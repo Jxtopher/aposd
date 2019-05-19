@@ -26,7 +26,7 @@ EXEC_NAME = AdaptivePortfolioSelectionDistributed
 
 #$(EXEC_NAME): $(SOURCES_DIR)main.cpp
 all : ./sources/main.cpp
-	$(CC) $(FLAGS) $< -o $(EXEC_NAME) -lboost_program_options
+	$(CC) $(FLAGS) $< -o $(EXEC_PATH)/$(EXEC_NAME) -lboost_program_options
 
 run:
 	mpirun -np 4 $(EXEC_NAME)
