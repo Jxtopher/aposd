@@ -14,6 +14,7 @@
 #include <cstring>
 #include <string>
 #include <memory>
+#include <cassert>
 
 #include "../macro.h"
 
