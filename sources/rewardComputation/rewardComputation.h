@@ -2,7 +2,6 @@
 #define	REWARDCOMPUTATION_H
 
 #include <utility>
-#include <cassert>
 
 using namespace std;
 

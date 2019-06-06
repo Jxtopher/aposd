@@ -10,7 +10,6 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
-#include <cassert>
 #include <cstdio>
 #include <cstring>
 #include <string>

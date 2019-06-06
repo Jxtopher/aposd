@@ -1,7 +1,6 @@
 #ifndef JXTOPHER_LAUNCHEREXEC_H
 #define JXTOPHER_LAUNCHEREXEC_H
 
-#include <cassert>
 #include <iostream>
 #include <sstream>
 #include <unistd.h>
