@@ -1,9 +1,10 @@
 #ifndef LAUNCHERSTOCOS_H
 #define LAUNCHERSTOCOS_H
 
-#include "../launcher.h"
+#include <iostream>
 
-#include "iostream"
+#include "../launcher.h"
+#include "stocos/sources/solution/solution.h"
 
 using namespace std;
 

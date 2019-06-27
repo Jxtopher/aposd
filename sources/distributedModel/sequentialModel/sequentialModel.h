@@ -5,7 +5,6 @@
 
 #include "../../rewardComputation/rewardComputation.h"
 #include "../../parameterSelection/parameterSelection.h"
-//#include "../../../../mini-solver-master/sources/solution/solution.h
 #include "../../launcher/launcher.h"
 #include "../../Viewing/loading.h"
 
@@ -33,7 +32,7 @@ public:
         _parameterSelection.reset();
 
 
-        while(s.getFitness() < 1000) {
+        while(s.getFitness() < 50) {
             // Get list operators to apply
             unsigned int parameter = _parameterSelection.getParameter();
 

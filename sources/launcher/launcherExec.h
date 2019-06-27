@@ -53,7 +53,7 @@ class LauncherExec : public Launcher {
 			stringstream ss;
 			
 			string cmd = _pathExecutable + " " + _args + " " + cmdParameter;
-			cout<<_pathExecutable<<endl;
+			//cout<<__LINE__<<" : "<<cmd<<endl;
 			FILE* pipe = popen(cmd.c_str(), "r");
 			try {
 				while (!feof(pipe)) {

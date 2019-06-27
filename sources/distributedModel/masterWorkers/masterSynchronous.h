@@ -70,8 +70,7 @@ class MasterSynchronous : public Master {
                 vector<pair<double, unsigned int>> rewardOp = _rewardComputation(solutions, solutionsAfterMutation, parameter);
                 _parameterSelection.update(rewardOp);
                 solutions = solutionsAfterMutation;
-        } while(true);
-
+        } while(solutions[0].getFitness() < 50);
         // ------------------------------------------
         order = MPI_Order::FINISH;
         for (int i = 1; i < mpi_globals_nbnodes; i++)

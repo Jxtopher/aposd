@@ -46,11 +46,13 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 #include "selection/selection.h"
 #include "selection/selection_maximization.h"
 
+#include "distributedModel/islandModel/topologies/topologies.h"
+#include "distributedModel/islandModel/topologies/circle.h"
+#include "distributedModel/islandModel/topologies/complete.h"
+#include "distributedModel/islandModel/topologies/star.h"
+#include "distributedModel/islandModel/topologies/RandomEdge.h"
 
 using namespace std;
-
-
-
 
 void version(string name_software, string num_version);
 
@@ -63,6 +65,13 @@ void version(string name_software, string num_version) {
 }
 
 int main(int argc, char **argv) {
+	unsigned long int seed1 = static_cast<unsigned long int>(time(0));
+	std::mt19937 mt_rand1;
+	mt_rand1.seed(seed1);
+
+	Topologies *t = new RandomEdge(mt_rand1, 32);
+	t->print();
+	exit(0);
 	DEBUG_TRACE("Start of the program")
 
 	Settings settings(argc, argv);
@@ -72,7 +81,7 @@ int main(int argc, char **argv) {
 	std::mt19937 mt_rand;
 	mt_rand.seed(seed);
 
-	Launcher *launcher = new LauncherExec("../stocos/stocos", "--budget 20");
+	Launcher *launcher = new LauncherExec("../stocos/build/stocos", "--budget=2 --problem=0 --instance=../stocos/instances/OneMax/onemax-50.json");
 	//ParameterSelection *parameterSelection = new PsConstant(3,0);
 	ParameterSelection *parameterSelection = new PsRandom(mt_rand, 3);
 	RewardComputation<Solution<unsigned int>> *rewardComputation = new RewardComputation<Solution<unsigned int>>;
@@ -81,7 +90,7 @@ int main(int argc, char **argv) {
 		*parameterSelection, 
 		*rewardComputation);
 
-	//sequentialModel();
+	// sequentialModel();
 	Selection<Solution<unsigned int>> *selection = new Selection_maximization<Solution<unsigned int>>;
 
 	MasterWorkersSynchronous<Solution<unsigned int>> mwSynchronous(argc, argv,
