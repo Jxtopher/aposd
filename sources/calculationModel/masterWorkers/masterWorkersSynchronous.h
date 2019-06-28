@@ -3,11 +3,12 @@
 
 #include <mpi.h>
 
+#include "../calculationModel.h"
 #include "masterSynchronous.h"
 #include "workersSynchronous.h"
 
 template <class SOL>
-class MasterWorkersSynchronous {
+class MasterWorkersSynchronous : public CalculationModel {
    public:
     MasterWorkersSynchronous(int argc, char** argv, 
                             Launcher& launcher, 
@@ -29,6 +30,7 @@ class MasterWorkersSynchronous {
     void operator()() {
         if (mpi_globals_nbnodes == 1) {
             // Not distributed
+            cerr<<"[-] Error we have only one node !"<<endl;
         } else if (mpi_globals_rank == MPI_MASTER) {
             // MASTER
             MasterSynchronous<SOL> mSynchro(_parameterSelection, _rewardComputation, _selection);

@@ -3,13 +3,14 @@
 
 #include <utility>
 
+#include "../calculationModel.h"
 #include "../../rewardComputation/rewardComputation.h"
 #include "../../parameterSelection/parameterSelection.h"
 #include "../../launcher/launcher.h"
 #include "../../Viewing/loading.h"
 
 template<class SOL>
-class SequentialModel {
+class SequentialModel : public CalculationModel {
 public:
     SequentialModel(Launcher &launcher,
                     ParameterSelection &parameterSelection,

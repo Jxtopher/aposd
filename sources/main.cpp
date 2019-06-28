@@ -34,10 +34,10 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 #include "launcher/launcherExec.h"
 //#include "launcher/launcherFork.h"
 //#include "launcher/launcherClass/launcherClassOneMax.h"
-#include "distributedModel/sequentialModel/sequentialModel.h"
-#include "distributedModel/masterWorkers/masterWorkersSynchronous.h"
-#include "distributedModel/masterWorkers/master.h"
-#include "distributedModel/masterWorkers/masterSynchronous.h"
+#include "calculationModel/sequentialModel/sequentialModel.h"
+#include "calculationModel/masterWorkers/masterWorkersSynchronous.h"
+#include "calculationModel/masterWorkers/master.h"
+#include "calculationModel/masterWorkers/masterSynchronous.h"
 #include "parameterSelection/parameterSelection.h"
 #include "parameterSelection/psConstant.h"
 #include "parameterSelection/psRandom.h"
@@ -46,11 +46,13 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 #include "selection/selection.h"
 #include "selection/selection_maximization.h"
 
-#include "distributedModel/islandModel/topologies/topologies.h"
-#include "distributedModel/islandModel/topologies/circle.h"
-#include "distributedModel/islandModel/topologies/complete.h"
-#include "distributedModel/islandModel/topologies/star.h"
-#include "distributedModel/islandModel/topologies/RandomEdge.h"
+#include "calculationModel/islandModel/topologies/topologies.h"
+#include "calculationModel/islandModel/topologies/circle.h"
+#include "calculationModel/islandModel/topologies/complete.h"
+#include "calculationModel/islandModel/topologies/star.h"
+#include "calculationModel/islandModel/topologies/randomEdge.h"
+#include "calculationModel/islandModel/islandModel.h"
+#include "calculationModel/islandModel/sharedParameter.h"
 
 using namespace std;
 
@@ -69,8 +71,12 @@ int main(int argc, char **argv) {
 	std::mt19937 mt_rand1;
 	mt_rand1.seed(seed1);
 
-	Topologies *t = new RandomEdge(mt_rand1, 32);
+	Topologies *t = new Complete(5);
 	t->print();
+
+	IslandModel *im = new SharedParameter(argc, argv, *t);
+	im->~IslandModel();
+
 	exit(0);
 	DEBUG_TRACE("Start of the program")
 
