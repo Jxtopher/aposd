@@ -23,8 +23,8 @@ using namespace std;
 template <typename TYPE_FITNESS>
 class Solution {
    public:
-    Solution(Solution const &s) : _numberOfObjective(s._numberOfObjective) {
-        DEBUG_TRACE("Constructeur de copie Solution");
+    Solution(const Solution &s) : _numberOfObjective(s._numberOfObjective) {
+        DEBUG_TRACE("Constructeur de copie Solution(const Solution &s)");
         //_fitness = new TYPE_FITNESS[_numberOfObjective];
         //_fitnessIsValid = new bool[_numberOfObjective];
         _fitness = unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
@@ -38,7 +38,7 @@ class Solution {
     }
 
     Solution() : _numberOfObjective(1) {
-        DEBUG_TRACE("Creation Solution");
+        DEBUG_TRACE("Creation Solution()");
         //_fitness = new TYPE_FITNESS[_numberOfObjective];
         //_fitnessIsValid = new bool[_numberOfObjective];
         _fitness = unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
@@ -46,8 +46,8 @@ class Solution {
         for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
     }
 
-    Solution(unsigned int const numberOfObjective) : _numberOfObjective(numberOfObjective) {
-        DEBUG_TRACE("Creation Solution");
+    Solution(const unsigned int numberOfObjective) : _numberOfObjective(numberOfObjective) {
+        DEBUG_TRACE("Creation Solution(const unsigned int numberOfObjective)");
         //_fitness = new TYPE_FITNESS[_numberOfObjective];
         //_fitnessIsValid = new bool[_numberOfObjective];
         _fitness = unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
@@ -56,7 +56,7 @@ class Solution {
     }
 
     // Deserialization
-    Solution(unsigned char const *deserialization) {
+    /*Solution(unsigned char const *deserialization) {
         DEBUG_TRACE("Constructeur de deserialization");
         unsigned long long size = 0;
         unsigned char const *cursorData = deserialization;
@@ -87,10 +87,11 @@ class Solution {
         // for (unsigned int i = 0 ; i < 62 ; i++) {
         //	printf("%X ", deserialization[i]);
         //}
-    }
+    }*/
 
 
-    Solution(string const &solution) {
+    Solution(const string &solution) {
+        DEBUG_TRACE("Creation Solution(const string &solution)");
         std::string token;
         std::istringstream ss(solution);
         vector<string> x;
@@ -114,7 +115,7 @@ class Solution {
                 _fitness = unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
                 _fitnessIsValid = unique_ptr<bool []>(new bool[_numberOfObjective]);
             } else {
-                cout << __LINE__ << ":" << _numberOfObjective << endl;
+                cout << "->"<<__LINE__ << ":" << _numberOfObjective << endl;
                 //_fitness = static_cast<TYPE_FITNESS *>(realloc(_fitness, _numberOfObjective * sizeof(TYPE_FITNESS)));
                 //_fitnessIsValid = static_cast<bool *>(realloc(_fitnessIsValid, _numberOfObjective * sizeof(bool)));
                 _fitness.reset(static_cast<TYPE_FITNESS *>(realloc(static_cast<void*>(_fitness.release()), _numberOfObjective * sizeof(TYPE_FITNESS))));
@@ -127,7 +128,7 @@ class Solution {
         }
 
         assert(i == this->numberOfObjective());
-
+        
         // solution
         sol = x[1];
     }
@@ -154,15 +155,13 @@ class Solution {
 
     ~Solution() {
         DEBUG_TRACE("Delete Solution");
-        //delete[] _fitness;
-        //delete[] _fitnessIsValid;
     }
 
     // Serialization
     // Return : unsigned char
     // Total size - numberOfObjective - Fitness * numberOfObjective -
     // FitnessIsValid * numberOfObjective
-    unsigned char *serialization() {
+    /*unsigned char *serialization() {
         unsigned long long size = sizeof(unsigned long long) + sizeof(unsigned int) +
                                   (_numberOfObjective * sizeof(TYPE_FITNESS)) + (_numberOfObjective * sizeof(bool));
         unsigned char *data = new unsigned char[size];
@@ -193,7 +192,7 @@ class Solution {
         //}
         // std::cout<<std::endl;
         return data;
-    }
+    }*/
 
     bool fitnessIsValid(unsigned int numObjectif) const {
         assert(numObjectif < _numberOfObjective);

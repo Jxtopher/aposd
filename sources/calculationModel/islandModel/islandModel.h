@@ -8,8 +8,8 @@
 
 using namespace std;
 
-
-class IslandModel : public CalculationModel{
+template <class SOL>
+class IslandModel : public CalculationModel {
 	public:
 		IslandModel(int argc, char** argv, Topologies &topologies) : 
             _topologies(topologies) {

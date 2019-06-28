@@ -71,10 +71,22 @@ int main(int argc, char **argv) {
 	std::mt19937 mt_rand1;
 	mt_rand1.seed(seed1);
 
-	Topologies *t = new Complete(5);
-	t->print();
+	Topologies *topologies = new Complete(4);
+	topologies->print();
 
-	IslandModel *im = new SharedParameter(argc, argv, *t);
+	Launcher *launcher1 = new LauncherExec("../stocos/build/stocos", "--budget=2 --problem=0 --instance=../stocos/instances/OneMax/onemax-50.json");
+	unsigned int nbParameter = 3;
+	ParameterSelection *parameterSelection1 = new PsRandom(mt_rand1, nbParameter);
+	RewardComputation<Solution<unsigned int>> *rewardComputation1 = new RewardComputation<Solution<unsigned int>>;
+	Selection<Solution<unsigned int>> *selection1 = new Selection_maximization<Solution<unsigned int>>;
+
+	IslandModel<Solution<unsigned int>> *im = new SharedParameter<Solution<unsigned int>>(argc, argv, 
+	*topologies, 
+	*launcher1,
+	*parameterSelection1, 
+	*rewardComputation1,
+	*selection1);
+	im->operator()();
 	im->~IslandModel();
 
 	exit(0);

@@ -97,7 +97,7 @@ class PsUCBW : public ParameterSelection {
             }
         }
 	}
-	
+
 	vector<unsigned int> getParameter(const unsigned int nbNodes) {
 		vector<unsigned int> parameterList;
 

@@ -32,7 +32,7 @@ class PsRandom : public ParameterSelection {
 	void update(pair<double, unsigned int> &rewards) {
 
 	}
-	
+
 	vector<unsigned int> getParameter(const unsigned int nbNodes) {
 		vector<unsigned int> parameterList;
 		

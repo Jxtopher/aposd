@@ -94,7 +94,7 @@ class PsEspsilonGreedy : public ParameterSelection {
 				break;
 		}
 	}
-	
+
 	vector<unsigned int> getParameter(const unsigned int nbNodes) {
 		vector<unsigned int> parameterList;
 		

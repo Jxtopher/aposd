@@ -60,7 +60,7 @@ class PsAdaptivePursuit : public ParameterSelection {
         // rewards.second =  parameter (unsigned int)
         rewardEstimate[rewards.second] = (1 - _alpha) * rewardEstimate[rewards.second] + _alpha * rewards.first;   
 	}
-	
+
 	vector<unsigned int> getParameter(const unsigned int nbNodes) {
 		vector<unsigned int> parameterList;
 		

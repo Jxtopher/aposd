@@ -51,6 +51,15 @@ class Topologies {
         void print() {
             print_graph(g);
         }
+        
+
+        const adjacency_list<
+        boost::vecS, boost::vecS, boost::undirectedS,
+        VertexProperties,                               // Type vertex
+        edge_info_prop_type                             // Type edge
+        > &graph() const {
+            return g;
+        }
 	protected:
         Graph g; /// < graphe g
         unsigned int _nbNodes;

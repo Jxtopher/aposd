@@ -40,14 +40,14 @@ class MasterSynchronous : public Master {
         }
 
         do {
-                // Selection parameter a exectue
+                // Selection parameter a execute
                 vector<unsigned int> parameter = _parameterSelection.getParameter(mpi_globals_nbnodes - 1);
                 SOL bestSolution = _selection(solutions);
 
                 // ------------------------------------------
                 order = MPI_Order::COMPUTE_FITNESS;
                 for (int i = 1; i < mpi_globals_nbnodes; i++)
-                MPI_Isend(&order, 1, MPI_INT, i, MPI_TAG, MPI_COMM_WORLD, &request);
+                    MPI_Isend(&order, 1, MPI_INT, i, MPI_TAG, MPI_COMM_WORLD, &request);
 
                 for (int i = 1; i < mpi_globals_nbnodes; i++) {
                         string soluString = bestSolution.str();

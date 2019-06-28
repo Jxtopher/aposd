@@ -31,11 +31,15 @@ class ParameterSelection {
 		virtual void reset() = 0;
 		virtual void update(vector<pair<double, unsigned int>> &rewards) = 0;
 		virtual void update(pair<double, unsigned int> &rewards) = 0;
+		void update(const double &reward, const unsigned int &parameter) {
+			pair<double, unsigned int> p(reward, parameter);
+			update(p);
+		}
 		virtual vector<unsigned int> getParameter(const unsigned int nbNodes) = 0;
 		virtual unsigned int getParameter() = 0;
 
 	protected:
-		const unsigned int &_nbParameter;
+		const unsigned int _nbParameter;
 };
 
 #endif

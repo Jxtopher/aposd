@@ -28,6 +28,8 @@ class Selection_maximization : public Selection<SOL> {
     }
    
     SOL operator()(const vector<SOL> &solutions) const {
+        assert(0 < solutions.size());
+        
         double fitness = solutions[0].getFitness();
         int index = 0;
         for (unsigned int i = 0 ; i < solutions.size() ; i++) {
