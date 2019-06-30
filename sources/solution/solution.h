@@ -110,14 +110,10 @@ class Solution {
         while (std::getline(ssFitness, token, ' ')) {
             _numberOfObjective++;
             if (_fitness == nullptr) {
-                //_fitness = new TYPE_FITNESS[_numberOfObjective];
-                //_fitnessIsValid = new bool[_numberOfObjective];
                 _fitness = unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
                 _fitnessIsValid = unique_ptr<bool []>(new bool[_numberOfObjective]);
             } else {
                 cout << "->"<<__LINE__ << ":" << _numberOfObjective << endl;
-                //_fitness = static_cast<TYPE_FITNESS *>(realloc(_fitness, _numberOfObjective * sizeof(TYPE_FITNESS)));
-                //_fitnessIsValid = static_cast<bool *>(realloc(_fitnessIsValid, _numberOfObjective * sizeof(bool)));
                 _fitness.reset(static_cast<TYPE_FITNESS *>(realloc(static_cast<void*>(_fitness.release()), _numberOfObjective * sizeof(TYPE_FITNESS))));
 				_fitnessIsValid.reset(static_cast<bool *>(realloc(static_cast<void*>(_fitnessIsValid.release()), _numberOfObjective * sizeof(bool))));            
             }

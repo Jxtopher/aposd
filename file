@@ -1,0 +1,2 @@
+mpirun -np 4 --mca orte_base_help_aggregate 0 build/AdaptivePortfolioSelectionDistributed 
+Makefile:33: recipe for target 'run' failed

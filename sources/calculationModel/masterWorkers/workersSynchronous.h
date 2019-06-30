@@ -48,6 +48,7 @@ class WorkersSynchronous : public Workers {
                     continued = false;
                     break;
                 default:
+                    assert("[-] Switch-case MPI_Order is not valide" && false);
                     break;
             }
         }

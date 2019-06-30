@@ -31,15 +31,16 @@ class SharedParameter : public IslandModel<SOL> {
 		}
 
         static void recvRewardParamter(int &_continued_recv,
-                                       vector<std::tuple<string, double, unsigned int>> &_rewardOp, 
-                                       vector<string> &neighboringSolutions, 
+                                       vector<std::tuple<string, double, unsigned int>> &_rewardOp,
                                        std::mutex &_lock_mutex) {
+            // MPI_Request request
             MPI_Status status;
-            //MPI_Request request;
             int order;
+
             do {
-                
+                cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
                 MPI_Recv(&order, 1, MPI_INT, MPI_ANY_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status);
+                cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<" | order :"<<order<<endl;
                 switch (order) {
                     case MPI_Order::FINISH:
 
@@ -49,30 +50,29 @@ class SharedParameter : public IslandModel<SOL> {
 
                         break;
                     case MPI_Order::COMPUTE_FITNESS: {
-                        cout<<"["<<mpi_globals_rank<<"]* | line : "<<__LINE__<<endl;
                         // Recv message : solution, RewardOp
                         int sizeOfmessage;  // Get size of string solution
-                        int parameter;  // Get parameter
                         double reward;  // Get reward
-                        cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
-                        MPI_Probe(MPI_ANY_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status);
+                        int parameter;  // Get parameter
+                        
+                        MPI_Probe(status.MPI_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status);
                         MPI_Get_count(&status, MPI_CHAR, &sizeOfmessage);
-                        cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<" | sizeOfmessage : "<<sizeOfmessage<<endl;
+                        
                         char *msg = new char[sizeOfmessage + 1];  // Get solution
-                        MPI_Recv(msg, sizeOfmessage, MPI_CHAR, MPI_ANY_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status);
-                        cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
-                        MPI_Recv(&parameter, 1, MPI_INT, MPI_ANY_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status); // Get parameter
-                        cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
-                        MPI_Recv(&reward, 1, MPI_DOUBLE, MPI_ANY_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status); // Get parameter
-                        cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
+                        MPI_Recv(msg, sizeOfmessage, MPI_CHAR, status.MPI_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status);
+
+                        MPI_Recv(&reward, 1, MPI_DOUBLE, status.MPI_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status); // Get reward
+
+                        MPI_Recv(&parameter, 1, MPI_INT, status.MPI_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status); // Get parameter
+
                         _lock_mutex.lock();
-                        _rewardOp.insert(_rewardOp.begin(), std::tuple<string, double, unsigned int>(string(msg), reward, parameter));
+                        _rewardOp.push_back(std::tuple<string, double, unsigned int>(string(msg), reward, parameter));
                         _lock_mutex.unlock();
-                        cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
+
                         delete msg;
                     } break;
                     default:
-                        assert("[-] MPI_Order is not valide" && false);
+                        assert("[-] Switch-case MPI_Order is not valide" && false);
                         break;
                 }
                
@@ -80,21 +80,18 @@ class SharedParameter : public IslandModel<SOL> {
         }
 
         void operator()() {
-            cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
             //MPI_Status status;
             MPI_Request request;
             vector<SOL> solutions;
             _parameterSelection.reset();
 
-            thread t(recvRewardParamter, boost::ref(continued_recv), boost::ref(rewardOp), boost::ref(neighboringSolutions), boost::ref(lock_mutex));
+            thread t(recvRewardParamter, boost::ref(continued_recv), boost::ref(rewardOp), boost::ref(lock_mutex));
             //unsigned int iteration = 0;
 
             // Initialisation de la premiere solution
-            solutions.push_back(_launcher.initSolution());
+            solutions.push_back(SOL(_launcher.initSolution()));
 
             do {
-                cout<<"["<<mpi_globals_rank<<"]* | line : "<<__LINE__<<endl;
-
                 // Update solutions and parameter
                 lock_mutex.lock();
                 if (!rewardOp.empty()) {
@@ -106,45 +103,37 @@ class SharedParameter : public IslandModel<SOL> {
                 }
                 lock_mutex.unlock();
                 
-                cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
                 // Selection solutions and parameter a utiliser
                 unsigned int parameter = _parameterSelection.getParameter();
-                cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
                 SOL bestSolution = _selection(solutions);
-                cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
+                
                 // Call solver
-                cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
-                string newSolution = _launcher.solve(bestSolution.str(), parameter);
-                cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
+                string newSolution = string("0 : 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0");//_launcher.solve(bestSolution.str(), parameter);
                 solutions.push_back(SOL(newSolution));
-                cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
+
                 // Compute reward
-                pair<double, unsigned int> rewardOp = _rewardComputation(bestSolution, SOL(string(newSolution)), parameter);
+                pair<double, unsigned int> rewardOp = _rewardComputation(bestSolution, solutions.back(), parameter);
 
                 // Send message : solution, RewardOp
-                double reward = rewardOp.first;
-                int mpi_parameter = rewardOp.second;
                 int order = MPI_Order::COMPUTE_FITNESS;
                 auto neighbours = boost::adjacent_vertices(mpi_globals_rank, this->_topologies.graph());
-                cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
                 for (unsigned int neighbour : make_iterator_range(neighbours)) {
-                    std::cout << mpi_globals_rank<< " has adjacent vertex " << neighbour << "\n";
-                    cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
+                    //std::cout << mpi_globals_rank<< " has adjacent vertex " << neighbour << "\n";
                     MPI_Isend(&order, 1, MPI_INT, neighbour, MPI_TAG, MPI_COMM_WORLD, &request);
-                    cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<" | newS.size() : "<<newSolution.size()<<endl;
+                    
                     MPI_Isend(static_cast<const char *>(newSolution.c_str()), newSolution.size(), MPI_CHAR, neighbour, MPI_TAG, MPI_COMM_WORLD, &request);
-                    cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
-                    MPI_Isend(&(mpi_parameter), 1, MPI_INT, neighbour, MPI_TAG, MPI_COMM_WORLD, &request);
-                    cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
-                    MPI_Isend(&(reward), 1, MPI_DOUBLE, neighbour, MPI_TAG, MPI_COMM_WORLD, &request);
-                    cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
+                    
+                    // Reward
+                    MPI_Isend(&(rewardOp.first), 1, MPI_DOUBLE, neighbour, MPI_TAG, MPI_COMM_WORLD, &request);
+
+                    // Parameter
+                    MPI_Isend(&(rewardOp.second), 1, MPI_INT, neighbour, MPI_TAG, MPI_COMM_WORLD, &request);
                 }
 
                 // Stop criteria
                 /* if (3 < iteration++) {
                     continued_send = false;
                 }*/
-                cout<<"["<<mpi_globals_rank<<"] | line : "<<__LINE__<<endl;
             } while(continued_recv && continued_send);
 
             // Send FINISH
@@ -169,7 +158,6 @@ class SharedParameter : public IslandModel<SOL> {
         Selection<SOL> & _selection;
 
         vector<std::tuple<string, double, unsigned int>> rewardOp;
-        vector<string> neighboringSolutions;
         std::mutex lock_mutex;
         int continued_recv;
         int continued_send;      
