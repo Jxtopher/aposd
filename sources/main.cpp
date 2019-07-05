@@ -27,8 +27,6 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 
 #include "macro.h"
 
-#include "configurations.h"
-
 #include "launcher/launcher.h"
 #include "launcher/launcherClass/launcherStocos.h"
 #include "launcher/launcherExec.h"
@@ -41,6 +39,10 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 #include "parameterSelection/parameterSelection.h"
 #include "parameterSelection/psConstant.h"
 #include "parameterSelection/psRandom.h"
+#include "parameterSelection/psAdaptivePursuit.h"
+#include "parameterSelection/psUCBW.h"
+#include "parameterSelection/psSelectBestMutate.h"
+#include "parameterSelection/psEpsilonGreedyW.h"
 #include "settings/settings.h"
 #include "solution/solution.h"
 #include "selection/selection.h"
@@ -67,29 +69,6 @@ void version(string name_software, string num_version) {
 }
 
 int main(int argc, char **argv) {
-	unsigned long int seed1 = static_cast<unsigned long int>(time(0));
-	std::mt19937 mt_rand1;
-	mt_rand1.seed(seed1);
-
-	Topologies *topologies = new Complete(4);
-	topologies->print();
-
-	Launcher *launcher1 = new LauncherExec("../stocos/build/stocos", "--budget=2 --problem=0 --instance=../stocos/instances/OneMax/onemax-50.json");
-	unsigned int nbParameter = 3;
-	ParameterSelection *parameterSelection1 = new PsRandom(mt_rand1, nbParameter);
-	RewardComputation<Solution<unsigned int>> *rewardComputation1 = new RewardComputation<Solution<unsigned int>>;
-	Selection<Solution<unsigned int>> *selection1 = new Selection_maximization<Solution<unsigned int>>;
-
-	IslandModel<Solution<unsigned int>> *im = new SharedParameter<Solution<unsigned int>>(argc, argv, 
-	*topologies, 
-	*launcher1,
-	*parameterSelection1, 
-	*rewardComputation1,
-	*selection1);
-	im->operator()();
-	im->~IslandModel();
-
-	exit(0);
 	DEBUG_TRACE("Start of the program")
 
 	Settings settings(argc, argv);
@@ -99,27 +78,17 @@ int main(int argc, char **argv) {
 	std::mt19937 mt_rand;
 	mt_rand.seed(seed);
 
-	Launcher *launcher = new LauncherExec("../stocos/build/stocos", "--budget=2 --problem=0 --instance=../stocos/instances/OneMax/onemax-50.json");
-	//ParameterSelection *parameterSelection = new PsConstant(3,0);
-	ParameterSelection *parameterSelection = new PsRandom(mt_rand, 3);
-	RewardComputation<Solution<unsigned int>> *rewardComputation = new RewardComputation<Solution<unsigned int>>;
-	SequentialModel<Solution<unsigned int>> sequentialModel(
-		*launcher, 
-		*parameterSelection, 
-		*rewardComputation);
 
-	// sequentialModel();
-	Selection<Solution<unsigned int>> *selection = new Selection_maximization<Solution<unsigned int>>;
 
-	MasterWorkersSynchronous<Solution<unsigned int>> mwSynchronous(argc, argv,
-		*launcher, 
-		*parameterSelection, 
-		*rewardComputation,
-		*selection);
+	Topologies *topologies;
+	if (CalculationModel::ISLAND_MODEL) {
+		topologies = new Complete(4);
+		topologies->print();
+	}
 
-	mwSynchronous();
 
 	// Problème à résoudre
+	Launcher *launcher = new LauncherExec("../stocos/build/stocos", "--budget=2 --problem=0 --instance=../stocos/instances/OneMax/onemax-50.json");
 	//switch() {
 	//	default:
 	//	break;
@@ -127,51 +96,76 @@ int main(int argc, char **argv) {
 	//LauncherClass *launcherClassOneMax = new LauncherClassOneMax;
 
 	// Méthode de réglage de paramètre
-	//switch() {
-	//	default:
-	//	break;
-	//}
-	
-	//ParameterSelection *ssUniform = new SsUniform(4,0);
+	unsigned int nbParameter = 3;
+	ParameterSelection *parameterSelection;
+	switch(ParameterSelection::RANDOM) {
+        case ParameterSelection::ADAPTIVEPURSUIT :
+			parameterSelection = new PsAdaptivePursuit(mt_rand,nbParameter);
+			break;
+        case ParameterSelection::CONSTANT :
+		 	parameterSelection = new PsConstant(nbParameter,0);
+			break;
+        case ParameterSelection::EPSILONGREEDY :
+			parameterSelection = new PsEspsilonGreedy(mt_rand, nbParameter);
+			break;
+        case ParameterSelection::RANDOM :
+			parameterSelection = new PsRandom(mt_rand, nbParameter);
+			break;
+        case ParameterSelection::SELECTBESTMUTATE :
+			//parameterSelection = new PsSelectBestMutate(mt_rand, nbParameter);
+			break;
+        case ParameterSelection::UCBW :
+			parameterSelection = new PsUCBW(mt_rand, nbParameter);
+			break;
+		default:
+			assert("The calculation model is not defined" && false);
+		break;
+	}
 
 
 	// Calcul de la récompense
-	//switch() {
-	//	default:
-	//	break;
-	//}
+	RewardComputation<Solution<unsigned int>> *rewardComputation = new RewardComputation<Solution<unsigned int>>;
+	// switch() {
+	// }
 	//RewardComputation *rewardComputation = new RewardComputation<SolutionArray <unsigned int, bool> >;
 
 
-	//SequentialModel< SolutionArray <unsigned int, bool> > sequentialModel(launcherClassOneMax, ssUniform, rewardComputation);
-	/*switch(MASTER_WORKER_MODEL) {
-		case MASTER_WORKER_MODEL:
+	// Selection de la meilleurs solution
+	Selection<Solution<unsigned int>> *selection = new Selection_maximization<Solution<unsigned int>>;
+
+
+	// Modèle de calcule
+	CalculationModel *calculationmodel;
+	switch(CalculationModel::ISLAND_MODEL) {
+		case CalculationModel::MASTER_WORKER_MODEL:
+			calculationmodel = new MasterWorkersSynchronous<Solution<unsigned int>>(argc, argv,
+				*launcher, 
+				*parameterSelection,
+				*rewardComputation,
+				*selection);
 		break;
-		case ISLAND_MODEL:
+		case CalculationModel::ISLAND_MODEL:
+			calculationmodel = new SharedParameter<Solution<unsigned int>>(argc, argv, 
+			*topologies, 
+			*launcher,
+			*parameterSelection, 
+			*rewardComputation,
+			*selection);
 		break;
-		case SEQUENTIAL_MODEL:
-			
+		case CalculationModel::SEQUENTIAL_MODEL:
+			calculationmodel = new SequentialModel<Solution<unsigned int>>(
+				*launcher, 
+				*parameterSelection, 
+				*rewardComputation);
 		break;
 		default:
-			THROW("The distributed model is not defined");
+			assert("The calculation model is not defined" && false);
 		break;
-	}*/
-	/*version("Hello World !", "1");
-	
-	for (int i =  0 ; i < 5 ; i++) {
-		DEBUG_VAR(i)
-		cout<<"Hello World!"<<endl;
 	}
+	
+	calculationmodel->operator()();
+	calculationmodel->~CalculationModel();
 
-	if (0 == -1) {
-		THROW("Error of variable i")
-	}*/
-
-	//LauncherFork lfork("kkkkk");
-	//LauncherClass lClass;
-
-
-	//lClass(NULL, 1);
 
 	DEBUG_TRACE("Stop program")
 	return EXIT_SUCCESS;

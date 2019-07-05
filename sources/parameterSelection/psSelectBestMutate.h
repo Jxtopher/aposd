@@ -124,7 +124,7 @@ class PsSelectBestMutate : public ParameterSelection {
 	protected:
 	std::mt19937 &_mt_rand;
 	const double &_espilon;
-	const unsigned int &_windowSize;
+	const unsigned int _windowSize;
 	const AggregationFunction _aggregationFunction;
 	const HeterogeneityPolicy _heterogeneityPolicy;
 	uniform_int_distribution<unsigned int> *uid;

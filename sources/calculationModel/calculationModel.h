@@ -10,6 +10,10 @@ class MPI_Order {
 
 class CalculationModel {
     public:
+        static const int SEQUENTIAL_MODEL = 0;
+        static const int MASTER_WORKER_MODEL = 1;
+        static const int ISLAND_MODEL = 2;
+        
         CalculationModel() {
 
         }

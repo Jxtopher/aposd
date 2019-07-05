@@ -19,6 +19,13 @@ enum class HeterogeneityPolicy {
 
 class ParameterSelection {
 	public:
+        static const int ADAPTIVEPURSUIT = 0;
+        static const int CONSTANT = 1;
+        static const int EPSILONGREEDY = 2;
+        static const int RANDOM = 3;
+        static const int SELECTBESTMUTATE = 4;
+        static const int UCBW = 5;
+
 		ParameterSelection(unsigned int nbParameter) : 
 			_nbParameter(nbParameter) {
 

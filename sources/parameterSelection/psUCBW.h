@@ -12,7 +12,13 @@
 #define	PSUCBW_H
 
 #include <random>
+
+#include <boost/circular_buffer.hpp>
+
 #include "parameterSelection.h"
+
+using namespace std;
+using namespace boost;
 
 class PsUCBW : public ParameterSelection {
 	public:
