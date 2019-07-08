@@ -7,7 +7,6 @@
 #include "../../rewardComputation/rewardComputation.h"
 #include "../../parameterSelection/parameterSelection.h"
 #include "../../launcher/launcher.h"
-#include "../../Viewing/loading.h"
 
 template<class SOL>
 class SequentialModel : public CalculationModel {
