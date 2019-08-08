@@ -28,13 +28,13 @@ class ParameterSelection {
 
 		ParameterSelection(unsigned int nbParameter) : 
 			_nbParameter(nbParameter) {
-
 		}
 
 		virtual ~ParameterSelection() {
 			
 		}
 
+		virtual ParameterSelection* clone() const = 0;
 		virtual void reset() = 0;
 		virtual void update(vector<pair<double, unsigned int>> &rewards) = 0;
 		virtual void update(pair<double, unsigned int> &rewards) = 0;

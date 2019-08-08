@@ -44,9 +44,21 @@ class PsSelectBestMutate : public ParameterSelection {
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 	}
 
+	PsSelectBestMutate(const PsSelectBestMutate &c) : 
+		ParameterSelection(c._nbParameter),
+		_mt_rand(c._mt_rand),
+		_espilon(c._espilon),
+		_windowSize(c._windowSize),
+		_aggregationFunction(c._aggregationFunction),
+		_heterogeneityPolicy(c._heterogeneityPolicy)  {
+			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+    }
+
 	virtual ~PsSelectBestMutate() {
 
 	}
+
+	ParameterSelection* clone() const { return new PsSelectBestMutate(*this); }
 
 	void reset() {
 

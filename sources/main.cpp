@@ -33,9 +33,10 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 //#include "launcher/launcherFork.h"
 //#include "launcher/launcherClass/launcherClassOneMax.h"
 #include "calculationModel/sequentialModel/sequentialModel.h"
-#include "calculationModel/masterWorkers/masterWorkersSynchronous.h"
-#include "calculationModel/masterWorkers/master.h"
-#include "calculationModel/masterWorkers/masterSynchronous.h"
+#include "calculationModel/masterWorkers/mpi/masterWorkersSynchronous.h"
+#include "calculationModel/masterWorkers/mpi/master.h"
+#include "calculationModel/masterWorkers/mpi/masterSynchronous.h"
+#include "calculationModel/masterWorkers/websocket/masterWebsocket.h"
 #include "parameterSelection/parameterSelection.h"
 #include "parameterSelection/psConstant.h"
 #include "parameterSelection/psRandom.h"
@@ -136,7 +137,7 @@ int main(int argc, char **argv) {
 
 	// Modèle de calcule
 	CalculationModel *calculationmodel;
-	switch(CalculationModel::ISLAND_MODEL) {
+	switch(CalculationModel::MASTER_WORKER_WEBSOCKET) {
 		case CalculationModel::MASTER_WORKER_MODEL:
 			calculationmodel = new MasterWorkersSynchronous<Solution<unsigned int>>(argc, argv,
 				*launcher, 
@@ -157,6 +158,12 @@ int main(int argc, char **argv) {
 				*launcher, 
 				*parameterSelection, 
 				*rewardComputation);
+		break;
+		case CalculationModel::MASTER_WORKER_WEBSOCKET:
+			calculationmodel = new MasterWebsocket<Solution<unsigned int>>(argc, argv,
+				*parameterSelection,
+				*rewardComputation,
+				*selection);
 		break;
 		default:
 			assert("The calculation model is not defined" && false);

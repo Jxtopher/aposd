@@ -3,7 +3,7 @@
 
 #include <mpi.h>
 
-#include "../calculationModel.h"
+#include "../../calculationModel.h"
 #include "masterSynchronous.h"
 #include "workersSynchronous.h"
 

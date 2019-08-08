@@ -12,6 +12,7 @@
 #define	PSADAPTIVEPURSUIT_H
 
 #include <random>
+#include <memory>
 #include "parameterSelection.h"
 
 class PsAdaptivePursuit : public ParameterSelection {
@@ -36,10 +37,31 @@ class PsAdaptivePursuit : public ParameterSelection {
             rewardEstimate = unique_ptr<double []>(new double[nbParameter]);
            selectionProbability = unique_ptr<double []>(new double[nbParameter]);
     }
+	
+	PsAdaptivePursuit(const PsAdaptivePursuit &c) : 
+		ParameterSelection(c._nbParameter),
+		_mt_rand(c._mt_rand),
+		_alpha(c._alpha),
+		_beta(c._beta),
+		_p_min(c._p_min),
+		_p_max(c._p_max),
+        _aggregationFunction(c._aggregationFunction),
+		_heterogeneityPolicy(c._heterogeneityPolicy)  {
+			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+            rewardEstimate = unique_ptr<double []>(new double[_nbParameter]);
+           	selectionProbability = unique_ptr<double []>(new double[_nbParameter]);
+			
+			for (unsigned int i = 0 ; i < _nbParameter ; i++) {
+				rewardEstimate[i] = c.rewardEstimate[i]; 
+				selectionProbability[i] = c.selectionProbability[i];
+			}
+    }
 
 	virtual ~PsAdaptivePursuit() {
 
 	}
+
+	ParameterSelection* clone() const { return new PsAdaptivePursuit(*this); }
 
 	void reset() {
 
