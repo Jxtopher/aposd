@@ -19,6 +19,8 @@ class Settings {
         // User setting
         po::options_description desc("Allowed options");
         desc.add_options()
+        ("help,h", "help message")
+        (",c", "config json cppcms")
         ("seed", po::value<unsigned long int>(&seed), "seed (default: time(0))")
         ;
 

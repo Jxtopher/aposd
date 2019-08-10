@@ -16,10 +16,20 @@ class PsRandom : public ParameterSelection {
 		_law(0) {
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 	}
+	
+	PsRandom(const PsRandom &c) : 
+		ParameterSelection(c._nbParameter),
+		_mt_rand(c._mt_rand),
+		_heterogeneityPolicy(c._heterogeneityPolicy),
+		_law(c._law)  {
+			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+    }
 
 	virtual ~PsRandom() {
 
 	}
+
+	ParameterSelection* clone() const { return new PsRandom(*this); }
 
 	void reset() {
 
@@ -49,7 +59,7 @@ class PsRandom : public ParameterSelection {
 				}
 				break;
 			default:
-				assert(false);
+				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The policy model is not defined");
 				break;
 		}
 

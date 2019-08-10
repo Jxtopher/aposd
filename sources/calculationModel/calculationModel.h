@@ -1,6 +1,8 @@
 #ifndef CALCULATIONMODEL_H
 #define	CALCULATIONMODEL_H
 
+
+
 class MPI_Order {
 	public:
 	static const int FINISH = 0;

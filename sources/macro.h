@@ -21,13 +21,5 @@
 #define DEBUG_VAR(variable)
 #endif
 
-
-
-#define THROW(msg) {std::ostringstream ss;\
-			ss << __FILE__<<":"<<__LINE__<<":"<<msg;\
-			throw std::logic_error(ss.str());}
-
-
-
 #endif
 
