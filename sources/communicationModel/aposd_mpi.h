@@ -73,7 +73,7 @@ void CommunicationModel_MPI(int argc, char **argv) {
 
 
 	// Problème à résoudre
-	Launcher *launcher;//= new LauncherExec("../stocos/build/stocos", "--budget=2 --problem=0 --instance=../stocos/instances/OneMax/onemax-50.json");
+	Launcher *launcher = new LauncherExec("../stocos/build/stocos", "--budget=2 --problem=0 --instance=../stocos/instances/OneMax/onemax-50.json");
 	//switch() {
 	//	default:
 	//	break;

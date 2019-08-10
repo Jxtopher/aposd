@@ -1,3 +1,10 @@
+///
+/// \file aposd_webApps.h
+/// \author Jxtopher
+/// \date 2019-08
+/// \brief Mode de communication SaaS 
+///
+
 #ifndef JXTOPHER_APOSD_WEBAPPS_H
 #define JXTOPHER_APOSD_WEBAPPS_H
 
@@ -10,7 +17,6 @@
 #include <unistd.h>
 #include <iostream>
 #include <map>
-#include <thread>
 #include <utility>  // std:pair
 #include <vector>
 
@@ -88,6 +94,8 @@ class MethodBuilder {
 
     ~MethodBuilder() {}
 
+    unsigned int init() { return parameterSelection->getParameter(); }
+
     std::pair<unsigned int, Solution<unsigned int>> learning(unsigned int parameter, Solution<unsigned int> s_new) {
         std::pair<double, unsigned int> rewardOp = rewardComputation->operator()(s, s_new, parameter);
 
@@ -107,21 +115,26 @@ class MethodBuilder {
     Selection<Solution<unsigned int>>* selection;
 };
 
-class hello1 : public cppcms::application {
+///
+/// \class WebAposd
+/// \brief Définie l'application web de Aposd avec cppcms.
+///        Automate : initialization -> learning (many time) ->finish
+///
+class WebAposd : public cppcms::application {
    public:
-    hello1(cppcms::service& srv) : cppcms::application(srv) {
+    WebAposd(cppcms::service& srv) : cppcms::application(srv) {
         // dispatcher().assign("aa", &hello::page_home, this);
 
-        dispatcher().assign("/initialization/(\\d+)", &hello1::initialization, this, 1);
+        dispatcher().assign("/initialization/(\\d+)", &WebAposd::initialization, this, 1);
         mapper().assign("initialization", "/initialization/{1}");
 
-        dispatcher().assign("/learning/(\\d+)/(\\d+)/((.*))", &hello1::learning, this, 1, 2, 3);
+        dispatcher().assign("/learning/(\\d+)/(\\d+)/((.*))", &WebAposd::learning, this, 1, 2, 3);
         mapper().assign("learning", "/learning/{1}/{1}/{1}");
 
-        dispatcher().assign("/test", &hello1::test, this);
+        dispatcher().assign("/test", &WebAposd::test, this);
         mapper().assign("test", "/test");
 
-        dispatcher().assign("/finish/(\\d+)", &hello1::finish, this, 1);
+        dispatcher().assign("/finish/(\\d+)", &WebAposd::finish, this, 1);
         mapper().assign("finish", "/finish/{1}");
 
         // http://127.0.0.1:8080/hello
@@ -134,21 +147,34 @@ class hello1 : public cppcms::application {
         response().out() << json;
     }
 
+    ///
+    /// \brief construction de l'objet
+    ///
+    /// \param nbParameter : le nombre de paramètre à considérer
+    ///
     void initialization(std::string nbParameter) {
-        cppcms::json::value r;
+        cppcms::json::value json;
 
         stringstream convert(nbParameter);
         int _nbParameter = 0;
         convert >> _nbParameter;
 
-        MethodBuilder* x = new MethodBuilder(_nbParameter);
-        methodList.push_back(x);
+        MethodBuilder* method = new MethodBuilder(_nbParameter);
+        methodList.push_back(method);
 
-        r["id"] = convertPointerToStringAddress(x);
+        json["id"] = convertPointerToStringAddress(method);
+        json["num_paramter"] = method->init();
 
-        response().out() << r;
+        response().out() << json;
     }
 
+    ///
+    /// \brief apprentissage adaptative
+    ///
+    /// \param id : numero de l'objet
+    /// \param num_parameter : numero du parametre utiliser
+    /// \param solution : nouvelle solution avec la fitness
+    ///
     void learning(std::string id, std::string num_parameter, std::string solution) {
         MethodBuilder* method = convertAddressStringToPointer<MethodBuilder>(id);
         cppcms::json::value json;
@@ -174,6 +200,11 @@ class hello1 : public cppcms::application {
         }
     }
 
+    ///
+    /// \brief destruction de l'objet
+    ///
+    /// \param id : numero de l'objet
+    ///
     void finish(std::string id) {
         cppcms::json::value json;
         MethodBuilder* method = convertAddressStringToPointer<MethodBuilder>(id);
@@ -193,14 +224,13 @@ class hello1 : public cppcms::application {
     }
 
    private:
-    std::map<unsigned int, int> pSelection;
     vector<MethodBuilder*> methodList;
 };
 
 void CommunicationModel_webApps(int argc, char** argv) {
     try {
         cppcms::service srv(argc, argv);
-        srv.applications_pool().mount(cppcms::applications_factory<hello1>());
+        srv.applications_pool().mount(cppcms::applications_factory<WebAposd>());
         srv.run();
     } catch (std::exception const& e) {
         std::cerr << e.what() << std::endl;
