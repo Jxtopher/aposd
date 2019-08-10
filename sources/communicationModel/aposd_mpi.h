@@ -121,7 +121,7 @@ void CommunicationModel_MPI(int argc, char **argv) {
 
 	// Modèle de calcule
 	CalculationModel *calculationmodel;
-	switch(CalculationModel::MASTER_WORKER_WEBSOCKET) {
+	switch(CalculationModel::MASTER_WORKER_MODEL) {
 		case CalculationModel::MASTER_WORKER_MODEL:
 			calculationmodel = new MasterWorkersSynchronous<Solution<unsigned int>>(argc, argv,
 				*launcher, 
