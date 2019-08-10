@@ -113,7 +113,7 @@ class PsEspsilonGreedy : public ParameterSelection {
 				}
 				break;
 			default:
-				assert(false);
+				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The aggregation function is not defined");
 				break;
 		}
 	}
@@ -146,7 +146,7 @@ class PsEspsilonGreedy : public ParameterSelection {
 					}
 					break;
 				default:
-					assert(false);
+					throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The policy model is not defined");
 					break;
 			}
 		}

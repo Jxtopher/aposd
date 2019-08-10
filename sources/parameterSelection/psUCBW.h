@@ -88,7 +88,7 @@ class PsUCBW : public ParameterSelection {
         // Update rewardAggregation
 		switch (_aggregationFunction) {
 			case AggregationFunction::MAX:
-				assert(false);
+				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] function is not defined");
 				slidingWindow.push_front(rewards);
 				{
 
@@ -114,7 +114,7 @@ class PsUCBW : public ParameterSelection {
 				}
 				break;
 			default:
-				assert(false);
+				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The aggregation function is not defined");
 				break;
 		}
 

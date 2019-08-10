@@ -103,7 +103,7 @@ void CommunicationModel_MPI(int argc, char **argv) {
 			parameterSelection = new PsUCBW(mt_rand, nbParameter);
 			break;
 		default:
-			assert("The calculation model is not defined" && false);
+			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The calculation model is not defined");
 		break;
 	}
 
@@ -144,7 +144,7 @@ void CommunicationModel_MPI(int argc, char **argv) {
 				*rewardComputation);
 		break;
 		default:
-			assert("The calculation model is not defined" && false);
+			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The calculation model is not defined");
 		break;
 	}
 	

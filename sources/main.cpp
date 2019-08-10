@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
 		CommunicationModel_webApps(argc, argv);
 		break;
 	default:
-		assert("The communication model is not defined" && false);
+		throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The communication model is not defined");
 		break;
 	}
 	
