@@ -2,7 +2,7 @@
 #define JXTOPHER_MASTERSYNCHRONOUS_H
 
 #include "master.h"
-#include "../../../selection/selection.h"
+#include "../../selection/selection.h"
 
 template <class SOL>
 class MasterSynchronous : public Master {

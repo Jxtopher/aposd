@@ -23,9 +23,9 @@
 
 
 
-#define THROW(msg) {std::ostringstream ss;\
+/*#define THROW(msg) {std::ostringstream ss;\
 			ss << __FILE__<<":"<<__LINE__<<":"<<msg;\
-			throw std::logic_error(ss.str());}
+			throw std::logic_error(ss.str());}*/
 
 
 
