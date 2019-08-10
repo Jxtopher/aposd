@@ -72,7 +72,7 @@ class SharedParameter : public IslandModel<SOL> {
                         delete msg;
                     } break;
                     default:
-                        assert("[-] Switch-case MPI_Order is not valide" && false);
+                        throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + "[-] Switch-case MPI_Order is not valide");
                         break;
                 }
                

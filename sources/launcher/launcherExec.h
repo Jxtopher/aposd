@@ -63,10 +63,7 @@ class LauncherExec : public Launcher {
 				}
 			} catch (...) {
 				pclose(pipe);
-				//THROW("");
-				//throw;
-				cerr<<__FILE__<<":"<<__LINE__<<"POPEN"<<endl;
-				assert(false);
+				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " POPEN");
 			}
 			pclose(pipe);
 			

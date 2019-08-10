@@ -4,6 +4,7 @@
 #include <random>
 #include <algorithm>    // std::min_element, std::max_element
 #include <iterator>		// distance
+#include <memory>
 
 #include <boost/circular_buffer.hpp>
 
@@ -36,10 +37,32 @@ class PsEspsilonGreedy : public ParameterSelection {
 			numberSelect = unique_ptr<unsigned int []>(new unsigned int[nbParameter]);
 			reset();
 	}
+	
+	PsEspsilonGreedy(const PsEspsilonGreedy &c) : 
+		ParameterSelection(c._nbParameter),
+		_mt_rand(c._mt_rand),
+		_espilon(c._espilon),
+		_windowSize(c._windowSize),
+		_aggregationFunction(c._aggregationFunction),
+		_heterogeneityPolicy(c._heterogeneityPolicy)  {
+			urd = new uniform_real_distribution<>(0.0, 1.0);
+			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+			slidingWindow.set_capacity(_windowSize);
+			rewardAggregation = unique_ptr<double []>(new double[_nbParameter]);
+			numberSelect = unique_ptr<unsigned int []>(new unsigned int[_nbParameter]);
+
+			slidingWindow = c.slidingWindow;
+			for (unsigned int i = 0 ; i < _nbParameter ; i++) {
+				rewardAggregation[i] = c.rewardAggregation[i];
+				numberSelect[i] = c.numberSelect[i];
+			}
+    }
 
 	virtual ~PsEspsilonGreedy() {
 
 	}
+
+	ParameterSelection* clone() const { return new PsEspsilonGreedy(*this); }
 
 	void reset() {
 		initEachParameter = 0;
@@ -90,7 +113,7 @@ class PsEspsilonGreedy : public ParameterSelection {
 				}
 				break;
 			default:
-				assert(false);
+				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The aggregation function is not defined");
 				break;
 		}
 	}
@@ -123,7 +146,7 @@ class PsEspsilonGreedy : public ParameterSelection {
 					}
 					break;
 				default:
-					assert(false);
+					throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The policy model is not defined");
 					break;
 			}
 		}

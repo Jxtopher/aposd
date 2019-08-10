@@ -15,6 +15,13 @@ class PsConstant : public ParameterSelection {
 
 		}
 
+	PsConstant(const PsConstant &c) : 
+		ParameterSelection(c._nbParameter),
+		_parameterUsed(c._parameterUsed) {
+    }
+
+	ParameterSelection* clone() const { return new PsConstant(*this); }
+
 	void reset() {
 
 	}
