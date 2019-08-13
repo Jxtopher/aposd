@@ -6,6 +6,13 @@
 #include <tuple>
 
 #include "islandModel.h"
+#include "topologies/topologies.h"
+#include "../../selection/selection.h"
+#include "../../parameterSelection/parameterSelection.h"
+#include "../../rewardComputation/rewardComputation.h"
+#include "../../launcher/launcher.h"
+
+
 
 using namespace std;
 
@@ -33,7 +40,7 @@ class SharedParameter : public IslandModel<SOL> {
 
         void operator()() {
             // Initialisation des varaibles
-            auto neighbours = boost::adjacent_vertices(mpi_globals_rank, this->_topologies.graph());
+            auto neighbours = boost::adjacent_vertices(mpi_globals_rank, this->_topologies->graph());
             solutions.clear();
             _parameterSelection->reset();
 
@@ -45,7 +52,7 @@ class SharedParameter : public IslandModel<SOL> {
             do {                
                 // Selection solutions and parameter a utiliser
                 unsigned int parameter = _parameterSelection->getParameter();
-                SOL bestSolution = _selection->opeartor()(solutions);
+                SOL bestSolution = _selection->operator()(solutions);
                 cout<<bestSolution<<endl;
 
                 // Call solver

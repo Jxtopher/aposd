@@ -1,7 +1,7 @@
 {
 	"aposd": {
+		"seed": 0,
 		"CommunicationModel": "WEBAPPLICATION"
-		
 	},
 	"service": {
 		"api": "http",

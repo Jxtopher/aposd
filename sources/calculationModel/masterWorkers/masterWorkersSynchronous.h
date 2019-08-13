@@ -16,8 +16,8 @@ class MasterWorkersSynchronous : public CalculationModel {
     MasterWorkersSynchronous(int argc, char** argv, 
                             unique_ptr<Launcher> launcher, 
                             unique_ptr<ParameterSelection> parameterSelection,
-                             unique_ptr<RewardComputation<SOL>> rewardComputation,
-                             unique_ptr<Selection<SOL>> selection) {
+                            unique_ptr<RewardComputation<SOL>> rewardComputation,
+                            unique_ptr<Selection<SOL>> selection) {
         // Variable MPI init
         MPI_Init(&argc, &argv);
         MPI_Comm_size(MPI_COMM_WORLD, &mpi_globals_nbnodes);

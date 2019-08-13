@@ -17,6 +17,12 @@
 
 #include "../rewardComputation/rewardComputation.h"
 
+#include "../calculationModel/islandModel/topologies/topologies.h"
+#include "../calculationModel/islandModel/topologies/circle.h"
+#include "../calculationModel/islandModel/topologies/complete.h"
+#include "../calculationModel/islandModel/topologies/randomEdge.h"
+#include "../calculationModel/islandModel/topologies/star.h"
+
 using namespace std;
 
 class ClassBuilder {
@@ -24,6 +30,22 @@ public:
     ClassBuilder(std::mt19937 &mt_rand) : _mt_rand(mt_rand) {
 
     }
+
+    unique_ptr<Topologies> topologies(const Json::Value &configuration) {
+        unique_ptr<Topologies> _topologies;
+        if (configuration["className"].asString() == Topologies::CIRCLE)
+            _topologies = make_unique<Circle>(4);
+        else if (configuration["className"].asString() == Topologies::COMPLETE)
+            _topologies = make_unique<Complete>(4);
+        else if (configuration["className"].asString() == Topologies::RANDOMEDGE)
+            _topologies = make_unique<RandomEdge>(_mt_rand, 4);
+        else if (configuration["className"].asString() == Topologies::STAR)
+            _topologies = make_unique<Star>(4);
+        else 
+            throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The topologie " + + " is not defined");
+        return std::move(_topologies);
+    }
+
 
     unique_ptr<ParameterSelection> parameterSelection(const Json::Value &configuration) {
         unique_ptr<ParameterSelection> _parameterSelection;

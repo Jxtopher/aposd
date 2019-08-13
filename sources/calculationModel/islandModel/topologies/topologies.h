@@ -39,6 +39,11 @@ typedef adjacency_list<
 
 class Topologies {
 	public:
+        static constexpr const char* CIRCLE = "Circle";
+        static constexpr const char* COMPLETE = "Complete";
+        static constexpr const char* RANDOMEDGE = "RandomEdge";
+        static constexpr const char* STAR = "Star";
+
 		Topologies(unsigned int nbNodes) : 
             _nbNodes(nbNodes) {
 

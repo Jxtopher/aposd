@@ -14,7 +14,7 @@
 #include <jsoncpp/json/json.h>
 
 #include "../launcher/launcher.h"
-
+#include "../calculationModel/sequentialModel/sequentialModel.h"
 #include "classBuilder.h"
 
 void CommunicationModel_sequential(int argc, char** argv, const Json::Value &configuration);

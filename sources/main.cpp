@@ -92,11 +92,11 @@ int main(int argc, char **argv) {
     cout<<configuration<<endl;
 
 	if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::MPI) {
-		CommunicationModel_MPI(argc, argv, configuration["aposd"]);
+		CommunicationModel_MPI(argc, argv, configuration["aposd"]["CalculationModel"]);
 	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::WEBAPPLICATION) {
-		CommunicationModel_webApps(argc, argv, configuration["aposd"]);
+		CommunicationModel_webApps(argc, argv, configuration["aposd"]["CalculationModel"]);
 	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::SEQUENTIAL) {
-		CommunicationModel_sequential(argc, argv, configuration["aposd"]);
+		CommunicationModel_sequential(argc, argv, configuration["aposd"]["CalculationModel"]);
 	} else {
 		throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] Communication model "+ configuration["aposd"]["CommunicationModel"].asString() +" does not exist.");
 	}

@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "master.h"
+#include "../calculationModel.h"
 #include "../../selection/selection.h"
 
 using namespace std;

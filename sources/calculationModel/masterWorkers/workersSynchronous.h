@@ -5,6 +5,8 @@
 #include <mpi.h>
 #include <regex>
 
+#include "../calculationModel.h"
+
 #include "workers.h"
 
 class WorkersSynchronous : public Workers {

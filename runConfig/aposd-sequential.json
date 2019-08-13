@@ -1,14 +1,18 @@
 {
     "aposd": {
+        "seed": 0,
         "CommunicationModel": "SEQUENTIAL",
-        "ParameterSelection": {
-            "className": "PsAdaptivePursuit",
-            "nbParameter": 3
-        },
-        "Launcher": {
-            "className": "LauncherExec",
-            "pathExecutable": "../stocos/build/stocos",
-            "string_args": ""
+        "CalculationModel": {
+            "className": "SequentialModel",
+            "ParameterSelection": {
+                "className": "PsAdaptivePursuit",
+                "nbParameter": 3
+            },
+            "Launcher": {
+                "className": "LauncherExec",
+                "pathExecutable": "../stocos/build/stocos",
+                "string_args": ""
+            }
         }
     }
 }
