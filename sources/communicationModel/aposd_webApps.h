@@ -2,7 +2,8 @@
 /// \file aposd_webApps.h
 /// \author Jxtopher
 /// \date 2019-08
-/// \brief Mode de communication SaaS 
+/// \brief Mode de communication SaaS
+///        https://en.wikipedia.org/wiki/JSON-RPC
 ///
 
 #ifndef JXTOPHER_APOSD_WEBAPPS_H
@@ -11,6 +12,7 @@
 #include <cppcms/application.h>
 #include <cppcms/applications_pool.h>
 #include <cppcms/http_response.h>
+#include <cppcms/rpc_json.h>
 #include <cppcms/service.h>
 #include <cppcms/url_dispatcher.h>
 #include <cppcms/url_mapper.h>
@@ -57,7 +59,7 @@ class MethodBuilder {
     MethodBuilder(unsigned int nbParameter) {
         //
         unsigned long int seed = static_cast<unsigned long int>(time(0));
-        std::mt19937 mt_rand;
+
         mt_rand.seed(seed);
 
         switch (ParameterSelection::RANDOM) {
@@ -109,6 +111,7 @@ class MethodBuilder {
     }
 
    private:
+    std::mt19937 mt_rand;
     Solution<unsigned int> s;
     ParameterSelection* parameterSelection;
     RewardComputation<Solution<unsigned int>>* rewardComputation;
@@ -120,25 +123,22 @@ class MethodBuilder {
 /// \brief Définie l'application web de Aposd avec cppcms.
 ///        Automate : initialization -> learning (many time) ->finish
 ///
-class WebAposd : public cppcms::application {
+class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server {
    public:
-    WebAposd(cppcms::service& srv) : cppcms::application(srv) {
-        // dispatcher().assign("aa", &hello::page_home, this);
+    WebAposd(cppcms::service& srv) : cppcms::rpc::json_rpc_server(srv) {
+        bind("notify", cppcms::rpc::json_method(&WebAposd::notify, this));
+        bind("test", cppcms::rpc::json_method(&WebAposd::test, this));
+        bind("initialization", cppcms::rpc::json_method(&WebAposd::initialization, this));
+        bind("learning", cppcms::rpc::json_method(&WebAposd::learning, this));
+        bind("finish", cppcms::rpc::json_method(&WebAposd::finish, this));
+    }
 
-        dispatcher().assign("/initialization/(\\d+)", &WebAposd::initialization, this, 1);
-        mapper().assign("initialization", "/initialization/{1}");
-
-        dispatcher().assign("/learning/(\\d+)/(\\d+)/((.*))", &WebAposd::learning, this, 1, 2, 3);
-        mapper().assign("learning", "/learning/{1}/{1}/{1}");
-
-        dispatcher().assign("/test", &WebAposd::test, this);
-        mapper().assign("test", "/test");
-
-        dispatcher().assign("/finish/(\\d+)", &WebAposd::finish, this, 1);
-        mapper().assign("finish", "/finish/{1}");
-
-        // http://127.0.0.1:8080/hello
-        mapper().root("/hello");
+    // curl -i -X POST --header "Content-Type:application/json" -d '{"method":"notify", "params":["msgxxxxxxxxxxxxxxxxxxxxxx"], "id":1}' http://127.0.0.1:8080/rpc
+    void notify(std::string msg) { 
+        std::cout << "We got notification " << msg << std::endl;
+        cppcms::json::value json;
+        json["test"] = "test";  // true | false
+        response().out() << json;
     }
 
     void test() {
@@ -152,14 +152,11 @@ class WebAposd : public cppcms::application {
     ///
     /// \param nbParameter : le nombre de paramètre à considérer
     ///
-    void initialization(std::string nbParameter) {
+    //void initialization(std::string nbParameter) {
+    void initialization(unsigned int nbParameter) {
         cppcms::json::value json;
 
-        stringstream convert(nbParameter);
-        int _nbParameter = 0;
-        convert >> _nbParameter;
-
-        MethodBuilder* method = new MethodBuilder(_nbParameter);
+        MethodBuilder* method = new MethodBuilder(nbParameter);
         methodList.push_back(method);
 
         json["id"] = convertPointerToStringAddress(method);
@@ -175,20 +172,16 @@ class WebAposd : public cppcms::application {
     /// \param num_parameter : numero du parametre utiliser
     /// \param solution : nouvelle solution avec la fitness
     ///
-    void learning(std::string id, std::string num_parameter, std::string solution) {
+    void learning(std::string id, unsigned int num_parameter, std::string solution) {
         MethodBuilder* method = convertAddressStringToPointer<MethodBuilder>(id);
         cppcms::json::value json;
-
-        stringstream convert(num_parameter);
-        int _num_parameter = 0;
-        convert >> _num_parameter;
-
+        
         // Vérifie que l'objet existe
         std::vector<MethodBuilder*>::iterator it = std::find(methodList.begin(), methodList.end(), method);
         if (it != methodList.end()) {
             Solution<unsigned int> s(solution);
 
-            std::pair<unsigned int, Solution<unsigned int>> apply = method->learning(_num_parameter, s);
+            std::pair<unsigned int, Solution<unsigned int>> apply = method->learning(num_parameter, s);
 
             json["solution"] = apply.second.getSolution();
             json["num_paramter"] = apply.first;

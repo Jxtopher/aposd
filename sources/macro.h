@@ -14,9 +14,11 @@
 #include <stdexcept>
 
 #ifdef DEBUG
+#define DEBUG_SHOW() std::cerr<<"[+] "<<__FILE__<<":"<<__LINE__<<std::endl;	
 #define DEBUG_TRACE(msg) std::cerr<<"[+] "<<__FILE__<<":"<<__LINE__<<" "<<msg<<std::endl;	
 #define DEBUG_VAR(variable) std::cerr<<"[+] "<<__FILE__<<":"<<__LINE__<<" "<<#variable << " = " << (variable) << std::endl;
 #else
+#define DEBUG_SHOW()
 #define	DEBUG_TRACE(msg) 
 #define DEBUG_VAR(variable)
 #endif

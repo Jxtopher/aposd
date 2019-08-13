@@ -41,22 +41,13 @@
 
 
 
-void version(string name_software, string num_version);
+
 void CommunicationModel_MPI(int argc, char **argv);
 
 
-void version(string name_software, string num_version) {
-	std::cout<<"*************************************"<<std::endl;
-	std::cout<<"[+] *** "<<name_software<<" ***"<<std::endl;
-	std::cout<<"[+] Day compilation : "<<__DATE__<<" "<<__TIME__<<std::endl;
-	std::cout<<"[+] Version : "<<num_version<<std::endl;
-	std::cout<<"*************************************"<<std::endl;
-}
-
 
 void CommunicationModel_MPI(int argc, char **argv) {
-	Settings settings(argc, argv);
-
+	
 
 	//
 	unsigned long int seed = static_cast<unsigned long int>(time(0));
@@ -123,33 +114,33 @@ void CommunicationModel_MPI(int argc, char **argv) {
 	CalculationModel *calculationmodel;
 	switch(CalculationModel::MASTER_WORKER_MODEL) {
 		case CalculationModel::MASTER_WORKER_MODEL:
-			calculationmodel = new MasterWorkersSynchronous<Solution<unsigned int>>(argc, argv,
-				*launcher, 
-				*parameterSelection,
-				*rewardComputation,
-				*selection);
+			// calculationmodel = new MasterWorkersSynchronous<Solution<unsigned int>>(argc, argv,
+			// 	*launcher, 
+			// 	*parameterSelection,
+			// 	*rewardComputation,
+			// 	*selection);
 		break;
 		case CalculationModel::ISLAND_MODEL:
-			calculationmodel = new SharedParameter<Solution<unsigned int>>(argc, argv, 
-			*topologies, 
-			*launcher,
-			*parameterSelection, 
-			*rewardComputation,
-			*selection);
+			// calculationmodel = new SharedParameter<Solution<unsigned int>>(argc, argv, 
+			// *topologies, 
+			// *launcher,
+			// *parameterSelection, 
+			// *rewardComputation,
+			// *selection);
 		break;
 		case CalculationModel::SEQUENTIAL_MODEL:
-			calculationmodel = new SequentialModel<Solution<unsigned int>>(
-				*launcher, 
-				*parameterSelection, 
-				*rewardComputation);
+			// calculationmodel = new SequentialModel<Solution<unsigned int>>(
+			// 	*launcher, 
+			// 	*parameterSelection, 
+			// 	*rewardComputation);
 		break;
 		default:
 			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The calculation model is not defined");
 		break;
 	}
 	
-	calculationmodel->operator()();
-	calculationmodel->~CalculationModel();
+	// calculationmodel->operator()();
+	// calculationmodel->~CalculationModel();
 }
 
 #endif

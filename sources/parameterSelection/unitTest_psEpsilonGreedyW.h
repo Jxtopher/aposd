@@ -57,8 +57,6 @@ class UnitTest_PsEspsilonGreedyW : public CppUnit::TestFixture {
         CPPUNIT_ASSERT(egreedy.getParameter() == 1);
         CPPUNIT_ASSERT(egreedy.getParameter() == 2);
         CPPUNIT_ASSERT(egreedy.getParameter() == 3);
-        CPPUNIT_ASSERT(egreedy.getParameter() == 2);
-        CPPUNIT_ASSERT(egreedy.getParameter() == 2);
     }
 
     private:

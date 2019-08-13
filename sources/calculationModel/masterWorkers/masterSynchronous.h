@@ -1,26 +1,30 @@
 #ifndef JXTOPHER_MASTERSYNCHRONOUS_H
 #define JXTOPHER_MASTERSYNCHRONOUS_H
 
+#include <memory>
+
 #include "master.h"
 #include "../../selection/selection.h"
+
+using namespace std;
 
 template <class SOL>
 class MasterSynchronous : public Master {
    public:
-    MasterSynchronous(ParameterSelection &parameterSelection, 
-                        RewardComputation<SOL> &rewardComputation,
-                        Selection<SOL> & selection)
+    MasterSynchronous(unique_ptr<ParameterSelection> parameterSelection, 
+                        unique_ptr<RewardComputation<SOL>> rewardComputation,
+                        unique_ptr<Selection<SOL>> selection)
         : Master(), 
-        _parameterSelection(parameterSelection), 
-        _rewardComputation(rewardComputation),
-        _selection(selection) {}
+        _parameterSelection(std::move(parameterSelection)), 
+        _rewardComputation(std::move(rewardComputation)),
+        _selection(std::move(selection)) {}
 
     virtual ~MasterSynchronous() {}
 
     virtual void operator()() {
         DEBUG_TRACE("MASTER")
 
-        _parameterSelection.reset();
+        _parameterSelection->reset();
         vector<SOL> solutions(mpi_globals_nbnodes - 1);
         vector<SOL> solutionsAfterMutation(mpi_globals_nbnodes - 1);
 
@@ -41,8 +45,8 @@ class MasterSynchronous : public Master {
 
         do {
                 // Selection parameter a execute
-                vector<unsigned int> parameter = _parameterSelection.getParameter(mpi_globals_nbnodes - 1);
-                SOL bestSolution = _selection(solutions);
+                vector<unsigned int> parameter = _parameterSelection->getParameter(mpi_globals_nbnodes - 1);
+                SOL bestSolution = _selection->operator()(solutions);
 
                 // ------------------------------------------
                 order = MPI_Order::COMPUTE_FITNESS;
@@ -67,8 +71,8 @@ class MasterSynchronous : public Master {
                 }
 
                 // Compute reward
-                vector<pair<double, unsigned int>> rewardOp = _rewardComputation(solutions, solutionsAfterMutation, parameter);
-                _parameterSelection.update(rewardOp);
+                vector<pair<double, unsigned int>> rewardOp = _rewardComputation->operator()(solutions, solutionsAfterMutation, parameter);
+                _parameterSelection->update(rewardOp);
                 solutions = solutionsAfterMutation;
         } while(solutions[0].getFitness() < 50);
         // ------------------------------------------
@@ -82,9 +86,9 @@ class MasterSynchronous : public Master {
     MPI_Request request;
     MPI_Status status;
 
-    ParameterSelection &_parameterSelection;
-    RewardComputation<SOL> &_rewardComputation;
-    Selection<SOL> & _selection;
+    unique_ptr<ParameterSelection> _parameterSelection;
+    unique_ptr<RewardComputation<SOL>> _rewardComputation;
+    unique_ptr<Selection<SOL>> _selection;
 };
 
 #endif
