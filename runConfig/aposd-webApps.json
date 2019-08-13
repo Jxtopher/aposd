@@ -1,6 +1,7 @@
 {
 	"aposd": {
 		"CommunicationModel": "WEBAPPLICATION"
+		
 	},
 	"service": {
 		"api": "http",

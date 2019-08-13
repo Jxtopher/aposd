@@ -31,6 +31,7 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 #include "communicationModel/communicationModel.h"
 #include "communicationModel/aposd_mpi.h"
 #include "communicationModel/aposd_webApps.h"
+#include "communicationModel/aposd_sequential.h"
 
 
 
@@ -90,12 +91,12 @@ int main(int argc, char **argv) {
 
     cout<<configuration<<endl;
 
-	if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::STR_MPI) {
-		CommunicationModel_MPI(argc, argv);
-	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::STR_WEBAPPLICATION) {
-		CommunicationModel_webApps(argc, argv);
-	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::STR_SEQUENTIAL) {
-		
+	if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::MPI) {
+		CommunicationModel_MPI(argc, argv, configuration["aposd"]);
+	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::WEBAPPLICATION) {
+		CommunicationModel_webApps(argc, argv, configuration["aposd"]);
+	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::SEQUENTIAL) {
+		CommunicationModel_sequential(argc, argv, configuration["aposd"]);
 	} else {
 		throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] Communication model "+ configuration["aposd"]["CommunicationModel"].asString() +" does not exist.");
 	}

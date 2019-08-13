@@ -6,7 +6,7 @@
 
 using namespace std;
 
-template<class SOL>
+template <typename SOL>
 class RewardComputation {
 public:
     RewardComputation() {

@@ -26,6 +26,13 @@ class ParameterSelection {
         static const int SELECTBESTMUTATE = 4;
         static const int UCBW = 5;
 
+        static constexpr const char* STR_ADAPTIVEPURSUIT = "PsAdaptivePursuit";
+        static constexpr const char* STR_CONSTANT = "PsConstant";
+        static constexpr const char* STR_EPSILONGREEDY = "PsEspsilonGreedy";
+        static constexpr const char* STR_RANDOM = "PsRandom";
+        static constexpr const char* STR_SELECTBESTMUTATE = "PsSelectBestMutate";
+        static constexpr const char* STR_UCBW = "PsUCBW";
+
 		ParameterSelection(unsigned int nbParameter) : 
 			_nbParameter(nbParameter) {
 		}

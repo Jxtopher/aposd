@@ -1,5 +1,15 @@
 {
     "aposd": {
-        "CommunicationModel": "MPI"
+        "seed": 0,
+        "CommunicationModel": "MPI",
+        "ParameterSelection": {
+            "className": "PsAdaptivePursuit",
+            "nbParameter": 3
+        },
+        "Launcher" : {
+            "className": "LauncherExec",
+            "pathExecutable": "../stocos/build/stocos",
+            "string_args":""
+        }
     }
 }

@@ -38,15 +38,11 @@
 #include "../calculationModel/islandModel/islandModel.h"
 #include "../calculationModel/islandModel/sharedParameter.h"
 
+void CommunicationModel_MPI(int argc, char **argv, const Json::Value &configuration);
 
 
 
-
-void CommunicationModel_MPI(int argc, char **argv);
-
-
-
-void CommunicationModel_MPI(int argc, char **argv) {
+void CommunicationModel_MPI(int argc, char **argv, const Json::Value &configuration) {
 	
 
 	//

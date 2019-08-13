@@ -35,7 +35,7 @@
 
 using namespace std;
 
-void CommunicationModel_webApps(int argc, char** argv);
+void CommunicationModel_webApps(int argc, char** argv, const Json::Value &configuration);
 
 template <typename T>
 std::string convertPointerToStringAddress(const T* obj) {
@@ -220,7 +220,7 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     vector<MethodBuilder*> methodList;
 };
 
-void CommunicationModel_webApps(int argc, char** argv) {
+void CommunicationModel_webApps(int argc, char** argv, const Json::Value &configuration) {
     try {
         cppcms::service srv(argc, argv);
         srv.applications_pool().mount(cppcms::applications_factory<WebAposd>());
