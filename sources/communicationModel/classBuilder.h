@@ -49,17 +49,17 @@ public:
 
     std::unique_ptr<ParameterSelection> parameterSelection(const Json::Value &configuration) {
         std::unique_ptr<ParameterSelection> _parameterSelection;
-        if (configuration["className"].asString() == ParameterSelection::STR_ADAPTIVEPURSUIT) {
+        if (configuration["className"].asString() == ParameterSelection::ADAPTIVEPURSUIT) {
             _parameterSelection = make_unique<PsAdaptivePursuit>(_mt_rand, configuration["nbParameter"].asUInt());
-        } else if (configuration["className"].asString() == ParameterSelection::STR_CONSTANT) {
+        } else if (configuration["className"].asString() == ParameterSelection::CONSTANT) {
             _parameterSelection = make_unique<PsConstant>(configuration["nbParameter"].asUInt(), 0);
-        } else if (configuration["className"].asString() == ParameterSelection::STR_EPSILONGREEDY) {
+        } else if (configuration["className"].asString() == ParameterSelection::EPSILONGREEDY) {
             _parameterSelection = make_unique<PsEspsilonGreedy>(_mt_rand, configuration["nbParameter"].asUInt());
-        } else if (configuration["className"].asString() == ParameterSelection::STR_RANDOM) {
+        } else if (configuration["className"].asString() == ParameterSelection::RANDOM) {
             _parameterSelection = make_unique<PsRandom>(_mt_rand, configuration["nbParameter"].asUInt());
-        } else if (configuration["className"].asString() == ParameterSelection::STR_SELECTBESTMUTATE) {
+        } else if (configuration["className"].asString() == ParameterSelection::SELECTBESTMUTATE) {
             _parameterSelection = make_unique<PsRandom>(_mt_rand, configuration["nbParameter"].asUInt());
-        } else if (configuration["className"].asString() == ParameterSelection::STR_UCBW) {
+        } else if (configuration["className"].asString() == ParameterSelection::UCBW) {
             _parameterSelection = make_unique<PsUCBW>(_mt_rand, configuration["nbParameter"].asUInt()); 
         } else {
             throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The calculation model is not defined");

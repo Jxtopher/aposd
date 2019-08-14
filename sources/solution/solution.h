@@ -161,17 +161,13 @@ class Solution {
 
     void loadJson(const Json::Value &jsonValue) {
         _numberOfObjective = jsonValue["fitness"].size();
-        cout<<__FILE__<<":"<<__LINE__<<" "<<_numberOfObjective<<endl;
 		if (this->_fitness == nullptr) {
-            cout<<__FILE__<<":"<<__LINE__<<endl;
 			this->_fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[this->_numberOfObjective]);
 			this->_fitnessIsValid = std::unique_ptr<bool []>(new bool[this->_numberOfObjective]);
 		} else {
-            cout<<__FILE__<<":"<<__LINE__<<endl;
 			this->_fitness.reset(static_cast<TYPE_FITNESS *>(realloc(static_cast<void*>(this->_fitness.release()), this->_numberOfObjective * sizeof(TYPE_FITNESS))));
 			this->_fitnessIsValid.reset(static_cast<bool *>(realloc(static_cast<void*>(this->_fitnessIsValid.release()), this->_numberOfObjective * sizeof(bool))));
 		}
-        cout<<__FILE__<<":"<<__LINE__<<endl;
         for (unsigned int i = 0; i < jsonValue["fitness"].size() ; i++) {
             _fitness[i] = static_cast<TYPE_FITNESS>(jsonValue["fitness"][i].asDouble());
             _fitnessIsValid[i] = jsonValue["fitnessIsValid"][i].asBool();

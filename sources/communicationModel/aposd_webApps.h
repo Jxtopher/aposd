@@ -38,6 +38,7 @@ using APOSD_SOL = Solution<unsigned int>;
 void CommunicationModel_webApps(int argc, char** argv, const Json::Value &configuration);
 string jsonAsString(const Json::Value &json);
 Json::Value stringAsjson(const string &strJson);
+cppcms::json::value jsonValueASJsonCppcms(const Json::Value &jsonValue);
 
 //-----------------------------------------------------------------------------
 template <typename T>
@@ -72,6 +73,16 @@ Json::Value stringAsjson(const string &strJson) {
     if (!parsingSuccessful) throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " + reader.getFormattedErrorMessages());
     return root;
 }
+
+cppcms::json::value jsonValueASJsonCppcms(const Json::Value &jsonValue) {
+    stringstream ss;
+    ss << jsonAsString(jsonValue);
+    cppcms::json::value tmp;
+    tmp.load(ss,true);
+    return tmp;
+}
+
+
 //-----------------------------------------------------------------------------
 
 ///
@@ -89,7 +100,7 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
         bind("finish", cppcms::rpc::json_method(&WebAposd::finish, this));
     }
 
-    // curl -i -X POST --header "Content-Type:application/json" -d '{"method":"notify", "params":["msgxxxxxxxxxxxxxxxxxxxxxx"], "id":1}' http://127.0.0.1:8080/rpc
+    // curl -i -X POST --header "Content-Type:application/json" -d '{"method":"notify", "params":["msgxxxxxxxxxxxxxxxxxxxxxx"], "id":1}' http://127.0.0.1:8080/
     void notify(std::string msg) { 
         std::cout << "We got notification " << msg << std::endl;
         cppcms::json::value json;
@@ -130,10 +141,13 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
             std::move(rewardComputation));
 
         methodList.push_back(std::move(calculationmodel));
+
         // Response
         cppcms::json::value r;
+        std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->initialSolution(APOSD_SOL(configuration["initialSolution"]));
         r["objectId"] = convertPointerToStringAddress(calculationmodel);
-        r["num_paramter"] = calculationmodel->initialSolution(APOSD_SOL(configuration["initialSolution"]));
+        r["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
+        r["num_paramter"] = buff.second;
         response().out()<<r;
 
         DEBUG_TRACE("initialization " + convertPointerToStringAddress(calculationmodel))
@@ -148,26 +162,15 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     ///
     void learning(std::string msg) {
         Json::Value data = stringAsjson(msg);
-        // cppcms::json::value json;
-        LearningOnline<APOSD_SOL>* method = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
+        LearningOnline<APOSD_SOL>* calculationmodel = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
         
-        // // Vérifie que l'objet existe
-        // std::vector<MethodBuilder*>::iterator it = std::find(methodList.begin(), methodList.end(), method);
-        // if (it != methodList.end()) {
-        //     APOSD_SOL s(solution);
-
-        //     std::pair<unsigned int, APOSD_SOL> apply = method->learning(num_parameter, s);
-
-        //     json["solution"] = apply.second.getSolution();
-        //     json["num_paramter"] = apply.first;
-        //     response().out() << json;
-        // } else {
-        //     json["error"] = -1;
-        //     json["error_msg"] = "[-] The method was not initialize";
-        //     response().out() << json;
-        // }
-
-            // calculationmodel();
+        // Response
+        cppcms::json::value r;
+        std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->run(APOSD_SOL(data["Solution"]), data["num_paramter"].asUInt());
+        r["objectId"] = convertPointerToStringAddress(calculationmodel);
+        r["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
+        r["num_paramter"] = buff.second;
+        response().out()<<r;
 
     }
 

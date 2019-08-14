@@ -26,10 +26,24 @@ public:
     }
 
     //
-    unsigned int initialSolution(const SOL &s) {
+    pair<SOL, unsigned int> initialSolution(const SOL &s) {
         solution_t0 = s;
-        cout<<">>"<<solution_t0<<"<<"<<endl;
-        return 0;
+        return pair<SOL, unsigned int>(solution_t0, 0);
+    }
+
+    pair<SOL, unsigned int> run(const SOL &s, unsigned int parameter) {
+        solution_t1 = s;
+
+        pair<double, unsigned int> rewardOp = _rewardComputation->operator()(solution_t0, solution_t1, parameter);
+
+        // update
+        _parameterSelection->update(rewardOp);
+
+        unsigned int new_parameter = _parameterSelection->getParameter();
+
+        solution_t0 = solution_t1;
+
+        return pair<SOL, unsigned int>(solution_t1, new_parameter);
     }
 
 

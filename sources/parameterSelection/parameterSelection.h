@@ -19,19 +19,12 @@ enum class HeterogeneityPolicy {
 
 class ParameterSelection {
 	public:
-        static const int ADAPTIVEPURSUIT = 0;
-        static const int CONSTANT = 1;
-        static const int EPSILONGREEDY = 2;
-        static const int RANDOM = 3;
-        static const int SELECTBESTMUTATE = 4;
-        static const int UCBW = 5;
-
-        static constexpr const char* STR_ADAPTIVEPURSUIT = "PsAdaptivePursuit";
-        static constexpr const char* STR_CONSTANT = "PsConstant";
-        static constexpr const char* STR_EPSILONGREEDY = "PsEspsilonGreedy";
-        static constexpr const char* STR_RANDOM = "PsRandom";
-        static constexpr const char* STR_SELECTBESTMUTATE = "PsSelectBestMutate";
-        static constexpr const char* STR_UCBW = "PsUCBW";
+        static constexpr const char* ADAPTIVEPURSUIT = "PsAdaptivePursuit";
+        static constexpr const char* CONSTANT = "PsConstant";
+        static constexpr const char* EPSILONGREEDY = "PsEspsilonGreedy";
+        static constexpr const char* RANDOM = "PsRandom";
+        static constexpr const char* SELECTBESTMUTATE = "PsSelectBestMutate";
+        static constexpr const char* UCBW = "PsUCBW";
 
 		ParameterSelection(unsigned int nbParameter) : 
 			_nbParameter(nbParameter) {
