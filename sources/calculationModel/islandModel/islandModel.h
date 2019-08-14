@@ -12,7 +12,7 @@ using namespace std;
 template <class SOL>
 class IslandModel : public CalculationModel {
     public:
-    IslandModel(int argc, char** argv, unique_ptr<Topologies> topologies) : 
+    IslandModel(int argc, char** argv, std::unique_ptr<Topologies> topologies) : 
         _topologies(std::move(topologies)) {
         // Variable MPI init
         MPI_Init(&argc, &argv);
@@ -27,7 +27,7 @@ class IslandModel : public CalculationModel {
     virtual void operator()() = 0;
 
     protected:
-        unique_ptr<Topologies> _topologies;
+        std::unique_ptr<Topologies> _topologies;
 };
 
 

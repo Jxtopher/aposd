@@ -30,7 +30,8 @@ all : ./sources/main.cpp
 	$(CC) $(FLAGS) $(INCLUDE_PATH) $< -o $(EXEC_PATH)/$(EXEC_NAME) -lboost_program_options -lcppcms
 
 run:
-	mpirun -np 4  $(EXEC_PATH)/$(EXEC_NAME)
+	$(EXEC_PATH)/$(EXEC_NAME) -c ./runConfig/aposd-webApps.json
+#	mpirun -np 4  $(EXEC_PATH)/$(EXEC_NAME)
 
 unittest: ./sources/unitTest.cpp
 	-mkdir $(EXEC_PATH)

@@ -16,7 +16,7 @@ using namespace boost;
 
 class PsEspsilonGreedy : public ParameterSelection {
 	public:
-	PsEspsilonGreedy(std::mt19937 &mt_rand,
+	PsEspsilonGreedy(std::shared_ptr<std::mt19937> mt_rand,
 		unsigned int nbParameter, 
 		const double espilon = 0.01,
 		const unsigned int windowSize = 150,
@@ -33,8 +33,8 @@ class PsEspsilonGreedy : public ParameterSelection {
 			urd = new uniform_real_distribution<>(0.0, 1.0);
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 			slidingWindow.set_capacity(windowSize);
-			rewardAggregation = unique_ptr<double []>(new double[nbParameter]);
-			numberSelect = unique_ptr<unsigned int []>(new unsigned int[nbParameter]);
+			rewardAggregation = std::unique_ptr<double []>(new double[nbParameter]);
+			numberSelect = std::unique_ptr<unsigned int []>(new unsigned int[nbParameter]);
 			reset();
 	}
 	
@@ -48,8 +48,8 @@ class PsEspsilonGreedy : public ParameterSelection {
 			urd = new uniform_real_distribution<>(0.0, 1.0);
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 			slidingWindow.set_capacity(_windowSize);
-			rewardAggregation = unique_ptr<double []>(new double[_nbParameter]);
-			numberSelect = unique_ptr<unsigned int []>(new unsigned int[_nbParameter]);
+			rewardAggregation = std::unique_ptr<double []>(new double[_nbParameter]);
+			numberSelect = std::unique_ptr<unsigned int []>(new unsigned int[_nbParameter]);
 
 			slidingWindow = c.slidingWindow;
 			for (unsigned int i = 0 ; i < _nbParameter ; i++) {
@@ -130,19 +130,19 @@ class PsEspsilonGreedy : public ParameterSelection {
 			switch (_heterogeneityPolicy) {
 				case HeterogeneityPolicy::HETEROGENOUS:
 					for (unsigned int i = 0 ; i < nbNodes ; i++) {
-						if (urd->operator()(this->_mt_rand) <= _espilon)
+						if (urd->operator()(*(this->_mt_rand)) <= _espilon)
 							parameterList.push_back(bestParameter);
 						else
-							parameterList.push_back(uid->operator()(this->_mt_rand));
+							parameterList.push_back(uid->operator()(*(this->_mt_rand)));
 					}
 					break;
 				case HeterogeneityPolicy::HOMOGENEOUS:
-					if (urd->operator()(this->_mt_rand) <= _espilon) {
+					if (urd->operator()(*(this->_mt_rand)) <= _espilon) {
 						for (unsigned int i = 0 ; i < nbNodes ; i++)
 							parameterList.push_back(bestParameter);
 					} else {
 						for (unsigned int i = 0 ; i < nbNodes ; i++)
-							parameterList.push_back(uid->operator()(this->_mt_rand));
+							parameterList.push_back(uid->operator()(*(this->_mt_rand)));
 					}
 					break;
 				default:
@@ -157,10 +157,10 @@ class PsEspsilonGreedy : public ParameterSelection {
 	unsigned int getParameter() {
 		if (initEachParameter < this->_nbParameter) {
 			return initEachParameter++;
-		} else if (urd->operator()(this->_mt_rand) <= _espilon) {
+		} else if (urd->operator()(*(this->_mt_rand)) <= _espilon) {
 			return distance(rewardAggregation.get(), max_element(rewardAggregation.get(), rewardAggregation.get() + this->_nbParameter));
 		} else {
-			return uid->operator()(this->_mt_rand);
+			return uid->operator()(*(this->_mt_rand));
 		}
 	}
 
@@ -171,7 +171,7 @@ class PsEspsilonGreedy : public ParameterSelection {
 	}
 
 	protected:
-	std::mt19937 &_mt_rand;
+	std::shared_ptr<std::mt19937> _mt_rand;
 	const double &_espilon;
 	const unsigned int &_windowSize;
 	const AggregationFunction _aggregationFunction;
@@ -181,8 +181,8 @@ class PsEspsilonGreedy : public ParameterSelection {
 	circular_buffer<pair<double, unsigned int>> slidingWindow;
 
 	unsigned int initEachParameter;
-	unique_ptr<double[]> rewardAggregation;
-	unique_ptr<unsigned int[]> numberSelect;
+	std::unique_ptr<double[]> rewardAggregation;
+	std::unique_ptr<unsigned int[]> numberSelect;
 };
 
 #endif

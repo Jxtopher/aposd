@@ -33,8 +33,6 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 #include "communicationModel/aposd_webApps.h"
 #include "communicationModel/aposd_sequential.h"
 
-
-
 using namespace std;
 
 void version(string name_software, string num_version);
@@ -47,20 +45,15 @@ void version(string name_software, string num_version) {
 	std::cout<<"*************************************"<<std::endl;
 }
 
-
 int main(int argc, char **argv) {
-	DEBUG_TRACE("Start of the program")
-
 	Settings settings(argc, argv);
-
-	// Paramètre du programme
-    string configFile;
+    string configFile; // Chemin du ficher de configuration json
 
 	boost::program_options::variables_map vm;
 	boost::program_options::options_description argements("[*] main option");
 	argements.add_options()
 						("help,h", "help message")
-						("config,c", boost::program_options::value<string>(&configFile), "file configuration json (default : null)");
+						("config,c", boost::program_options::value<string>(&configFile), "File configuration json (default : null)");
 	try {
     	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, argements), vm);
 		boost::program_options::notify(vm);
@@ -69,12 +62,12 @@ int main(int argc, char **argv) {
   	}
 
 	if (vm.count("version")) {
-			version("STOChastic Optimization Solver", "1");
+			version("Adaptive Portfolio Selection Distributed", "1");
 			exit(EXIT_SUCCESS);
 	}
 
     if (configFile.empty()) {
-        cerr<<"./xx -c config.json"<<endl;
+        cerr<<"./aposd -c config.json"<<endl;
         exit(EXIT_FAILURE);
     }
 
@@ -89,19 +82,15 @@ int main(int argc, char **argv) {
 
     std::string encoding = configuration.get("encoding", "UTF-8").asString();
 
-    cout<<configuration<<endl;
-
 	if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::MPI) {
-		CommunicationModel_MPI(argc, argv, configuration["aposd"]["CalculationModel"]);
+		CommunicationModel_MPI(argc, argv, configuration["aposd"]);
 	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::WEBAPPLICATION) {
-		CommunicationModel_webApps(argc, argv, configuration["aposd"]["CalculationModel"]);
+		CommunicationModel_webApps(argc, argv, configuration["aposd"]);
 	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::SEQUENTIAL) {
-		CommunicationModel_sequential(argc, argv, configuration["aposd"]["CalculationModel"]);
+		CommunicationModel_sequential(argc, argv, configuration["aposd"]);
 	} else {
 		throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] Communication model "+ configuration["aposd"]["CommunicationModel"].asString() +" does not exist.");
 	}
-	
 
-	DEBUG_TRACE("Stop program")
 	return EXIT_SUCCESS;
 }

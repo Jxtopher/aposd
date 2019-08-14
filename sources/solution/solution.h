@@ -29,8 +29,8 @@ class Solution {
         DEBUG_TRACE("Constructeur de copie Solution(const Solution &s)");
         //_fitness = new TYPE_FITNESS[_numberOfObjective];
         //_fitnessIsValid = new bool[_numberOfObjective];
-        _fitness = unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
-        _fitnessIsValid = unique_ptr<bool []>(new bool[_numberOfObjective]);
+        _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
+        _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) {
             _fitness[i] = s._fitness[i];
             _fitnessIsValid[i] = s._fitnessIsValid[i];
@@ -43,8 +43,8 @@ class Solution {
         DEBUG_TRACE("Creation Solution()");
         //_fitness = new TYPE_FITNESS[_numberOfObjective];
         //_fitnessIsValid = new bool[_numberOfObjective];
-        _fitness = unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
-        _fitnessIsValid = unique_ptr<bool []>(new bool[_numberOfObjective]);
+        _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
+        _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
     }
 
@@ -52,49 +52,19 @@ class Solution {
         DEBUG_TRACE("Creation Solution(const unsigned int numberOfObjective)");
         //_fitness = new TYPE_FITNESS[_numberOfObjective];
         //_fitnessIsValid = new bool[_numberOfObjective];
-        _fitness = unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
-        _fitnessIsValid = unique_ptr<bool []>(new bool[_numberOfObjective]);
+        _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
+        _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
     }
 
-    Solution(const string &solution) {
-        DEBUG_TRACE("Creation Solution(const string &solution)");
-        std::string token;
-        std::istringstream ss(solution);
-        vector<string> x;
-
-        while (std::getline(ss, token, ':')) {
-            x.push_back(token);
-        }
-
-        _fitness = nullptr;
-        _fitnessIsValid = nullptr;
-
-        // fitness
-        unsigned int i = 0;
-        _numberOfObjective = 0;
-        std::istringstream ssFitness(x[0]);
-        while (std::getline(ssFitness, token, ' ')) {
-            _numberOfObjective++;
-            if (_fitness == nullptr) {
-                _fitness = unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
-                _fitnessIsValid = unique_ptr<bool []>(new bool[_numberOfObjective]);
-            } else {
-                cout << "->"<<__LINE__ << ":" << _numberOfObjective << endl;
-                _fitness.reset(static_cast<TYPE_FITNESS *>(realloc(static_cast<void*>(_fitness.release()), _numberOfObjective * sizeof(TYPE_FITNESS))));
-				_fitnessIsValid.reset(static_cast<bool *>(realloc(static_cast<void*>(_fitnessIsValid.release()), _numberOfObjective * sizeof(bool))));            
-            }
-            std::stringstream convert(token);
-            TYPE_FITNESS value;
-            convert >> value;
-            this->setFitness(i++, value);
-        }
-
-        assert(i == this->numberOfObjective());
-        
-        // solution
-        sol = x[1];
-    }
+	Solution(const Json::Value &jsonValue) :
+		_numberOfObjective(0),
+		_fitness(nullptr),
+		_fitnessIsValid(nullptr)
+		 {
+		DEBUG_TRACE("Creation Solution");
+		loadJson(jsonValue);
+	}
 
     Solution &operator=(Solution const &s) {
         if (_numberOfObjective != s._numberOfObjective) {
@@ -102,8 +72,8 @@ class Solution {
             _numberOfObjective = s._numberOfObjective;
             //_fitness = new TYPE_FITNESS[_numberOfObjective];
             //_fitnessIsValid = new bool[_numberOfObjective];
-            _fitness = unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
-            _fitnessIsValid = unique_ptr<bool []>(new bool[_numberOfObjective]);
+            _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
+            _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
             for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
         }
 
@@ -161,7 +131,12 @@ class Solution {
 
     unsigned int numberOfObjective() const { return _numberOfObjective; }
 
-    string getSolution() const { return sol; }
+    string getSolution() const { 
+        Json::StreamWriterBuilder builder;
+        builder["commentStyle"] = "None";
+        builder["indentation"] = "";
+        return Json::writeString(builder, sol);
+     }
 
     string str() {
         std::stringstream ss;
@@ -186,18 +161,23 @@ class Solution {
 
     void loadJson(const Json::Value &jsonValue) {
         _numberOfObjective = jsonValue["fitness"].size();
+        cout<<__FILE__<<":"<<__LINE__<<" "<<_numberOfObjective<<endl;
 		if (this->_fitness == nullptr) {
-			this->_fitness = unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[this->_numberOfObjective]);
-			this->_fitnessIsValid = unique_ptr<bool []>(new bool[this->_numberOfObjective]);
+            cout<<__FILE__<<":"<<__LINE__<<endl;
+			this->_fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[this->_numberOfObjective]);
+			this->_fitnessIsValid = std::unique_ptr<bool []>(new bool[this->_numberOfObjective]);
 		} else {
+            cout<<__FILE__<<":"<<__LINE__<<endl;
 			this->_fitness.reset(static_cast<TYPE_FITNESS *>(realloc(static_cast<void*>(this->_fitness.release()), this->_numberOfObjective * sizeof(TYPE_FITNESS))));
 			this->_fitnessIsValid.reset(static_cast<bool *>(realloc(static_cast<void*>(this->_fitnessIsValid.release()), this->_numberOfObjective * sizeof(bool))));
 		}
+        cout<<__FILE__<<":"<<__LINE__<<endl;
         for (unsigned int i = 0; i < jsonValue["fitness"].size() ; i++) {
             _fitness[i] = static_cast<TYPE_FITNESS>(jsonValue["fitness"][i].asDouble());
             _fitnessIsValid[i] = jsonValue["fitnessIsValid"][i].asBool();
         }
-        sol = jsonValue["solution"].asString();
+
+        sol = jsonValue["solution"];
     }
 
     Json::Value asJson() {
@@ -212,9 +192,9 @@ class Solution {
 
    protected:
     unsigned int _numberOfObjective;
-	unique_ptr<TYPE_FITNESS []> _fitness;
-	unique_ptr<bool []>_fitnessIsValid;
-    string sol;
+	std::unique_ptr<TYPE_FITNESS []> _fitness;
+	std::unique_ptr<bool []>_fitnessIsValid;
+    Json::Value sol;
 };
 
 #endif

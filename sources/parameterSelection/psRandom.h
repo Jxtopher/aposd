@@ -6,7 +6,7 @@
 
 class PsRandom : public ParameterSelection {
 	public:
-	PsRandom(std::mt19937 &mt_rand,
+	PsRandom(std::shared_ptr<std::mt19937> mt_rand,
 		unsigned int nbParameter,
 		AggregationFunction aggregationFunction = AggregationFunction::MEAN,
 		HeterogeneityPolicy heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
@@ -49,11 +49,11 @@ class PsRandom : public ParameterSelection {
 		switch (_heterogeneityPolicy) {
 			case HeterogeneityPolicy::HETEROGENOUS:
 				for (unsigned int i = 0 ; i < nbNodes ; i++)
-					parameterList.push_back(uid->operator()(this->_mt_rand));
+					parameterList.push_back(uid->operator()(*(this->_mt_rand)));
 				break;
 			case HeterogeneityPolicy::HOMOGENEOUS:
 				{
-				unsigned int pick = uid->operator()(this->_mt_rand);
+				unsigned int pick = uid->operator()(*(this->_mt_rand));
 				for (unsigned int i = 0 ; i < nbNodes ; i++)
 					parameterList.push_back(pick);
 				}
@@ -67,11 +67,11 @@ class PsRandom : public ParameterSelection {
 	}
 
 	unsigned int getParameter() {
-		return uid->operator()(this->_mt_rand);
+		return uid->operator()(*(this->_mt_rand));
 	}
 
 	protected:
-	std::mt19937 &_mt_rand;
+	std::shared_ptr<std::mt19937> _mt_rand;
 	const HeterogeneityPolicy _heterogeneityPolicy;
 	unsigned int _law;
 	uniform_int_distribution<unsigned int> *uid;

@@ -12,9 +12,9 @@
 template<class SOL>
 class SequentialModel : public CalculationModel {
 public:
-    SequentialModel(unique_ptr<Launcher> launcher,
-                    unique_ptr<ParameterSelection> parameterSelection,
-                    unique_ptr<RewardComputation<SOL>> rewardComputation) : 
+    SequentialModel(std::unique_ptr<Launcher> launcher,
+                    std::unique_ptr<ParameterSelection> parameterSelection,
+                    std::unique_ptr<RewardComputation<SOL>> rewardComputation) : 
         _launcher(std::move(launcher)),
         _parameterSelection(std::move(parameterSelection)),
         _rewardComputation(std::move(rewardComputation)) {
@@ -51,9 +51,9 @@ public:
     }
 
 protected:
-    unique_ptr<Launcher> _launcher;
-    unique_ptr<ParameterSelection> _parameterSelection;
-    unique_ptr<RewardComputation<SOL>> _rewardComputation;
+    std::unique_ptr<Launcher> _launcher;
+    std::unique_ptr<ParameterSelection> _parameterSelection;
+    std::unique_ptr<RewardComputation<SOL>> _rewardComputation;
 
 };
 

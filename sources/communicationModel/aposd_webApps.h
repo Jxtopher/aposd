@@ -21,22 +21,25 @@
 #include <map>
 #include <utility>  // std:pair
 #include <vector>
+#include <memory>
 
+#include "classBuilder.h"
 #include "../parameterSelection/parameterSelection.h"
-#include "../parameterSelection/psAdaptivePursuit.h"
-#include "../parameterSelection/psConstant.h"
-#include "../parameterSelection/psEpsilonGreedyW.h"
-#include "../parameterSelection/psRandom.h"
-#include "../parameterSelection/psSelectBestMutate.h"
-#include "../parameterSelection/psUCBW.h"
 #include "../selection/selection.h"
 #include "../selection/selection_maximization.h"
 #include "../solution/solution.h"
+#include "../calculationModel/SaaS/learningOnline.h"
+
 
 using namespace std;
 
-void CommunicationModel_webApps(int argc, char** argv, const Json::Value &configuration);
+using APOSD_SOL = Solution<unsigned int>;
 
+void CommunicationModel_webApps(int argc, char** argv, const Json::Value &configuration);
+string jsonAsString(const Json::Value &json);
+Json::Value stringAsjson(const string &strJson);
+
+//-----------------------------------------------------------------------------
 template <typename T>
 std::string convertPointerToStringAddress(const T* obj) {
     long long int address(reinterpret_cast<long long int>(obj));
@@ -50,73 +53,26 @@ T* convertAddressStringToPointer(const std::string& address) {
     std::stringstream ss;
     ss << address;
     long long int tmp(0);
-    if (!(ss >> tmp)) throw std::runtime_error("Failed - invalid address!");
+    if (!(ss >> tmp)) throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) +" Failed - invalid address!");
     return reinterpret_cast<T*>(tmp);
 }
 
-class MethodBuilder {
-   public:
-    MethodBuilder(unsigned int nbParameter) {
-        //
-        unsigned long int seed = static_cast<unsigned long int>(time(0));
+//-----------------------------------------------------------------------------
+string jsonAsString(const Json::Value &json) {
+    Json::StreamWriterBuilder builder;
+    builder["commentStyle"] = "None";
+    builder["indentation"] = "";
+    return Json::writeString(builder, json);
+}
 
-        mt_rand.seed(seed);
-
-        switch (ParameterSelection::RANDOM) {
-            case ParameterSelection::ADAPTIVEPURSUIT:
-                parameterSelection = new PsAdaptivePursuit(mt_rand, nbParameter);
-                break;
-            case ParameterSelection::CONSTANT:
-                parameterSelection = new PsConstant(nbParameter, 0);
-                break;
-            case ParameterSelection::EPSILONGREEDY:
-                parameterSelection = new PsEspsilonGreedy(mt_rand, nbParameter);
-                break;
-            case ParameterSelection::RANDOM:
-                parameterSelection = new PsRandom(mt_rand, nbParameter);
-                break;
-            case ParameterSelection::SELECTBESTMUTATE:
-                // parameterSelection = new PsSelectBestMutate(mt_rand, nbParameter);
-                break;
-            case ParameterSelection::UCBW:
-                parameterSelection = new PsUCBW(mt_rand, nbParameter);
-                break;
-            default:
-                assert("The calculation model is not defined" && false);
-                break;
-        }
-
-        // Calcul de la récompense
-        rewardComputation = new RewardComputation<Solution<unsigned int>>;
-        // switch() {
-
-        // Selection de la meilleurs solution
-        selection = new Selection_maximization<Solution<unsigned int>>;
-    }
-
-    ~MethodBuilder() {}
-
-    unsigned int init() { return parameterSelection->getParameter(); }
-
-    std::pair<unsigned int, Solution<unsigned int>> learning(unsigned int parameter, Solution<unsigned int> s_new) {
-        std::pair<double, unsigned int> rewardOp = rewardComputation->operator()(s, s_new, parameter);
-
-        parameterSelection->update(rewardOp);
-
-        s = s_new;
-
-        unsigned int new_parameter = parameterSelection->getParameter();
-
-        return std::pair<unsigned int, Solution<unsigned int>>(new_parameter, s);
-    }
-
-   private:
-    std::mt19937 mt_rand;
-    Solution<unsigned int> s;
-    ParameterSelection* parameterSelection;
-    RewardComputation<Solution<unsigned int>>* rewardComputation;
-    Selection<Solution<unsigned int>>* selection;
-};
+Json::Value stringAsjson(const string &strJson) {
+    Json::Value root;
+    Json::Reader reader;
+    bool parsingSuccessful = reader.parse(strJson.c_str(), root);
+    if (!parsingSuccessful) throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " + reader.getFormattedErrorMessages());
+    return root;
+}
+//-----------------------------------------------------------------------------
 
 ///
 /// \class WebAposd
@@ -153,16 +109,34 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     /// \param nbParameter : le nombre de paramètre à considérer
     ///
     //void initialization(std::string nbParameter) {
-    void initialization(unsigned int nbParameter) {
-        cppcms::json::value json;
+    void initialization(std::string msg) {
+        Json::Value configuration = stringAsjson(msg);
 
-        MethodBuilder* method = new MethodBuilder(nbParameter);
-        methodList.push_back(method);
+        std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
+        if (!configuration["seed"].empty())
+            mt_rand->seed(configuration["seed"].isInt());
+        else
+            mt_rand->seed(static_cast<mt19937::result_type>(time(0)));
 
-        json["id"] = convertPointerToStringAddress(method);
-        json["num_paramter"] = method->init();
+        std::unique_ptr<ClassBuilder> classBuilder = std::make_unique<ClassBuilder>(mt_rand);
 
-        response().out() << json;
+        std::unique_ptr<Launcher> launcher = classBuilder->launcher(configuration["CalculationModel"]["Launcher"]);
+        std::unique_ptr<ParameterSelection> parameterSelection = classBuilder->parameterSelection(configuration["CalculationModel"]["ParameterSelection"]);
+        std::unique_ptr<RewardComputation<APOSD_SOL>> rewardComputation = classBuilder->rewardComputation<APOSD_SOL>(configuration["CalculationModel"]["RewardComputation"]);
+
+        LearningOnline<APOSD_SOL> *calculationmodel = new LearningOnline<APOSD_SOL>(
+            std::move(launcher), 
+            std::move(parameterSelection), 
+            std::move(rewardComputation));
+
+        methodList.push_back(std::move(calculationmodel));
+        // Response
+        cppcms::json::value r;
+        r["objectId"] = convertPointerToStringAddress(calculationmodel);
+        r["num_paramter"] = calculationmodel->initialSolution(APOSD_SOL(configuration["initialSolution"]));
+        response().out()<<r;
+
+        DEBUG_TRACE("initialization " + convertPointerToStringAddress(calculationmodel))
     }
 
     ///
@@ -172,25 +146,29 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     /// \param num_parameter : numero du parametre utiliser
     /// \param solution : nouvelle solution avec la fitness
     ///
-    void learning(std::string id, unsigned int num_parameter, std::string solution) {
-        MethodBuilder* method = convertAddressStringToPointer<MethodBuilder>(id);
-        cppcms::json::value json;
+    void learning(std::string msg) {
+        Json::Value data = stringAsjson(msg);
+        // cppcms::json::value json;
+        LearningOnline<APOSD_SOL>* method = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
         
-        // Vérifie que l'objet existe
-        std::vector<MethodBuilder*>::iterator it = std::find(methodList.begin(), methodList.end(), method);
-        if (it != methodList.end()) {
-            Solution<unsigned int> s(solution);
+        // // Vérifie que l'objet existe
+        // std::vector<MethodBuilder*>::iterator it = std::find(methodList.begin(), methodList.end(), method);
+        // if (it != methodList.end()) {
+        //     APOSD_SOL s(solution);
 
-            std::pair<unsigned int, Solution<unsigned int>> apply = method->learning(num_parameter, s);
+        //     std::pair<unsigned int, APOSD_SOL> apply = method->learning(num_parameter, s);
 
-            json["solution"] = apply.second.getSolution();
-            json["num_paramter"] = apply.first;
-            response().out() << json;
-        } else {
-            json["error"] = -1;
-            json["error_msg"] = "[-] The method was not initialize";
-            response().out() << json;
-        }
+        //     json["solution"] = apply.second.getSolution();
+        //     json["num_paramter"] = apply.first;
+        //     response().out() << json;
+        // } else {
+        //     json["error"] = -1;
+        //     json["error_msg"] = "[-] The method was not initialize";
+        //     response().out() << json;
+        // }
+
+            // calculationmodel();
+
     }
 
     ///
@@ -198,29 +176,34 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     ///
     /// \param id : numero de l'objet
     ///
-    void finish(std::string id) {
-        cppcms::json::value json;
-        MethodBuilder* method = convertAddressStringToPointer<MethodBuilder>(id);
+    void finish(std::string msg) {
+        Json::Value data = stringAsjson(msg);
+        // cppcms::json::value json;
+        LearningOnline<APOSD_SOL>* method = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
+        DEBUG_TRACE("finish " + data["objectId"].asString())
 
         // Vérifie que l'objet existe
-        std::vector<MethodBuilder*>::iterator it = std::find(methodList.begin(), methodList.end(), method);
+        std::vector<LearningOnline<APOSD_SOL>*>::iterator it = std::find(methodList.begin(), methodList.end(), method);
+
+        cppcms::json::value r;
         if (it != methodList.end()) {
             methodList.erase(it);
-
-            json["ack"] = 1;  // true | false
-            response().out() << json;
+            
+            r["ack"] = 1;  // true | false
+            response().out()<<r;
         } else {
-            json["error"] = -1;
-            json["error_msg"] = "[-] The method was not initialize";
-            response().out() << json;
+            r["ack"] = 0;
+            r["error_msg"] = "[-] The method was not initialize";
+            response().out()<<r;
         }
     }
 
    private:
-    vector<MethodBuilder*> methodList;
+    vector<LearningOnline<APOSD_SOL> *> methodList;
 };
 
 void CommunicationModel_webApps(int argc, char** argv, const Json::Value &configuration) {
+    DEBUG_TRACE("CREATE CommunicationModel_webApps")
     try {
         cppcms::service srv(argc, argv);
         srv.applications_pool().mount(cppcms::applications_factory<WebAposd>());

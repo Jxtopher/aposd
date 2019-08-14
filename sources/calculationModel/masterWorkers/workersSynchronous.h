@@ -11,7 +11,7 @@
 
 class WorkersSynchronous : public Workers {
    public:
-    WorkersSynchronous(unique_ptr<Launcher> launcher) : _launcher(std::move(launcher)) {}
+    WorkersSynchronous(std::unique_ptr<Launcher> launcher) : _launcher(std::move(launcher)) {}
     virtual ~WorkersSynchronous() {}
 
     void operator()() {
@@ -58,7 +58,7 @@ class WorkersSynchronous : public Workers {
     }
 
    protected:
-    unique_ptr<Launcher> _launcher;
+    std::unique_ptr<Launcher> _launcher;
     MPI_Status status;
     MPI_Request request;
 };

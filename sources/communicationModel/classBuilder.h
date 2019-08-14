@@ -27,12 +27,12 @@ using namespace std;
 
 class ClassBuilder {
 public:
-    ClassBuilder(std::mt19937 &mt_rand) : _mt_rand(mt_rand) {
+    ClassBuilder(std::shared_ptr<std::mt19937> mt_rand) : _mt_rand(mt_rand) {
 
     }
 
-    unique_ptr<Topologies> topologies(const Json::Value &configuration) {
-        unique_ptr<Topologies> _topologies;
+    std::unique_ptr<Topologies> topologies(const Json::Value &configuration) {
+        std::unique_ptr<Topologies> _topologies;
         if (configuration["className"].asString() == Topologies::CIRCLE)
             _topologies = make_unique<Circle>(4);
         else if (configuration["className"].asString() == Topologies::COMPLETE)
@@ -47,8 +47,8 @@ public:
     }
 
 
-    unique_ptr<ParameterSelection> parameterSelection(const Json::Value &configuration) {
-        unique_ptr<ParameterSelection> _parameterSelection;
+    std::unique_ptr<ParameterSelection> parameterSelection(const Json::Value &configuration) {
+        std::unique_ptr<ParameterSelection> _parameterSelection;
         if (configuration["className"].asString() == ParameterSelection::STR_ADAPTIVEPURSUIT) {
             _parameterSelection = make_unique<PsAdaptivePursuit>(_mt_rand, configuration["nbParameter"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::STR_CONSTANT) {
@@ -67,8 +67,8 @@ public:
         return std::move(_parameterSelection);
     }
 
-    unique_ptr<Launcher> launcher(const Json::Value &configuration) {
-        unique_ptr<Launcher> _launcher;
+    std::unique_ptr<Launcher> launcher(const Json::Value &configuration) {
+        std::unique_ptr<Launcher> _launcher;
         if (Launcher::LAUNCHEREXEC == configuration["className"].asString())
             _launcher = make_unique<LauncherExec>(configuration["pathExecutable"].asString(), configuration["string_args"].asString());
         else 
@@ -78,12 +78,12 @@ public:
     }
 
     template <typename SOL>
-    unique_ptr<RewardComputation<SOL>> rewardComputation(const Json::Value &configuration) {
+    std::unique_ptr<RewardComputation<SOL>> rewardComputation(const Json::Value &configuration) {
         return make_unique<RewardComputation<SOL>>();
     }
 
 private:
-    std::mt19937 &_mt_rand;
+    std::shared_ptr<std::mt19937> _mt_rand;
 
 };
 

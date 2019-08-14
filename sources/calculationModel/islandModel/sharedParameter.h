@@ -20,11 +20,11 @@ template <class SOL>
 class SharedParameter : public IslandModel<SOL> {
 	public:
 		SharedParameter(int argc, char** argv, 
-                        unique_ptr<Topologies> topologies, 
-                        unique_ptr<Launcher> launcher, 
-                        unique_ptr<ParameterSelection> parameterSelection, 
-                        unique_ptr<RewardComputation<SOL>> rewardComputation,
-                        unique_ptr<Selection<SOL>> selection) : 
+                        std::unique_ptr<Topologies> topologies, 
+                        std::unique_ptr<Launcher> launcher, 
+                        std::unique_ptr<ParameterSelection> parameterSelection, 
+                        std::unique_ptr<RewardComputation<SOL>> rewardComputation,
+                        std::unique_ptr<Selection<SOL>> selection) : 
             IslandModel<SOL>(argc, argv, std::move(topologies)),
             _launcher(std::move(launcher)),
             _parameterSelection(std::move(parameterSelection)),
@@ -124,10 +124,10 @@ class SharedParameter : public IslandModel<SOL> {
         }
         
 	private:
-        unique_ptr<Launcher> _launcher;
-        unique_ptr<ParameterSelection> _parameterSelection;
-        unique_ptr<RewardComputation<SOL>> _rewardComputation;
-        unique_ptr<Selection<SOL>> _selection;
+        std::unique_ptr<Launcher> _launcher;
+        std::unique_ptr<ParameterSelection> _parameterSelection;
+        std::unique_ptr<RewardComputation<SOL>> _rewardComputation;
+        std::unique_ptr<Selection<SOL>> _selection;
 
         vector<SOL> solutions;  // liste des solutions candidat
         

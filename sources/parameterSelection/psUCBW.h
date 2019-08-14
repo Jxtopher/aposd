@@ -12,6 +12,7 @@
 #define	PSUCBW_H
 
 #include <random>
+#include <memory>
 
 #include <boost/circular_buffer.hpp>
 
@@ -22,7 +23,7 @@ using namespace boost;
 
 class PsUCBW : public ParameterSelection {
 	public:
-	PsUCBW(std::mt19937 &mt_rand,
+	PsUCBW(std::shared_ptr<std::mt19937> mt_rand,
 		unsigned int nbParameter,
         const double C = 0.03,
         const unsigned int windowSize = 300,
@@ -34,9 +35,9 @@ class PsUCBW : public ParameterSelection {
 		_aggregationFunction(aggregationFunction) {
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 			slidingWindow.set_capacity(windowSize);
-			rewardAggregation = unique_ptr<double []>(new double[nbParameter]);
-			numberSelect = unique_ptr<unsigned int []>(new unsigned int[nbParameter]);
-            Q = unique_ptr<double []>(new double[nbParameter]);
+			rewardAggregation = std::unique_ptr<double []>(new double[nbParameter]);
+			numberSelect = std::unique_ptr<unsigned int []>(new unsigned int[nbParameter]);
+            Q = std::unique_ptr<double []>(new double[nbParameter]);
 	}
 
 	PsUCBW(const PsUCBW &c) : 
@@ -47,9 +48,9 @@ class PsUCBW : public ParameterSelection {
 		_aggregationFunction(c._aggregationFunction)  {
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 			slidingWindow.set_capacity(_windowSize);
-			rewardAggregation = unique_ptr<double []>(new double[_nbParameter]);
-			numberSelect = unique_ptr<unsigned int []>(new unsigned int[_nbParameter]);
-            Q = unique_ptr<double []>(new double[_nbParameter]);
+			rewardAggregation = std::unique_ptr<double []>(new double[_nbParameter]);
+			numberSelect = std::unique_ptr<unsigned int []>(new unsigned int[_nbParameter]);
+            Q = std::unique_ptr<double []>(new double[_nbParameter]);
 			
 			slidingWindow = c.slidingWindow;
 			for (unsigned int i = 0 ; i < _nbParameter ; i++) {
@@ -150,7 +151,7 @@ class PsUCBW : public ParameterSelection {
 	}
 
 	protected:
-	std::mt19937 &_mt_rand;
+	std::shared_ptr<std::mt19937> _mt_rand;
     const double &_C;
     const unsigned int &_windowSize;
 	const AggregationFunction _aggregationFunction;
@@ -158,9 +159,9 @@ class PsUCBW : public ParameterSelection {
 
 	uniform_int_distribution<unsigned int> *uid;
     unsigned int initEachParameter;
-    unique_ptr<double[]> rewardAggregation;
-	unique_ptr<unsigned int[]> numberSelect;
-    unique_ptr<double[]> Q;
+    std::unique_ptr<double[]> rewardAggregation;
+	std::unique_ptr<unsigned int[]> numberSelect;
+    std::unique_ptr<double[]> Q;
 };
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef JXTOPHER_RANDOM_H
 #define JXTOPHER_RANDOM_H
 
+#include <memory>
 #include <random>
 
 #include <boost/graph/graph_utility.hpp> // print_graph
@@ -14,7 +15,7 @@ using namespace boost;
 
 class RandomEdge : public Topologies {
 	public:
-		RandomEdge(std::mt19937 &mt_rand, unsigned int nbNodes, double p = 0.20) : 
+		RandomEdge(std::shared_ptr<std::mt19937> mt_rand, unsigned int nbNodes, double p = 0.20) : 
             Topologies(nbNodes) {
 			assert(p <= 1 && p >= 0);
 			uniform_real_distribution<> urd(0, 1);
@@ -24,7 +25,7 @@ class RandomEdge : public Topologies {
 
             for (unsigned int i = 0 ; i < this->_nbNodes ; i++) {
                 for (unsigned int j = i + 1 ; j < this->_nbNodes ; j++) {
-					if (urd(mt_rand) < p) {
+					if (urd(*mt_rand) < p) {
 						add_edge(i, j, EdgeProperties(0), g);
 					}
                     

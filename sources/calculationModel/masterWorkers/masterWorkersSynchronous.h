@@ -14,10 +14,10 @@ template <class SOL>
 class MasterWorkersSynchronous : public CalculationModel {
    public:
     MasterWorkersSynchronous(int argc, char** argv, 
-                            unique_ptr<Launcher> launcher, 
-                            unique_ptr<ParameterSelection> parameterSelection,
-                            unique_ptr<RewardComputation<SOL>> rewardComputation,
-                            unique_ptr<Selection<SOL>> selection) {
+                            std::unique_ptr<Launcher> launcher, 
+                            std::unique_ptr<ParameterSelection> parameterSelection,
+                            std::unique_ptr<RewardComputation<SOL>> rewardComputation,
+                            std::unique_ptr<Selection<SOL>> selection) {
         // Variable MPI init
         MPI_Init(&argc, &argv);
         MPI_Comm_size(MPI_COMM_WORLD, &mpi_globals_nbnodes);
@@ -51,8 +51,8 @@ class MasterWorkersSynchronous : public CalculationModel {
     }
 
    private:
-        unique_ptr<MasterSynchronous<SOL>> mSynchro;
-        unique_ptr<WorkersSynchronous> wSynchro;
+        std::unique_ptr<MasterSynchronous<SOL>> mSynchro;
+        std::unique_ptr<WorkersSynchronous> wSynchro;
 };
 
 #endif

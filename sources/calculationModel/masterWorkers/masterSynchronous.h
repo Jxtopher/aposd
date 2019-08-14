@@ -12,9 +12,9 @@ using namespace std;
 template <class SOL>
 class MasterSynchronous : public Master {
    public:
-    MasterSynchronous(unique_ptr<ParameterSelection> parameterSelection, 
-                        unique_ptr<RewardComputation<SOL>> rewardComputation,
-                        unique_ptr<Selection<SOL>> selection)
+    MasterSynchronous(std::unique_ptr<ParameterSelection> parameterSelection, 
+                        std::unique_ptr<RewardComputation<SOL>> rewardComputation,
+                        std::unique_ptr<Selection<SOL>> selection)
         : Master(), 
         _parameterSelection(std::move(parameterSelection)), 
         _rewardComputation(std::move(rewardComputation)),
@@ -87,9 +87,9 @@ class MasterSynchronous : public Master {
     MPI_Request request;
     MPI_Status status;
 
-    unique_ptr<ParameterSelection> _parameterSelection;
-    unique_ptr<RewardComputation<SOL>> _rewardComputation;
-    unique_ptr<Selection<SOL>> _selection;
+    std::unique_ptr<ParameterSelection> _parameterSelection;
+    std::unique_ptr<RewardComputation<SOL>> _rewardComputation;
+    std::unique_ptr<Selection<SOL>> _selection;
 };
 
 #endif
