@@ -10,12 +10,13 @@
 #ifndef PSSELECTBESTMUTATE_H
 #define	PSSELECTBESTMUTATE_H
 
+#include <memory>
 #include <random>
 #include "parameterSelection.h"
 
 class PsSelectBestMutate : public ParameterSelection {
 	public:
-	PsSelectBestMutate(std::mt19937 &mt_rand,
+	PsSelectBestMutate(std::shared_ptr<std::mt19937> mt_rand,
 		unsigned int nbParameter,
 		const double espilon = 0.15,
 		AggregationFunction aggregationFunction = AggregationFunction::MEAN,
@@ -29,7 +30,7 @@ class PsSelectBestMutate : public ParameterSelection {
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 	}
 
-	PsSelectBestMutate(std::mt19937 &mt_rand,
+	PsSelectBestMutate(std::shared_ptr<std::mt19937> mt_rand,
 		unsigned int nbParameter,
 		const double espilon = 0.15,
 		const unsigned int windowSize = 150,
@@ -112,11 +113,11 @@ class PsSelectBestMutate : public ParameterSelection {
 		switch (_heterogeneityPolicy) {
 			case HeterogeneityPolicy::HETEROGENOUS:
 				for (unsigned int i = 0 ; i < nbNodes ; i++)
-					parameterList.push_back(uid->operator()(this->_mt_rand));
+					parameterList.push_back(uid->operator()(*(this->_mt_rand)));
 				break;
 			case HeterogeneityPolicy::HOMOGENEOUS:
 				{
-				unsigned int pick = uid->operator()(this->_mt_rand);
+				unsigned int pick = uid->operator()(*(this->_mt_rand));
 				for (unsigned int i = 0 ; i < nbNodes ; i++)
 					parameterList.push_back(pick);
 				}
@@ -130,12 +131,16 @@ class PsSelectBestMutate : public ParameterSelection {
 	}
 
 	unsigned int getParameter() {
-		return uid->operator()(this->_mt_rand);
+		return uid->operator()(*(this->_mt_rand));
 	}
 
+    string className() const {
+        return "PsSelectBestMutate";
+    }
+
 	protected:
-	std::mt19937 &_mt_rand;
-	const double &_espilon;
+	std::shared_ptr<std::mt19937> _mt_rand;
+	const double _espilon;
 	const unsigned int _windowSize;
 	const AggregationFunction _aggregationFunction;
 	const HeterogeneityPolicy _heterogeneityPolicy;

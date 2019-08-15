@@ -17,7 +17,7 @@
 
 class PsAdaptivePursuit : public ParameterSelection {
 	public:
-	PsAdaptivePursuit(std::mt19937 &mt_rand,
+	PsAdaptivePursuit(std::shared_ptr<std::mt19937> mt_rand,
 		unsigned int nbParameter,
         const double alpha = 0.2,
         const double beta = 0.2,
@@ -34,8 +34,8 @@ class PsAdaptivePursuit : public ParameterSelection {
         _aggregationFunction(aggregationFunction),
 		_heterogeneityPolicy(heterogeneityPolicy) {
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
-            rewardEstimate = unique_ptr<double []>(new double[nbParameter]);
-           selectionProbability = unique_ptr<double []>(new double[nbParameter]);
+            rewardEstimate = std::unique_ptr<double []>(new double[nbParameter]);
+           selectionProbability = std::unique_ptr<double []>(new double[nbParameter]);
     }
 	
 	PsAdaptivePursuit(const PsAdaptivePursuit &c) : 
@@ -48,8 +48,8 @@ class PsAdaptivePursuit : public ParameterSelection {
         _aggregationFunction(c._aggregationFunction),
 		_heterogeneityPolicy(c._heterogeneityPolicy)  {
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
-            rewardEstimate = unique_ptr<double []>(new double[_nbParameter]);
-           	selectionProbability = unique_ptr<double []>(new double[_nbParameter]);
+            rewardEstimate = std::unique_ptr<double []>(new double[_nbParameter]);
+           	selectionProbability = std::unique_ptr<double []>(new double[_nbParameter]);
 			
 			for (unsigned int i = 0 ; i < _nbParameter ; i++) {
 				rewardEstimate[i] = c.rewardEstimate[i]; 
@@ -89,11 +89,11 @@ class PsAdaptivePursuit : public ParameterSelection {
 		switch (_heterogeneityPolicy) {
 			case HeterogeneityPolicy::HETEROGENOUS:
 				for (unsigned int i = 0 ; i < nbNodes ; i++)
-					parameterList.push_back(uid->operator()(this->_mt_rand));
+					parameterList.push_back(uid->operator()(*(this->_mt_rand)));
 				break;
 			case HeterogeneityPolicy::HOMOGENEOUS:
 				{
-				unsigned int pick = uid->operator()(this->_mt_rand);
+				unsigned int pick = uid->operator()(*(this->_mt_rand));
 				for (unsigned int i = 0 ; i < nbNodes ; i++)
 					parameterList.push_back(pick);
 				}
@@ -107,11 +107,15 @@ class PsAdaptivePursuit : public ParameterSelection {
 	}
 
 	unsigned int getParameter() {
-		return uid->operator()(this->_mt_rand);
+		return uid->operator()(*(this->_mt_rand));
 	}
 
+    string className() const {
+        return "PsAdaptivePursuit";
+    }
+
 	protected:
-	std::mt19937 &_mt_rand;
+	std::shared_ptr<std::mt19937> _mt_rand;
 	const double _alpha;   // adaptation rate
 	const double _beta;    // learning rate
     const double _p_min;
@@ -122,8 +126,8 @@ class PsAdaptivePursuit : public ParameterSelection {
 
     unsigned int initEachParameter;
 	uniform_int_distribution<unsigned int> *uid;
-    unique_ptr<double []> rewardEstimate;
-    unique_ptr<double []> selectionProbability;
+    std::unique_ptr<double []> rewardEstimate;
+    std::unique_ptr<double []> selectionProbability;
 };
 
 #endif

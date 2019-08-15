@@ -2,9 +2,9 @@
 #define	SELECTIONSTRATEGIE_H
 
 #include <vector>
+#include <string>
 
 using namespace std;
-
 
 enum class AggregationFunction {
 	MAX,
@@ -19,12 +19,12 @@ enum class HeterogeneityPolicy {
 
 class ParameterSelection {
 	public:
-        static const int ADAPTIVEPURSUIT = 0;
-        static const int CONSTANT = 1;
-        static const int EPSILONGREEDY = 2;
-        static const int RANDOM = 3;
-        static const int SELECTBESTMUTATE = 4;
-        static const int UCBW = 5;
+        static constexpr const char* ADAPTIVEPURSUIT = "PsAdaptivePursuit";
+        static constexpr const char* CONSTANT = "PsConstant";
+        static constexpr const char* EPSILONGREEDY = "PsEspsilonGreedy";
+        static constexpr const char* RANDOM = "PsRandom";
+        static constexpr const char* SELECTBESTMUTATE = "PsSelectBestMutate";
+        static constexpr const char* UCBW = "PsUCBW";
 
 		ParameterSelection(unsigned int nbParameter) : 
 			_nbParameter(nbParameter) {
@@ -44,6 +44,7 @@ class ParameterSelection {
 		}
 		virtual vector<unsigned int> getParameter(const unsigned int nbNodes) = 0;
 		virtual unsigned int getParameter() = 0;
+		virtual string className() const = 0;
 
 	protected:
 		const unsigned int _nbParameter;

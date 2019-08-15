@@ -6,6 +6,13 @@
 #include <tuple>
 
 #include "islandModel.h"
+#include "topologies/topologies.h"
+#include "../../selection/selection.h"
+#include "../../parameterSelection/parameterSelection.h"
+#include "../../rewardComputation/rewardComputation.h"
+#include "../../launcher/launcher.h"
+
+
 
 using namespace std;
 
@@ -13,16 +20,16 @@ template <class SOL>
 class SharedParameter : public IslandModel<SOL> {
 	public:
 		SharedParameter(int argc, char** argv, 
-                        Topologies &topologies, 
-                        Launcher &launcher, 
-                        ParameterSelection &parameterSelection, 
-                        RewardComputation<SOL> &rewardComputation,
-                        Selection<SOL> &selection) : 
-            IslandModel<SOL>(argc, argv, topologies),
-            _launcher(launcher),
-            _parameterSelection(parameterSelection),
-            _rewardComputation(rewardComputation),
-            _selection(selection)  {
+                        std::unique_ptr<Topologies> topologies, 
+                        std::unique_ptr<Launcher> launcher, 
+                        std::unique_ptr<ParameterSelection> parameterSelection, 
+                        std::unique_ptr<RewardComputation<SOL>> rewardComputation,
+                        std::unique_ptr<Selection<SOL>> selection) : 
+            IslandModel<SOL>(argc, argv, std::move(topologies)),
+            _launcher(std::move(launcher)),
+            _parameterSelection(std::move(parameterSelection)),
+            _rewardComputation(std::move(rewardComputation)),
+            _selection(std::move(selection))  {
                 continued = true;
                 recv_msg_size = 10;   
                 recv_msg = new char[recv_msg_size];
@@ -33,27 +40,27 @@ class SharedParameter : public IslandModel<SOL> {
 
         void operator()() {
             // Initialisation des varaibles
-            auto neighbours = boost::adjacent_vertices(mpi_globals_rank, this->_topologies.graph());
+            auto neighbours = boost::adjacent_vertices(mpi_globals_rank, this->_topologies->graph());
             solutions.clear();
-            _parameterSelection.reset();
+            _parameterSelection->reset();
 
             unsigned int iteration = 0;
 
             // Initialisation de la premiere solution
-            solutions.push_back(SOL(_launcher.initSolution()));
+            solutions.push_back(SOL(_launcher->initSolution()));
 
             do {                
                 // Selection solutions and parameter a utiliser
-                unsigned int parameter = _parameterSelection.getParameter();
-                SOL bestSolution = _selection(solutions);
+                unsigned int parameter = _parameterSelection->getParameter();
+                SOL bestSolution = _selection->operator()(solutions);
                 cout<<bestSolution<<endl;
 
                 // Call solver
-                string newSolution = _launcher.solve(bestSolution.str(), parameter);
+                string newSolution = _launcher->solve(bestSolution.str(), parameter);
                 solutions.push_back(SOL(newSolution));
                 
                 // Compute reward
-                pair<double, unsigned int> rewardOp = _rewardComputation(bestSolution, solutions.back(), parameter);
+                pair<double, unsigned int> rewardOp = _rewardComputation->operator()(bestSolution, solutions.back(), parameter);
 
                 // Send message : solution, RewardOp
                 order = MPI_Order::COMPUTE_FITNESS;
@@ -96,7 +103,7 @@ class SharedParameter : public IslandModel<SOL> {
                             MPI_Recv(&recv_parameter, 1, MPI_INT, status.MPI_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status); // Get parameter
                                                         
                             // Update solutions and parameter
-                            _parameterSelection.update(recv_reward, recv_parameter);
+                            _parameterSelection->update(recv_reward, recv_parameter);
                             solutions.push_back(SOL(recv_msg));
                             
                             } break;
@@ -117,10 +124,10 @@ class SharedParameter : public IslandModel<SOL> {
         }
         
 	private:
-        Launcher &_launcher;
-        ParameterSelection &_parameterSelection;
-        RewardComputation<SOL> &_rewardComputation;
-        Selection<SOL> & _selection;
+        std::unique_ptr<Launcher> _launcher;
+        std::unique_ptr<ParameterSelection> _parameterSelection;
+        std::unique_ptr<RewardComputation<SOL>> _rewardComputation;
+        std::unique_ptr<Selection<SOL>> _selection;
 
         vector<SOL> solutions;  // liste des solutions candidat
         

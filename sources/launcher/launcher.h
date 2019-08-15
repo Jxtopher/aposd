@@ -20,6 +20,9 @@ class Launcher {
 		virtual string initSolution() = 0;
 		virtual string solve(string solution, unsigned int numParameter) = 0;
 		
+
+		static constexpr const char* LAUNCHEREXEC = "LauncherExec";
+        static constexpr const char* LAUNCHERFORK = "LauncherFork";
 	protected:
 
 

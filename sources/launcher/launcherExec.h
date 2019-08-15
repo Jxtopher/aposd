@@ -17,7 +17,8 @@ class LauncherExec : public Launcher {
 			_pathExecutable(pathExecutable),
 			_args(""),
 			bufferLength(1024) {
-			assert(exists_file(_pathExecutable));
+			if (!exists_file(_pathExecutable))
+				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + "The path \""+ _pathExecutable +"\" does not exsit");
 			buffer = new char[bufferLength];
 		}
 
@@ -26,7 +27,8 @@ class LauncherExec : public Launcher {
 			_pathExecutable(pathExecutable),
 			_args(args),
 			bufferLength(1024) {
-			assert(exists_file(_pathExecutable));
+			if (!exists_file(_pathExecutable))
+				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + "The path \""+ _pathExecutable +"\" does not exsit");
 			buffer = new char[bufferLength];
 		}
 		

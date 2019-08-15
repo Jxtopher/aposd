@@ -12,9 +12,10 @@ class MPI_Order {
 
 class CalculationModel {
     public:
-        static const int SEQUENTIAL_MODEL = 0;
-        static const int MASTER_WORKER_MODEL = 1;
-        static const int ISLAND_MODEL = 2;
+        static constexpr const char* SEQUENTIAL_MODEL = "SequentialModel";
+        static constexpr const char* MASTER_WORKER_MODEL = "MasterWorkersSynchronous";
+        static constexpr const char* ISLAND_MODEL = "SharedParameter";
+
         
         CalculationModel() {
 

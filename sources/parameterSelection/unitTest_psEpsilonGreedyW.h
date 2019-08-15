@@ -11,8 +11,8 @@ using namespace std;
 
 class UnitTest_PsEspsilonGreedyW : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(UnitTest_PsEspsilonGreedyW);
-    CPPUNIT_TEST(test_Constructor);
-    CPPUNIT_TEST(test_update);
+    CPPUNIT_TEST(update);
+    CPPUNIT_TEST(getParameter);
     CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -23,12 +23,8 @@ class UnitTest_PsEspsilonGreedyW : public CppUnit::TestFixture {
     void tearDown(void) {
     }
 
-    void test_Constructor(void) {
-
-    }
-
-    void test_update(void) {
-        std::mt19937 mt_rand;
+    void update(void) {
+        std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
 		unsigned int nbParameter = 4;
 		const double espilon = 1;
 		const unsigned int windowSize = 5;
@@ -57,8 +53,31 @@ class UnitTest_PsEspsilonGreedyW : public CppUnit::TestFixture {
         CPPUNIT_ASSERT(egreedy.getParameter() == 1);
         CPPUNIT_ASSERT(egreedy.getParameter() == 2);
         CPPUNIT_ASSERT(egreedy.getParameter() == 3);
-        CPPUNIT_ASSERT(egreedy.getParameter() == 2);
-        CPPUNIT_ASSERT(egreedy.getParameter() == 2);
+    }
+
+    void getParameter(void) {
+        std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
+		unsigned int nbParameter = 2;
+		const double espilon = 1;
+		const unsigned int windowSize = 5;
+        PsEspsilonGreedy egreedy(mt_rand, nbParameter, espilon, windowSize);
+
+        pair<double, unsigned int> r1(1, 0);    // Parameter 0, reward = 1
+        pair<double, unsigned int> r2(5, 1);    // Parameter 1, reward = 5
+
+        egreedy.update(r1);
+        egreedy.update(r2);
+
+        unsigned int p0 = 0, p1 = 0;
+        for (unsigned int i = 0 ; i < 50 ; i++) {
+            unsigned int p = egreedy.getParameter();
+            if (p == 0) {
+                p0++;
+            } else if (p == 1) {
+                p1++;
+            }
+        }
+        // CPPUNIT_ASSERT(p1 < p0);
     }
 
     private:

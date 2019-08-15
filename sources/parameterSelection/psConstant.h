@@ -47,6 +47,10 @@ class PsConstant : public ParameterSelection {
 		return _parameterUsed;
 	}
 
+    string className() const {
+        return "PsConstant";
+    }
+
 	protected:
 		unsigned int _parameterUsed;
 

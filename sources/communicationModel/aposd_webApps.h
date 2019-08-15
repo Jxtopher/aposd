@@ -2,7 +2,8 @@
 /// \file aposd_webApps.h
 /// \author Jxtopher
 /// \date 2019-08
-/// \brief Mode de communication SaaS 
+/// \brief Mode de communication SaaS
+///        https://en.wikipedia.org/wiki/JSON-RPC
 ///
 
 #ifndef JXTOPHER_APOSD_WEBAPPS_H
@@ -11,6 +12,7 @@
 #include <cppcms/application.h>
 #include <cppcms/applications_pool.h>
 #include <cppcms/http_response.h>
+#include <cppcms/rpc_json.h>
 #include <cppcms/service.h>
 #include <cppcms/url_dispatcher.h>
 #include <cppcms/url_mapper.h>
@@ -19,22 +21,26 @@
 #include <map>
 #include <utility>  // std:pair
 #include <vector>
+#include <memory>
 
+#include "classBuilder.h"
 #include "../parameterSelection/parameterSelection.h"
-#include "../parameterSelection/psAdaptivePursuit.h"
-#include "../parameterSelection/psConstant.h"
-#include "../parameterSelection/psEpsilonGreedyW.h"
-#include "../parameterSelection/psRandom.h"
-#include "../parameterSelection/psSelectBestMutate.h"
-#include "../parameterSelection/psUCBW.h"
 #include "../selection/selection.h"
 #include "../selection/selection_maximization.h"
 #include "../solution/solution.h"
+#include "../calculationModel/SaaS/learningOnline.h"
+
 
 using namespace std;
 
-void CommunicationModel_webApps(int argc, char** argv);
+using APOSD_SOL = Solution<unsigned int>;
 
+void CommunicationModel_webApps(int argc, char** argv, const Json::Value &configuration);
+string jsonAsString(const Json::Value &json);
+Json::Value stringAsjson(const string &strJson);
+cppcms::json::value jsonValueASJsonCppcms(const Json::Value &jsonValue);
+
+//-----------------------------------------------------------------------------
 template <typename T>
 std::string convertPointerToStringAddress(const T* obj) {
     long long int address(reinterpret_cast<long long int>(obj));
@@ -48,124 +54,104 @@ T* convertAddressStringToPointer(const std::string& address) {
     std::stringstream ss;
     ss << address;
     long long int tmp(0);
-    if (!(ss >> tmp)) throw std::runtime_error("Failed - invalid address!");
+    if (!(ss >> tmp)) throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) +" Failed - invalid address!");
     return reinterpret_cast<T*>(tmp);
 }
 
-class MethodBuilder {
-   public:
-    MethodBuilder(unsigned int nbParameter) {
-        //
-        unsigned long int seed = static_cast<unsigned long int>(time(0));
-        std::mt19937 mt_rand;
-        mt_rand.seed(seed);
+//-----------------------------------------------------------------------------
+string jsonAsString(const Json::Value &json) {
+    Json::StreamWriterBuilder builder;
+    builder["commentStyle"] = "None";
+    builder["indentation"] = "";
+    return Json::writeString(builder, json);
+}
 
-        switch (ParameterSelection::RANDOM) {
-            case ParameterSelection::ADAPTIVEPURSUIT:
-                parameterSelection = new PsAdaptivePursuit(mt_rand, nbParameter);
-                break;
-            case ParameterSelection::CONSTANT:
-                parameterSelection = new PsConstant(nbParameter, 0);
-                break;
-            case ParameterSelection::EPSILONGREEDY:
-                parameterSelection = new PsEspsilonGreedy(mt_rand, nbParameter);
-                break;
-            case ParameterSelection::RANDOM:
-                parameterSelection = new PsRandom(mt_rand, nbParameter);
-                break;
-            case ParameterSelection::SELECTBESTMUTATE:
-                // parameterSelection = new PsSelectBestMutate(mt_rand, nbParameter);
-                break;
-            case ParameterSelection::UCBW:
-                parameterSelection = new PsUCBW(mt_rand, nbParameter);
-                break;
-            default:
-                assert("The calculation model is not defined" && false);
-                break;
-        }
+Json::Value stringAsjson(const string &strJson) {
+    Json::Value root;
+    Json::Reader reader;
+    bool parsingSuccessful = reader.parse(strJson.c_str(), root);
+    if (!parsingSuccessful) throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " + reader.getFormattedErrorMessages());
+    return root;
+}
 
-        // Calcul de la récompense
-        rewardComputation = new RewardComputation<Solution<unsigned int>>;
-        // switch() {
+cppcms::json::value jsonValueASJsonCppcms(const Json::Value &jsonValue) {
+    stringstream ss;
+    ss << jsonAsString(jsonValue);
+    cppcms::json::value tmp;
+    tmp.load(ss,true);
+    return tmp;
+}
 
-        // Selection de la meilleurs solution
-        selection = new Selection_maximization<Solution<unsigned int>>;
-    }
 
-    ~MethodBuilder() {}
-
-    unsigned int init() { return parameterSelection->getParameter(); }
-
-    std::pair<unsigned int, Solution<unsigned int>> learning(unsigned int parameter, Solution<unsigned int> s_new) {
-        std::pair<double, unsigned int> rewardOp = rewardComputation->operator()(s, s_new, parameter);
-
-        parameterSelection->update(rewardOp);
-
-        s = s_new;
-
-        unsigned int new_parameter = parameterSelection->getParameter();
-
-        return std::pair<unsigned int, Solution<unsigned int>>(new_parameter, s);
-    }
-
-   private:
-    Solution<unsigned int> s;
-    ParameterSelection* parameterSelection;
-    RewardComputation<Solution<unsigned int>>* rewardComputation;
-    Selection<Solution<unsigned int>>* selection;
-};
+//-----------------------------------------------------------------------------
 
 ///
 /// \class WebAposd
 /// \brief Définie l'application web de Aposd avec cppcms.
 ///        Automate : initialization -> learning (many time) ->finish
 ///
-class WebAposd : public cppcms::application {
+class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server {
    public:
-    WebAposd(cppcms::service& srv) : cppcms::application(srv) {
-        // dispatcher().assign("aa", &hello::page_home, this);
-
-        dispatcher().assign("/initialization/(\\d+)", &WebAposd::initialization, this, 1);
-        mapper().assign("initialization", "/initialization/{1}");
-
-        dispatcher().assign("/learning/(\\d+)/(\\d+)/((.*))", &WebAposd::learning, this, 1, 2, 3);
-        mapper().assign("learning", "/learning/{1}/{1}/{1}");
-
-        dispatcher().assign("/test", &WebAposd::test, this);
-        mapper().assign("test", "/test");
-
-        dispatcher().assign("/finish/(\\d+)", &WebAposd::finish, this, 1);
-        mapper().assign("finish", "/finish/{1}");
-
-        // http://127.0.0.1:8080/hello
-        mapper().root("/hello");
+    WebAposd(cppcms::service& srv) : cppcms::rpc::json_rpc_server(srv) {
+        bind("echo", cppcms::rpc::json_method(&WebAposd::echo, this));
+        // bind("ping", cppcms::rpc::json_method(&WebAposd::ping, this));
+        bind("initialization", cppcms::rpc::json_method(&WebAposd::initialization, this));
+        bind("learning", cppcms::rpc::json_method(&WebAposd::learning, this));
+        bind("finish", cppcms::rpc::json_method(&WebAposd::finish, this));
     }
 
-    void test() {
+    // curl -i -X POST --header "Content-Type:application/json" -d '{"method":"notify", "params":["msgxxxxxxxxxxxxxxxxxxxxxx"], "id":1}' http://127.0.0.1:8080/
+    void echo(std::string msg) { 
+        DEBUG_TRACE("echo")
         cppcms::json::value json;
-        json["test"] = "test";  // true | false
+        json["your_msg"] = msg;  // true | false
+        json["help"] = "initialization | learning | finish";
         response().out() << json;
     }
+
+    // void ping(std::string msg) { 
+    //     DEBUG_TRACE("echo")
+    //     cppcms::json::value json;
+    //     json["pong"] = msg;  // true | false
+    //     json["timer"] = "";
+    //     response().out() << json;
+    // }
 
     ///
     /// \brief construction de l'objet
     ///
     /// \param nbParameter : le nombre de paramètre à considérer
     ///
-    void initialization(std::string nbParameter) {
-        cppcms::json::value json;
+    //void initialization(std::string nbParameter) {
+    void initialization(std::string msg) {
+        Json::Value configuration = stringAsjson(msg);
 
-        stringstream convert(nbParameter);
-        int _nbParameter = 0;
-        convert >> _nbParameter;
+        std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
+        if (!configuration["seed"].empty())
+            mt_rand->seed(configuration["seed"].isInt());
+        else
+            mt_rand->seed(static_cast<mt19937::result_type>(time(0)));
 
-        MethodBuilder* method = new MethodBuilder(_nbParameter);
-        methodList.push_back(method);
+        std::unique_ptr<ClassBuilder> classBuilder = std::make_unique<ClassBuilder>(mt_rand);
 
-        json["id"] = convertPointerToStringAddress(method);
-        json["num_paramter"] = method->init();
+        std::unique_ptr<ParameterSelection> parameterSelection = classBuilder->parameterSelection(configuration["CalculationModel"]["ParameterSelection"]);
+        std::unique_ptr<RewardComputation<APOSD_SOL>> rewardComputation = classBuilder->rewardComputation<APOSD_SOL>(configuration["CalculationModel"]["RewardComputation"]);
 
-        response().out() << json;
+        LearningOnline<APOSD_SOL> *calculationmodel = new LearningOnline<APOSD_SOL>( 
+            std::move(parameterSelection), 
+            std::move(rewardComputation));
+
+        methodList.push_back(std::move(calculationmodel));
+
+        // Response
+        cppcms::json::value r;
+        std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->initialSolution(APOSD_SOL(configuration["initialSolution"]));
+        r["objectId"] = convertPointerToStringAddress(calculationmodel);
+        r["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
+        r["num_paramter"] = buff.second;
+        response().out()<<r;
+
+        DEBUG_TRACE("initialization " + convertPointerToStringAddress(calculationmodel))
     }
 
     ///
@@ -175,29 +161,19 @@ class WebAposd : public cppcms::application {
     /// \param num_parameter : numero du parametre utiliser
     /// \param solution : nouvelle solution avec la fitness
     ///
-    void learning(std::string id, std::string num_parameter, std::string solution) {
-        MethodBuilder* method = convertAddressStringToPointer<MethodBuilder>(id);
-        cppcms::json::value json;
+    void learning(std::string msg) {
+        Json::Value data = stringAsjson(msg);
+        LearningOnline<APOSD_SOL>* calculationmodel = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
+        DEBUG_TRACE("learning " + convertPointerToStringAddress(calculationmodel))
+        
+        // Response
+        cppcms::json::value r;
+        std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->run(APOSD_SOL(data["Solution"]), data["num_paramter"].asUInt());
+        r["objectId"] = convertPointerToStringAddress(calculationmodel);
+        r["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
+        r["num_paramter"] = buff.second;
+        response().out()<<r;
 
-        stringstream convert(num_parameter);
-        int _num_parameter = 0;
-        convert >> _num_parameter;
-
-        // Vérifie que l'objet existe
-        std::vector<MethodBuilder*>::iterator it = std::find(methodList.begin(), methodList.end(), method);
-        if (it != methodList.end()) {
-            Solution<unsigned int> s(solution);
-
-            std::pair<unsigned int, Solution<unsigned int>> apply = method->learning(_num_parameter, s);
-
-            json["solution"] = apply.second.getSolution();
-            json["num_paramter"] = apply.first;
-            response().out() << json;
-        } else {
-            json["error"] = -1;
-            json["error_msg"] = "[-] The method was not initialize";
-            response().out() << json;
-        }
     }
 
     ///
@@ -205,29 +181,42 @@ class WebAposd : public cppcms::application {
     ///
     /// \param id : numero de l'objet
     ///
-    void finish(std::string id) {
-        cppcms::json::value json;
-        MethodBuilder* method = convertAddressStringToPointer<MethodBuilder>(id);
+    void finish(std::string msg) {
+        Json::Value data = stringAsjson(msg);
+        if (data["objectId"].empty()) {
+            cppcms::json::value r;
+            r["ack"] = 0;
+            r["error_msg"] = "[-] \"objectId\" is empty";
+            response().out()<<r;
+            return ;
+        }
+
+
+        // cppcms::json::value json;
+        LearningOnline<APOSD_SOL>* method = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
+        DEBUG_TRACE("finish " + data["objectId"].asString())
 
         // Vérifie que l'objet existe
-        std::vector<MethodBuilder*>::iterator it = std::find(methodList.begin(), methodList.end(), method);
+        std::vector<LearningOnline<APOSD_SOL>*>::iterator it = std::find(methodList.begin(), methodList.end(), method);
+
+        cppcms::json::value r;
         if (it != methodList.end()) {
             methodList.erase(it);
-
-            json["ack"] = 1;  // true | false
-            response().out() << json;
+            r["ack"] = 1;  // true | false
+            response().out()<<r;
         } else {
-            json["error"] = -1;
-            json["error_msg"] = "[-] The method was not initialize";
-            response().out() << json;
+            r["ack"] = 0;
+            r["error_msg"] = "[-] The method was not initialize";
+            response().out()<<r;
         }
     }
 
    private:
-    vector<MethodBuilder*> methodList;
+    vector<LearningOnline<APOSD_SOL> *> methodList;
 };
 
-void CommunicationModel_webApps(int argc, char** argv) {
+void CommunicationModel_webApps(int argc, char** argv, const Json::Value &configuration) {
+    DEBUG_TRACE("CREATE CommunicationModel_webApps")
     try {
         cppcms::service srv(argc, argv);
         srv.applications_pool().mount(cppcms::applications_factory<WebAposd>());
