@@ -1,10 +1,10 @@
 ///
-/// \file solutionSelection.h
-/// \author Jxtopher
-/// \version 1
-/// \copyright CC-BY-NC-SA
-/// \date 2018-10
-/// \brief
+/// @file selection.h
+/// @author Jxtopher
+/// @version 1
+/// @copyright CC-BY-NC-SA
+/// @date 2018-10
+/// @brief
 ///
 
 #ifndef SELECTION_H

@@ -1,9 +1,9 @@
 ///
-/// \file psAdaptivePursuit.h
-/// \author Jxtopher
-/// \version 1
-/// \date 2019-05
-/// \brief Implementation adaptive pursuit strategy
+/// @file psAdaptivePursuit.h
+/// @author Jxtopher
+/// @version 1
+/// @date 2019-05
+/// @brief Implementation adaptive pursuit strategy
 ///		   see : Thierens - 2005 - An adaptive pursuit strategy for allocating operator Probabilities
 ///
 
@@ -68,14 +68,14 @@ class PsAdaptivePursuit : public ParameterSelection {
 	}
 
     ///
-    /// \brief Collective version
+    /// @brief Collective version
     ///
 	void update(vector<pair<double, unsigned int>> &rewards) {
 
 	}
 
     ///
-    /// \brief Individual version
+    /// @brief Individual version
     ///
 	void update(pair<double, unsigned int> &rewards) {
         // rewards.first =  reward (double)

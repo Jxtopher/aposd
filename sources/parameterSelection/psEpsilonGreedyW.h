@@ -79,11 +79,11 @@ class PsEspsilonGreedy : public ParameterSelection {
 			update(*it);
 	}
 
-    ///
-    /// \brief update the reward aggregation for a parameter
-    ///
-    /// \param p : rewards is a pair of raward and parameter
-    ///
+	///
+	/// @brief update the reward aggregation for a parameter
+	/// 
+	/// @param rewards : rewards is a pair of raward and parameter
+	///
 	void update(pair<double, unsigned int> &rewards) {
 		switch (_aggregationFunction)
 		{

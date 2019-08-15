@@ -1,10 +1,10 @@
 ///
-/// \file solution.h
-/// \author Jxtopher
-/// \version 1
-/// \copyright CC-BY-NC-SA
-/// \date 2018-10
-/// \brief defined the solution
+/// @file solution.h
+/// @author Jxtopher
+/// @version 1
+/// @copyright CC-BY-NC-SA
+/// @date 2018-10
+/// @brief defined the solution
 ///
 
 #ifndef SOLUTION_H

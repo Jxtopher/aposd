@@ -33,6 +33,28 @@ include_directories(${Boost_INCLUDE_DIR})
 # find_library(LIB_CPPCMS cppcms)
 include_directories(/usr/local/include)
 
+## Doxygen
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+    configure_file(Doxyfile.in Doxyfile)
+
+    set(DOXYGEN_INPUT ${CMAKE_BINARY_DIR}/Doxyfile)
+    set(DOXYGEN_OUTPUT ${APIDOC_DIR}/html/index.html)
+
+    add_custom_target(doc ALL
+    COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
+    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} > /dev/null
+    COMMAND ${CMAKE_COMMAND} -E echo "Done."
+    )
+
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html 
+        DESTINATION share/doc/${CMAKE_PROJECT_NAME})
+else (DOXYGEN_FOUND)
+    message("Doxygen need to be installed to generate the doxygen documentation")
+endif (DOXYGEN_FOUND)
+
+
+##
 add_executable(aposd-${CMAKE_BUILD_TYPE} sources/main.cpp)
 target_link_libraries(aposd-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${MPI_LIBRARIES})
 target_link_libraries(aposd-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${Boost_LIBRARIES})

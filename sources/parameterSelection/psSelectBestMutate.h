@@ -1,9 +1,9 @@
 ///
-/// \file psSelectBestMutate.h
-/// \author Jxtopher
-/// \version 1
-/// \date 2019-05
-/// \brief Implementation Select best mutate
+/// @file psSelectBestMutate.h
+/// @author Jxtopher
+/// @version 1
+/// @date 2019-05
+/// @brief Implementation Select best mutate
 ///		   see : Derbel et Verel - 2011 - DAMS distributed adaptive metaheuristic selection
 ///
 

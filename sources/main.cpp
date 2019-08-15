@@ -1,10 +1,10 @@
 ///
-/// \file main.h
-/// \author Jxtopher
-/// \version 1
-/// \copyright CC-BY-NC-SA
-/// \date 2019-03
-/// \brief 
+/// @file main.cpp
+/// @author Jxtopher
+/// @version 1
+/// @copyright CC-BY-NC-SA
+/// @date 2019-03
+/// @brief 
 ///
 
 // -> MPI ---------------------
@@ -28,6 +28,8 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 #include <jsoncpp/json/json.h>
 #include <fstream>
 
+#include <boost/program_options.hpp>
+
 #include "communicationModel/communicationModel.h"
 #include "communicationModel/aposd_mpi.h"
 #include "communicationModel/aposd_webApps.h"
@@ -46,7 +48,6 @@ void version(string name_software, string num_version) {
 }
 
 int main(int argc, char **argv) {
-	Settings settings(argc, argv);
     string configFile; // Chemin du ficher de configuration json
 
 	boost::program_options::variables_map vm;
@@ -63,6 +64,11 @@ int main(int argc, char **argv) {
 
 	if (vm.count("version")) {
 			version("Adaptive Portfolio Selection Distributed", "1");
+			exit(EXIT_SUCCESS);
+	}
+
+	if (vm.count("help")) {
+			cout<<argements<<endl;
 			exit(EXIT_SUCCESS);
 	}
 

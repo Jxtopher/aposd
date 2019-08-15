@@ -1,8 +1,8 @@
 ///
-/// \file aposd_webApps.h
-/// \author Jxtopher
-/// \date 2019-08
-/// \brief Mode de communication SaaS
+/// @file aposd_webApps.h
+/// @author Jxtopher
+/// @date 2019-08
+/// @brief Mode de communication SaaS
 ///        https://en.wikipedia.org/wiki/JSON-RPC
 ///
 
@@ -87,7 +87,7 @@ cppcms::json::value jsonValueASJsonCppcms(const Json::Value &jsonValue) {
 
 ///
 /// \class WebAposd
-/// \brief Définie l'application web de Aposd avec cppcms.
+/// @brief Définie l'application web de Aposd avec cppcms.
 ///        Automate : initialization -> learning (many time) ->finish
 ///
 class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server {
@@ -118,9 +118,9 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     // }
 
     ///
-    /// \brief construction de l'objet
+    /// @brief construction de l'objet
     ///
-    /// \param nbParameter : le nombre de paramètre à considérer
+    /// @param nbParameter : le nombre de paramètre à considérer
     ///
     //void initialization(std::string nbParameter) {
     void initialization(std::string msg) {
@@ -155,11 +155,11 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     }
 
     ///
-    /// \brief apprentissage adaptative
+    /// @brief apprentissage adaptative
     ///
-    /// \param id : numero de l'objet
-    /// \param num_parameter : numero du parametre utiliser
-    /// \param solution : nouvelle solution avec la fitness
+    /// @param id : numero de l'objet
+    /// @param num_parameter : numero du parametre utiliser
+    /// @param solution : nouvelle solution avec la fitness
     ///
     void learning(std::string msg) {
         Json::Value data = stringAsjson(msg);
@@ -177,9 +177,9 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     }
 
     ///
-    /// \brief destruction de l'objet
+    /// @brief destruction de l'objet
     ///
-    /// \param id : numero de l'objet
+    /// @param id : numero de l'objet
     ///
     void finish(std::string msg) {
         Json::Value data = stringAsjson(msg);

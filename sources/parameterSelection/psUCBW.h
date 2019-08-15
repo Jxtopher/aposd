@@ -1,9 +1,9 @@
 ///
-/// \file psUCBW.h
-/// \author Jxtopher
-/// \version 1
-/// \date 2019-05
-/// \brief Implementation UCB with sliding windows
+/// @file psUCBW.h
+/// @author Jxtopher
+/// @version 1
+/// @date 2019-05
+/// @brief Implementation UCB with sliding windows
 ///		   see : Auer - 2002 - Finite-time Analysis of the Multiarmed Bandit Problem
 ///        see : DaCosta et al. - 2008 - Adaptive Operator Selection with Dynamic Multi-Armed Bandits
 ///
@@ -81,9 +81,9 @@ class PsUCBW : public ParameterSelection {
 	}
 
     ///
-    /// \brief update the reward aggregation for a parameter
+    /// @brief update the reward aggregation for a parameter
     ///
-    /// \param p : rewards is a pair of raward and parameter
+    /// @param p : rewards is a pair of raward and parameter
     ///
 	void update(pair<double, unsigned int> &rewards) {
         // Update rewardAggregation

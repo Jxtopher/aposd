@@ -20,7 +20,6 @@
 #include "../rewardComputation/rewardComputation.h"
 #include "../selection/selection.h"
 #include "../selection/selection_maximization.h"
-#include "../settings/settings.h"
 #include "../solution/solution.h"
 #include "classBuilder.h"
 

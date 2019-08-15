@@ -1,10 +1,10 @@
 ///
-/// \file stoppingCriteria.h
-/// \author Jxtopher
-/// \version 1
-/// \copyright CC-BY-NC-SA
-/// \date 2019-03
-/// \brief 
+/// @file stoppingCriteria.h
+/// @author Jxtopher
+/// @version 1
+/// @copyright CC-BY-NC-SA
+/// @date 2019-03
+/// @brief 
 ///
 
 #ifndef STOPPINGCRITERIA_H

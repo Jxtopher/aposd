@@ -1,9 +1,9 @@
 /// 
-/// \file aposd_sequential.h
-/// \author Jxtopher
-/// \brief 
-/// \version 0.1
-/// \date 2019-08-13
+/// @file aposd_sequential.h
+/// @author Jxtopher
+/// @brief 
+/// @version 0.1
+/// @date 2019-08-13
 /// 
 /// 
 
