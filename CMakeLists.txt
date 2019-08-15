@@ -33,31 +33,48 @@ include_directories(${Boost_INCLUDE_DIR})
 # find_library(LIB_CPPCMS cppcms)
 include_directories(/usr/local/include)
 
+pkg_check_modules(CPPUNIT cppunit)
+link_libraries(${CPPUNIT_LIBRARIES})
+
 ## Doxygen
-find_package(Doxygen)
-if (DOXYGEN_FOUND)
-    configure_file(Doxyfile.in Doxyfile)
+# find_package(Doxygen)
+# if (DOXYGEN_FOUND)
+#     configure_file(Doxyfile.in Doxyfile)
 
-    set(DOXYGEN_INPUT ${CMAKE_BINARY_DIR}/Doxyfile)
-    set(DOXYGEN_OUTPUT ${APIDOC_DIR}/html/index.html)
+#     set(DOXYGEN_INPUT ${CMAKE_BINARY_DIR}/Doxyfile)
+#     set(DOXYGEN_OUTPUT ${APIDOC_DIR}/html/index.html)
 
-    add_custom_target(doc ALL
-    COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
-    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} > /dev/null
-    COMMAND ${CMAKE_COMMAND} -E echo "Done."
-    )
+#     add_custom_target(doc ALL
+#     COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
+#     COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} > /dev/null
+#     COMMAND ${CMAKE_COMMAND} -E echo "Done."
+#     )
 
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html 
-        DESTINATION share/doc/${CMAKE_PROJECT_NAME})
-else (DOXYGEN_FOUND)
-    message("Doxygen need to be installed to generate the doxygen documentation")
-endif (DOXYGEN_FOUND)
+#     install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html 
+#         DESTINATION share/doc/${CMAKE_PROJECT_NAME})
+# else (DOXYGEN_FOUND)
+#     message("Doxygen need to be installed to generate the doxygen documentation")
+# endif (DOXYGEN_FOUND)
 
 
-##
-add_executable(aposd-${CMAKE_BUILD_TYPE} sources/main.cpp)
-target_link_libraries(aposd-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${MPI_LIBRARIES})
-target_link_libraries(aposd-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${Boost_LIBRARIES})
-target_link_libraries(aposd-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${LIB_CPPCMS_LIBRARIES})
-target_link_libraries(aposd-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${JSONCPP_LIBRARIES})
-target_link_libraries(aposd-${CMAKE_BUILD_TYPE} LINK_PUBLIC /usr/local/lib/libcppcms.so.1.2.1)
+## Aposd
+add_executable(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} sources/main.cpp)
+target_link_libraries(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${MPI_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${LIB_CPPCMS_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${JSONCPP_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} LINK_PUBLIC /usr/local/lib/libcppcms.so.1.2.1)
+
+
+## Aposd unit test
+add_executable(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} sources/unitTest.cpp)
+target_link_libraries(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${MPI_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${LIB_CPPCMS_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${JSONCPP_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} LINK_PUBLIC /usr/local/lib/libcppcms.so.1.2.1)
+target_link_libraries(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${CPPUNIT_LIBRARIES})
+
+## Test unitaire
+enable_testing()
+add_test(NAME ${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} COMMAND "${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE}")
