@@ -30,6 +30,7 @@ class PsEspsilonGreedy : public ParameterSelection {
 		_heterogeneityPolicy(heterogeneityPolicy) {
 			assert(0 <= _espilon && _espilon <= 1);
 			
+			initEachParameter = 0;
 			urd = new uniform_real_distribution<>(0.0, 1.0);
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 			slidingWindow.set_capacity(windowSize);
@@ -44,7 +45,8 @@ class PsEspsilonGreedy : public ParameterSelection {
 		_espilon(c._espilon),
 		_windowSize(c._windowSize),
 		_aggregationFunction(c._aggregationFunction),
-		_heterogeneityPolicy(c._heterogeneityPolicy)  {
+		_heterogeneityPolicy(c._heterogeneityPolicy),
+		initEachParameter(c.initEachParameter)  {
 			urd = new uniform_real_distribution<>(0.0, 1.0);
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 			slidingWindow.set_capacity(_windowSize);
@@ -131,18 +133,18 @@ class PsEspsilonGreedy : public ParameterSelection {
 				case HeterogeneityPolicy::HETEROGENOUS:
 					for (unsigned int i = 0 ; i < nbNodes ; i++) {
 						if (urd->operator()(*(this->_mt_rand)) <= _espilon)
-							parameterList.push_back(bestParameter);
-						else
 							parameterList.push_back(uid->operator()(*(this->_mt_rand)));
+						else
+							parameterList.push_back(bestParameter);
 					}
 					break;
 				case HeterogeneityPolicy::HOMOGENEOUS:
 					if (urd->operator()(*(this->_mt_rand)) <= _espilon) {
 						for (unsigned int i = 0 ; i < nbNodes ; i++)
-							parameterList.push_back(bestParameter);
+							parameterList.push_back(uid->operator()(*(this->_mt_rand)));
 					} else {
 						for (unsigned int i = 0 ; i < nbNodes ; i++)
-							parameterList.push_back(uid->operator()(*(this->_mt_rand)));
+							parameterList.push_back(bestParameter);
 					}
 					break;
 				default:
@@ -158,9 +160,9 @@ class PsEspsilonGreedy : public ParameterSelection {
 		if (initEachParameter < this->_nbParameter) {
 			return initEachParameter++;
 		} else if (urd->operator()(*(this->_mt_rand)) <= _espilon) {
-			return distance(rewardAggregation.get(), max_element(rewardAggregation.get(), rewardAggregation.get() + this->_nbParameter));
-		} else {
 			return uid->operator()(*(this->_mt_rand));
+		} else {
+			return distance(rewardAggregation.get(), max_element(rewardAggregation.get(), rewardAggregation.get() + this->_nbParameter));
 		}
 	}
 
@@ -170,10 +172,14 @@ class PsEspsilonGreedy : public ParameterSelection {
 		return rewardAggregation[parameter];
 	}
 
+    string className() const {
+        return "PsEspsilonGreedy";
+    }
+
 	protected:
 	std::shared_ptr<std::mt19937> _mt_rand;
-	const double &_espilon;
-	const unsigned int &_windowSize;
+	const double _espilon;
+	const unsigned int _windowSize;
 	const AggregationFunction _aggregationFunction;
 	const HeterogeneityPolicy _heterogeneityPolicy;
 	uniform_real_distribution<> *urd;

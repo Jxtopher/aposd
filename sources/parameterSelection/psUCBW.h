@@ -150,6 +150,10 @@ class PsUCBW : public ParameterSelection {
 		}
 	}
 
+    string className() const {
+        return "PsUCBW";
+    }
+
 	protected:
 	std::shared_ptr<std::mt19937> _mt_rand;
     const double &_C;

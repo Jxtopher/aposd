@@ -134,6 +134,10 @@ class PsSelectBestMutate : public ParameterSelection {
 		return uid->operator()(*(this->_mt_rand));
 	}
 
+    string className() const {
+        return "PsSelectBestMutate";
+    }
+
 	protected:
 	std::shared_ptr<std::mt19937> _mt_rand;
 	const double _espilon;

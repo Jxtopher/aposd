@@ -110,6 +110,10 @@ class PsAdaptivePursuit : public ParameterSelection {
 		return uid->operator()(*(this->_mt_rand));
 	}
 
+    string className() const {
+        return "PsAdaptivePursuit";
+    }
+
 	protected:
 	std::shared_ptr<std::mt19937> _mt_rand;
 	const double _alpha;   // adaptation rate

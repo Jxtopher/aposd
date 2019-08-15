@@ -70,6 +70,10 @@ class PsRandom : public ParameterSelection {
 		return uid->operator()(*(this->_mt_rand));
 	}
 
+    string className() const {
+        return "PsRandom";
+    }
+
 	protected:
 	std::shared_ptr<std::mt19937> _mt_rand;
 	const HeterogeneityPolicy _heterogeneityPolicy;

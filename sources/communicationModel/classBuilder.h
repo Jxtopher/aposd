@@ -58,7 +58,7 @@ public:
         } else if (configuration["className"].asString() == ParameterSelection::RANDOM) {
             _parameterSelection = make_unique<PsRandom>(_mt_rand, configuration["nbParameter"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::SELECTBESTMUTATE) {
-            _parameterSelection = make_unique<PsRandom>(_mt_rand, configuration["nbParameter"].asUInt());
+            //_parameterSelection = make_unique<PsSelectBestMutate>(_mt_rand, configuration["nbParameter"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::UCBW) {
             _parameterSelection = make_unique<PsUCBW>(_mt_rand, configuration["nbParameter"].asUInt()); 
         } else {

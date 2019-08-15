@@ -93,26 +93,29 @@ cppcms::json::value jsonValueASJsonCppcms(const Json::Value &jsonValue) {
 class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server {
    public:
     WebAposd(cppcms::service& srv) : cppcms::rpc::json_rpc_server(srv) {
-        bind("notify", cppcms::rpc::json_method(&WebAposd::notify, this));
-        bind("test", cppcms::rpc::json_method(&WebAposd::test, this));
+        bind("echo", cppcms::rpc::json_method(&WebAposd::echo, this));
+        // bind("ping", cppcms::rpc::json_method(&WebAposd::ping, this));
         bind("initialization", cppcms::rpc::json_method(&WebAposd::initialization, this));
         bind("learning", cppcms::rpc::json_method(&WebAposd::learning, this));
         bind("finish", cppcms::rpc::json_method(&WebAposd::finish, this));
     }
 
     // curl -i -X POST --header "Content-Type:application/json" -d '{"method":"notify", "params":["msgxxxxxxxxxxxxxxxxxxxxxx"], "id":1}' http://127.0.0.1:8080/
-    void notify(std::string msg) { 
-        std::cout << "We got notification " << msg << std::endl;
+    void echo(std::string msg) { 
+        DEBUG_TRACE("echo")
         cppcms::json::value json;
-        json["test"] = "test";  // true | false
+        json["your_msg"] = msg;  // true | false
+        json["help"] = "initialization | learning | finish";
         response().out() << json;
     }
 
-    void test() {
-        cppcms::json::value json;
-        json["test"] = "test";  // true | false
-        response().out() << json;
-    }
+    // void ping(std::string msg) { 
+    //     DEBUG_TRACE("echo")
+    //     cppcms::json::value json;
+    //     json["pong"] = msg;  // true | false
+    //     json["timer"] = "";
+    //     response().out() << json;
+    // }
 
     ///
     /// \brief construction de l'objet
@@ -131,12 +134,10 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
 
         std::unique_ptr<ClassBuilder> classBuilder = std::make_unique<ClassBuilder>(mt_rand);
 
-        std::unique_ptr<Launcher> launcher = classBuilder->launcher(configuration["CalculationModel"]["Launcher"]);
         std::unique_ptr<ParameterSelection> parameterSelection = classBuilder->parameterSelection(configuration["CalculationModel"]["ParameterSelection"]);
         std::unique_ptr<RewardComputation<APOSD_SOL>> rewardComputation = classBuilder->rewardComputation<APOSD_SOL>(configuration["CalculationModel"]["RewardComputation"]);
 
-        LearningOnline<APOSD_SOL> *calculationmodel = new LearningOnline<APOSD_SOL>(
-            std::move(launcher), 
+        LearningOnline<APOSD_SOL> *calculationmodel = new LearningOnline<APOSD_SOL>( 
             std::move(parameterSelection), 
             std::move(rewardComputation));
 
@@ -163,6 +164,7 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     void learning(std::string msg) {
         Json::Value data = stringAsjson(msg);
         LearningOnline<APOSD_SOL>* calculationmodel = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
+        DEBUG_TRACE("learning " + convertPointerToStringAddress(calculationmodel))
         
         // Response
         cppcms::json::value r;
@@ -181,6 +183,15 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     ///
     void finish(std::string msg) {
         Json::Value data = stringAsjson(msg);
+        if (data["objectId"].empty()) {
+            cppcms::json::value r;
+            r["ack"] = 0;
+            r["error_msg"] = "[-] \"objectId\" is empty";
+            response().out()<<r;
+            return ;
+        }
+
+
         // cppcms::json::value json;
         LearningOnline<APOSD_SOL>* method = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
         DEBUG_TRACE("finish " + data["objectId"].asString())
@@ -191,7 +202,6 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
         cppcms::json::value r;
         if (it != methodList.end()) {
             methodList.erase(it);
-            
             r["ack"] = 1;  // true | false
             response().out()<<r;
         } else {

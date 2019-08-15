@@ -11,7 +11,7 @@ using namespace std;
 
 class UnitTest_psSelectBestMutate : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(UnitTest_psSelectBestMutate);
-    CPPUNIT_TEST(test_update);
+    CPPUNIT_TEST(update);
     CPPUNIT_TEST_SUITE_END();
 
     public:
@@ -22,7 +22,7 @@ class UnitTest_psSelectBestMutate : public CppUnit::TestFixture {
     void tearDown(void) {
     }
 
-    void test_update(void) {
+    void update(void) {
     }
 
     private:

@@ -2,9 +2,9 @@
 #define	SELECTIONSTRATEGIE_H
 
 #include <vector>
+#include <string>
 
 using namespace std;
-
 
 enum class AggregationFunction {
 	MAX,
@@ -44,6 +44,7 @@ class ParameterSelection {
 		}
 		virtual vector<unsigned int> getParameter(const unsigned int nbNodes) = 0;
 		virtual unsigned int getParameter() = 0;
+		virtual string className() const = 0;
 
 	protected:
 		const unsigned int _nbParameter;
