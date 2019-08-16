@@ -58,15 +58,15 @@ class UnitTest_PsEspsilonGreedyW : public CppUnit::TestFixture {
     void getParameter(void) {
         std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
 		unsigned int nbParameter = 2;
-		const double espilon = 1;
+		const double espilon = 0.01;
 		const unsigned int windowSize = 5;
         PsEspsilonGreedy egreedy(mt_rand, nbParameter, espilon, windowSize);
 
-        pair<double, unsigned int> r1(1, 0);    // Parameter 0, reward = 1
-        pair<double, unsigned int> r2(5, 1);    // Parameter 1, reward = 5
+        pair<double, unsigned int> r0(5, 0);    // Parameter 0, reward = 1
+        pair<double, unsigned int> r1(1, 1);    // Parameter 1, reward = 5
 
+        egreedy.update(r0);
         egreedy.update(r1);
-        egreedy.update(r2);
 
         unsigned int p0 = 0, p1 = 0;
         for (unsigned int i = 0 ; i < 50 ; i++) {
@@ -77,7 +77,8 @@ class UnitTest_PsEspsilonGreedyW : public CppUnit::TestFixture {
                 p1++;
             }
         }
-        // CPPUNIT_ASSERT(p1 < p0);
+        CPPUNIT_ASSERT(p1 < p0);
+        CPPUNIT_ASSERT(25 < (p0 - p1));
     }
 
     private:

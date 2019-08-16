@@ -20,8 +20,8 @@ class PsEspsilonGreedy : public ParameterSelection {
 		unsigned int nbParameter, 
 		const double espilon = 0.01,
 		const unsigned int windowSize = 150,
-		AggregationFunction aggregationFunction = AggregationFunction::MEAN,
-		HeterogeneityPolicy heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
+		const char* aggregationFunction = AggregationFunction::MEAN,
+		const char* heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
 		ParameterSelection(nbParameter),
 		_mt_rand(mt_rand),
 		_espilon(espilon),
@@ -85,38 +85,33 @@ class PsEspsilonGreedy : public ParameterSelection {
 	/// @param rewards : rewards is a pair of raward and parameter
 	///
 	void update(pair<double, unsigned int> &rewards) {
-		switch (_aggregationFunction)
-		{
-			case AggregationFunction::MAX:
-				assert(false);
-				// NEED implementation
-				slidingWindow.push_front(rewards);
-				{
+		if (_aggregationFunction == AggregationFunction::MAX) {
+			assert(false);
+			// NEED implementation
+			slidingWindow.push_front(rewards);
+			{
 
-				}
-				break;
-			case AggregationFunction::MEAN:
-				if (slidingWindow.full()) {
-					unsigned int r = slidingWindow.back().first;  // Reward
-					unsigned int p = slidingWindow.back().second; // Parameter
-					assert(p < this->_nbParameter);
-					rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] - r) / (numberSelect[p] - 1);
-					numberSelect[p]--;
-				}
+			}
+		} else if (_aggregationFunction == AggregationFunction::MEAN) {
+			if (slidingWindow.full()) {
+				unsigned int r = slidingWindow.back().first;  // Reward
+				unsigned int p = slidingWindow.back().second; // Parameter
+				assert(p < this->_nbParameter);
+				rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] - r) / (numberSelect[p] - 1);
+				numberSelect[p]--;
+			}
 
-				slidingWindow.push_front(rewards);
+			slidingWindow.push_front(rewards);
 
-				{
-					unsigned int r = slidingWindow.begin()->first;  // Reward
-					unsigned int p = slidingWindow.begin()->second; // Parameter
-					assert(p < this->_nbParameter);
-					rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] + r) / (numberSelect[p] + 1);
-					numberSelect[p]++;
-				}
-				break;
-			default:
-				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The aggregation function is not defined");
-				break;
+			{
+				unsigned int r = slidingWindow.begin()->first;  // Reward
+				unsigned int p = slidingWindow.begin()->second; // Parameter
+				assert(p < this->_nbParameter);
+				rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] + r) / (numberSelect[p] + 1);
+				numberSelect[p]++;
+			}
+		} else {
+			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The aggregation function is not defined");
 		}
 	}
 
@@ -129,28 +124,23 @@ class PsEspsilonGreedy : public ParameterSelection {
 			initEachParameter++;
 		} else {
 			unsigned int bestParameter = distance(rewardAggregation.get(), max_element(rewardAggregation.get(), rewardAggregation.get() + this->_nbParameter));
-			switch (_heterogeneityPolicy) {
-				case HeterogeneityPolicy::HETEROGENOUS:
-					for (unsigned int i = 0 ; i < nbNodes ; i++) {
-						if (urd->operator()(*(this->_mt_rand)) <= _espilon)
-							parameterList.push_back(uid->operator()(*(this->_mt_rand)));
-						else
-							parameterList.push_back(bestParameter);
-					}
-					break;
-				case HeterogeneityPolicy::HOMOGENEOUS:
-					if (urd->operator()(*(this->_mt_rand)) <= _espilon) {
-						for (unsigned int i = 0 ; i < nbNodes ; i++)
-							parameterList.push_back(uid->operator()(*(this->_mt_rand)));
-					} else {
-						for (unsigned int i = 0 ; i < nbNodes ; i++)
-							parameterList.push_back(bestParameter);
-					}
-					break;
-				default:
-					throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The policy model is not defined");
-					break;
-			}
+			if (_heterogeneityPolicy == HeterogeneityPolicy::HETEROGENOUS) {
+				for (unsigned int i = 0 ; i < nbNodes ; i++) {
+					if (urd->operator()(*(this->_mt_rand)) <= _espilon)
+						parameterList.push_back(uid->operator()(*(this->_mt_rand)));
+					else
+						parameterList.push_back(bestParameter);
+				}
+			} else if (_heterogeneityPolicy == HeterogeneityPolicy::HOMOGENEOUS) {
+				if (urd->operator()(*(this->_mt_rand)) <= _espilon) {
+					for (unsigned int i = 0 ; i < nbNodes ; i++)
+						parameterList.push_back(uid->operator()(*(this->_mt_rand)));
+				} else {
+					for (unsigned int i = 0 ; i < nbNodes ; i++)
+						parameterList.push_back(bestParameter);
+				}
+			} else 
+				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The policy model is not defined");
 		}
 				
 		return parameterList;
@@ -180,8 +170,8 @@ class PsEspsilonGreedy : public ParameterSelection {
 	std::shared_ptr<std::mt19937> _mt_rand;
 	const double _espilon;
 	const unsigned int _windowSize;
-	const AggregationFunction _aggregationFunction;
-	const HeterogeneityPolicy _heterogeneityPolicy;
+	const char* _aggregationFunction;
+	const char* _heterogeneityPolicy;
 	uniform_real_distribution<> *urd;
 	uniform_int_distribution<unsigned int> *uid;
 	circular_buffer<pair<double, unsigned int>> slidingWindow;

@@ -27,7 +27,7 @@ class PsUCBW : public ParameterSelection {
 		unsigned int nbParameter,
         const double C = 0.03,
         const unsigned int windowSize = 300,
-		AggregationFunction aggregationFunction = AggregationFunction::MEAN) :
+		const char* aggregationFunction = AggregationFunction::MEAN) :
 		ParameterSelection(nbParameter),
 		_mt_rand(mt_rand),
         _C(C),
@@ -80,44 +80,39 @@ class PsUCBW : public ParameterSelection {
 			update(*it);
 	}
 
-    ///
-    /// @brief update the reward aggregation for a parameter
-    ///
-    /// @param p : rewards is a pair of raward and parameter
-    ///
+	///
+	/// @brief update the reward aggregation for a parameter
+	/// 
+	/// @param rewards is a pair of raward and parameter
+	///
 	void update(pair<double, unsigned int> &rewards) {
         // Update rewardAggregation
-		switch (_aggregationFunction) {
-			case AggregationFunction::MAX:
-				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] function is not defined");
-				slidingWindow.push_front(rewards);
-				{
+		if (_aggregationFunction == AggregationFunction::MAX) {
+			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] function is not defined");
+			slidingWindow.push_front(rewards);
+			{
 
-				}
-				break;
-			case AggregationFunction::MEAN:
-				if (slidingWindow.full()) {
-					unsigned int r = slidingWindow.back().first;  // Reward
-					unsigned int p = slidingWindow.back().second; // Parameter
-					assert(p < this->_nbParameter);
-					rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] - r) / (numberSelect[p] - 1);
-					numberSelect[p]--;
-				}
+			}
+		} else if (_aggregationFunction == AggregationFunction::MEAN) {
+			if (slidingWindow.full()) {
+				unsigned int r = slidingWindow.back().first;  // Reward
+				unsigned int p = slidingWindow.back().second; // Parameter
+				assert(p < this->_nbParameter);
+				rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] - r) / (numberSelect[p] - 1);
+				numberSelect[p]--;
+			}
 
-				slidingWindow.push_front(rewards);
+			slidingWindow.push_front(rewards);
 
-				{
-					unsigned int r = slidingWindow.begin()->first;  // Reward
-					unsigned int p = slidingWindow.begin()->second; // Parameter
-					assert(p < this->_nbParameter);
-					rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] + r) / (numberSelect[p] + 1);
-					numberSelect[p]++;
-				}
-				break;
-			default:
-				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The aggregation function is not defined");
-				break;
-		}
+			{
+				unsigned int r = slidingWindow.begin()->first;  // Reward
+				unsigned int p = slidingWindow.begin()->second; // Parameter
+				assert(p < this->_nbParameter);
+				rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] + r) / (numberSelect[p] + 1);
+				numberSelect[p]++;
+			}
+		} else
+			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The aggregation function is not defined");
 
         // Update Q
         for (unsigned int i = 0 ; i < this->_nbParameter ; i++) {
@@ -158,7 +153,7 @@ class PsUCBW : public ParameterSelection {
 	std::shared_ptr<std::mt19937> _mt_rand;
     const double &_C;
     const unsigned int &_windowSize;
-	const AggregationFunction _aggregationFunction;
+	const char* _aggregationFunction;
     circular_buffer<pair<double, unsigned int>> slidingWindow;
 
 	uniform_int_distribution<unsigned int> *uid;

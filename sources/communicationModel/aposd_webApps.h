@@ -117,12 +117,12 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     //     response().out() << json;
     // }
 
+
     ///
     /// @brief construction de l'objet
+    /// 
+    /// @param msg 
     ///
-    /// @param nbParameter : le nombre de paramètre à considérer
-    ///
-    //void initialization(std::string nbParameter) {
     void initialization(std::string msg) {
         Json::Value configuration = stringAsjson(msg);
 
@@ -156,10 +156,8 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
 
     ///
     /// @brief apprentissage adaptative
-    ///
-    /// @param id : numero de l'objet
-    /// @param num_parameter : numero du parametre utiliser
-    /// @param solution : nouvelle solution avec la fitness
+    /// 
+    /// @param msg 
     ///
     void learning(std::string msg) {
         Json::Value data = stringAsjson(msg);
@@ -178,8 +176,8 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
 
     ///
     /// @brief destruction de l'objet
-    ///
-    /// @param id : numero de l'objet
+    /// 
+    /// @param msg
     ///
     void finish(std::string msg) {
         Json::Value data = stringAsjson(msg);

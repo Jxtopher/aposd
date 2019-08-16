@@ -23,8 +23,8 @@ class PsAdaptivePursuit : public ParameterSelection {
         const double beta = 0.2,
         const double p_min = 0.1,
         const double p_max = 0.9,
-        AggregationFunction aggregationFunction = AggregationFunction::MEAN,
-		HeterogeneityPolicy heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
+        const char* aggregationFunction = AggregationFunction::MEAN,
+		const char* heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
         ParameterSelection(nbParameter),
 		_mt_rand(mt_rand),
         _alpha(alpha),
@@ -48,8 +48,8 @@ class PsAdaptivePursuit : public ParameterSelection {
         _aggregationFunction(c._aggregationFunction),
 		_heterogeneityPolicy(c._heterogeneityPolicy)  {
 			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
-            rewardEstimate = std::unique_ptr<double []>(new double[_nbParameter]);
-           	selectionProbability = std::unique_ptr<double []>(new double[_nbParameter]);
+            rewardEstimate = std::make_unique<double []>(_nbParameter);
+           	selectionProbability = std::make_unique<double []>(_nbParameter);
 			
 			for (unsigned int i = 0 ; i < _nbParameter ; i++) {
 				rewardEstimate[i] = c.rewardEstimate[i]; 
@@ -86,23 +86,17 @@ class PsAdaptivePursuit : public ParameterSelection {
 	vector<unsigned int> getParameter(const unsigned int nbNodes) {
 		vector<unsigned int> parameterList;
 		
-		switch (_heterogeneityPolicy) {
-			case HeterogeneityPolicy::HETEROGENOUS:
-				for (unsigned int i = 0 ; i < nbNodes ; i++)
-					parameterList.push_back(uid->operator()(*(this->_mt_rand)));
-				break;
-			case HeterogeneityPolicy::HOMOGENEOUS:
-				{
-				unsigned int pick = uid->operator()(*(this->_mt_rand));
-				for (unsigned int i = 0 ; i < nbNodes ; i++)
-					parameterList.push_back(pick);
-				}
-				break;
-			default:
-				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The policy model is not defined");
-				break;
+		if (_heterogeneityPolicy == HeterogeneityPolicy::HETEROGENOUS) {
+			for (unsigned int i = 0 ; i < nbNodes ; i++)
+				parameterList.push_back(uid->operator()(*(this->_mt_rand)));
+		} else if (_heterogeneityPolicy == HeterogeneityPolicy::HOMOGENEOUS) {
+			unsigned int pick = uid->operator()(*(this->_mt_rand));
+			for (unsigned int i = 0 ; i < nbNodes ; i++)
+				parameterList.push_back(pick);
+		} else {
+			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The policy model is not defined");
 		}
-
+		
 		return parameterList;
 	}
 
@@ -121,8 +115,8 @@ class PsAdaptivePursuit : public ParameterSelection {
     const double _p_min;
 	const double _p_max;
 	
-    const AggregationFunction _aggregationFunction;
-	const HeterogeneityPolicy _heterogeneityPolicy;
+    const char* _aggregationFunction;
+	const char* _heterogeneityPolicy;
 
     unsigned int initEachParameter;
 	uniform_int_distribution<unsigned int> *uid;

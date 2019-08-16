@@ -6,15 +6,17 @@
 
 using namespace std;
 
-enum class AggregationFunction {
-	MAX,
-	MEAN
+class AggregationFunction {
+	public:
+	static constexpr const char* MAX = "max";
+	static constexpr const char* MEAN = "mean";
 };
 
-enum class HeterogeneityPolicy {
-	NONE,
-	HOMOGENEOUS,
-	HETEROGENOUS
+class HeterogeneityPolicy {
+	public:
+	static constexpr const char* NONE = "none";
+	static constexpr const char* HOMOGENEOUS = "homogeneous";
+	static constexpr const char* HETEROGENOUS = "heterogenous";
 };
 
 class ParameterSelection {

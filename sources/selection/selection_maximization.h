@@ -1,5 +1,5 @@
 ///
-/// @file solutionSelection_best.h
+/// @file selection_maximization.h
 /// @author Jxtopher
 /// @version 1
 /// @copyright CC-BY-NC-SA
