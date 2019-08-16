@@ -29,8 +29,9 @@ public:
         return pair<SOL, unsigned int>(solution_t0, 0);
     }
 
-    pair<SOL, unsigned int> run(const SOL &s, unsigned int parameter) {
-        solution_t1 = s;
+    pair<SOL, unsigned int> run(const SOL &s_t0, const SOL s_t1, unsigned int parameter) {
+        solution_t1 = s_t0;
+        solution_t1 = s_t1;
         
         pair<double, unsigned int> rewardOp = _rewardComputation->operator()(solution_t0, solution_t1, parameter);
 

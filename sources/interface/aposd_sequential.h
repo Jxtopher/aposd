@@ -18,10 +18,10 @@
 #include "classBuilder.h"
 #include "../solution/solution.h"
 
-void CommunicationModel_sequential(int argc, char** argv, const Json::Value &configuration);
+void Interface_sequential(int argc, char** argv, const Json::Value &configuration);
 
-void CommunicationModel_sequential(int argc, char** argv, const Json::Value &configuration) {
-    DEBUG_TRACE("CREATE CommunicationModel_sequential")
+void Interface_sequential(int argc, char** argv, const Json::Value &configuration) {
+    DEBUG_TRACE("CREATE Interface_sequential")
     std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
 
     if (!configuration["seed"].empty())

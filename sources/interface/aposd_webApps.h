@@ -35,7 +35,7 @@ using namespace std;
 
 using APOSD_SOL = Solution<unsigned int>;
 
-void CommunicationModel_webApps(int argc, char** argv, const Json::Value &configuration);
+void Interface_webApps(int argc, char** argv, const Json::Value &configuration);
 string jsonAsString(const Json::Value &json);
 Json::Value stringAsjson(const string &strJson);
 cppcms::json::value jsonValueASJsonCppcms(const Json::Value &jsonValue);
@@ -90,7 +90,7 @@ cppcms::json::value jsonValueASJsonCppcms(const Json::Value &jsonValue) {
 /// @brief Définie l'application web de Aposd avec cppcms.
 ///        Automate : initialization -> learning (many time) ->finish
 ///
-class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server {
+class WebAposd : public Interface, public cppcms::rpc::json_rpc_server {
    public:
     WebAposd(cppcms::service& srv) : cppcms::rpc::json_rpc_server(srv) {
         bind("echo", cppcms::rpc::json_method(&WebAposd::echo, this));
@@ -166,12 +166,11 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
         
         // Response
         cppcms::json::value r;
-        std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->run(APOSD_SOL(data["Solution"]), data["num_paramter"].asUInt());
+        std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->run(APOSD_SOL(data["Solution_t0"]), APOSD_SOL(data["Solution_t1"]),  data["num_paramter"].asUInt());
         r["objectId"] = convertPointerToStringAddress(calculationmodel);
         r["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
         r["num_paramter"] = buff.second;
         response().out()<<r;
-
     }
 
     ///
@@ -213,8 +212,8 @@ class WebAposd : public CommunicationModel, public cppcms::rpc::json_rpc_server 
     vector<LearningOnline<APOSD_SOL> *> methodList;
 };
 
-void CommunicationModel_webApps(int argc, char** argv, const Json::Value &configuration) {
-    DEBUG_TRACE("CREATE CommunicationModel_webApps")
+void Interface_webApps(int argc, char** argv, const Json::Value &configuration) {
+    DEBUG_TRACE("CREATE Interface_webApps")
     try {
         cppcms::service srv(argc, argv);
         srv.applications_pool().mount(cppcms::applications_factory<WebAposd>());

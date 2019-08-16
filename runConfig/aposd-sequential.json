@@ -1,7 +1,7 @@
 {
     "aposd": {
         "seed": 0,
-        "CommunicationModel": "SEQUENTIAL",
+        "Interface": "SEQUENTIAL",
         "CalculationModel": {
             "className": "SequentialModel",
             "ParameterSelection": {

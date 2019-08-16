@@ -19,7 +19,7 @@
 #include <stdexcept>
 #include <string>  //for std::string
 
-#include "communicationModel/communicationModel.h"
+#include "interface/interface.h"
 
 
 #if MODULE_MPI
@@ -35,17 +35,17 @@
 	#define MPI_TAG			0
 	// <- MPI ---------------------
 
-	#include "communicationModel/aposd_mpi.h"
+	#include "interface/aposd_mpi.h"
 #endif
 
 #if MODULE_SAAS
 	#include <jsoncpp/json/json.h>
 
-	#include "communicationModel/aposd_webApps.h"
+	#include "interface/aposd_webApps.h"
 #endif
 
 #if MODULE_SEQ
-	#include "communicationModel/aposd_sequential.h"
+	#include "interface/aposd_sequential.h"
 #endif
 
 using namespace std;
@@ -104,26 +104,26 @@ int main(int argc, char **argv) {
 
     std::string encoding = configuration.get("encoding", "UTF-8").asString();
 
-	if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::MPI) {
+	if (configuration["aposd"]["Interface"] == Interface::MPI) {
 		#if MODULE_MPI
-			CommunicationModel_MPI(argc, argv, configuration["aposd"]);
+			Interface_MPI(argc, argv, configuration["aposd"]);
 		#else
 			throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The MPI module is not include of the binary. Please turn true of MODULE_MPI in complilation.");
 		#endif
-	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::WEBAPPLICATION) {
+	} else if (configuration["aposd"]["Interface"] == Interface::WEBAPPLICATION) {
 		#if MODULE_SAAS
-		CommunicationModel_webApps(argc, argv, configuration["aposd"]);
+		Interface_webApps(argc, argv, configuration["aposd"]);
 		#else
 			throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The SaaS module is not include of the binary. Please turn true of MODULE_SAAS in complilation.");
 		#endif
-	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::SEQUENTIAL) {
+	} else if (configuration["aposd"]["Interface"] == Interface::SEQUENTIAL) {
 		#if MODULE_SEQ
-			CommunicationModel_sequential(argc, argv, configuration["aposd"]);
+			Interface_sequential(argc, argv, configuration["aposd"]);
 		#else
 			throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The sequential module is not include of the binary. Please turn true of MODULE_SEQ in complilation.");
 		#endif
 	} else {
-		throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] Communication model "+ configuration["aposd"]["CommunicationModel"].asString() +" does not exist.");
+		throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] Communication model "+ configuration["aposd"]["Interface"].asString() +" does not exist.");
 	}
 
 	return EXIT_SUCCESS;

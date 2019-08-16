@@ -27,8 +27,6 @@ class Solution {
    public:
     Solution(const Solution &s) : _numberOfObjective(s._numberOfObjective) {
         DEBUG_TRACE("Constructeur de copie Solution(const Solution &s)");
-        //_fitness = new TYPE_FITNESS[_numberOfObjective];
-        //_fitnessIsValid = new bool[_numberOfObjective];
         _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
         _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) {
@@ -41,8 +39,6 @@ class Solution {
 
     Solution() : _numberOfObjective(1) {
         DEBUG_TRACE("Creation Solution()");
-        //_fitness = new TYPE_FITNESS[_numberOfObjective];
-        //_fitnessIsValid = new bool[_numberOfObjective];
         _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
         _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
@@ -50,8 +46,6 @@ class Solution {
 
     Solution(const unsigned int numberOfObjective) : _numberOfObjective(numberOfObjective) {
         DEBUG_TRACE("Creation Solution(const unsigned int numberOfObjective)");
-        //_fitness = new TYPE_FITNESS[_numberOfObjective];
-        //_fitnessIsValid = new bool[_numberOfObjective];
         _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
         _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
@@ -60,18 +54,14 @@ class Solution {
 	Solution(const Json::Value &jsonValue) :
 		_numberOfObjective(0),
 		_fitness(nullptr),
-		_fitnessIsValid(nullptr)
-		 {
+		_fitnessIsValid(nullptr) {
 		DEBUG_TRACE("Creation Solution");
 		loadJson(jsonValue);
 	}
 
     Solution &operator=(Solution const &s) {
         if (_numberOfObjective != s._numberOfObjective) {
-            //this->~Solution();
             _numberOfObjective = s._numberOfObjective;
-            //_fitness = new TYPE_FITNESS[_numberOfObjective];
-            //_fitnessIsValid = new bool[_numberOfObjective];
             _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
             _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
             for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
@@ -173,7 +163,8 @@ class Solution {
             _fitnessIsValid[i] = jsonValue["fitnessIsValid"][i].asBool();
         }
 
-        sol = jsonValue["solution"];
+        sol = jsonValue["solution"].empty() ? Json::Value() : jsonValue["solution"];
+        
     }
 
     Json::Value asJson() {
@@ -182,7 +173,8 @@ class Solution {
             jsonValue["fitness"].append(_fitness[i]);
             jsonValue["fitnessIsValid"].append(_fitnessIsValid[i]);
         }
-        jsonValue["solution"] = sol;
+        
+        if (!sol.empty()) jsonValue["solution"] = sol;
         return jsonValue;
     }
 

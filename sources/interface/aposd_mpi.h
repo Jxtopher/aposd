@@ -23,10 +23,10 @@
 #include "../solution/solution.h"
 #include "classBuilder.h"
 
-void CommunicationModel_MPI(int argc, char **argv, const Json::Value &configuration);
+void Interface_MPI(int argc, char **argv, const Json::Value &configuration);
 
-void CommunicationModel_MPI(int argc, char **argv, const Json::Value &configuration) {
-	DEBUG_TRACE("CREATE CommunicationModel_MPI")
+void Interface_MPI(int argc, char **argv, const Json::Value &configuration) {
+	DEBUG_TRACE("CREATE Interface_MPI")
     std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
 
     if (!configuration["seed"].empty())

@@ -1,12 +1,12 @@
 
-#ifndef COMMUNICATIONMODEL_H
-#define	COMMUNICATIONMODEL_H
+#ifndef INTERFACE_H
+#define	INTERFACE_H
 
 #include <string>
 
 using namespace std;
 
-class CommunicationModel {
+class Interface {
     public:
         static constexpr const char* MPI = "MPI";
         static constexpr const char* WEBAPPLICATION = "WEBAPPLICATION";
