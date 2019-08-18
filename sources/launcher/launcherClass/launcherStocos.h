@@ -2,10 +2,9 @@
 #define LAUNCHERSTOCOS_H
 
 #include <iostream>
+#include <random>
 
 #include "../launcher.h"
-#include "stocos/sources/solution/solution.h"
-
 
 
 class LauncherStocos : public Launcher {
