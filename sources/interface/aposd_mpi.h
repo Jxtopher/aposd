@@ -6,6 +6,19 @@
 #include <random>
 #include <memory>
 
+// -> MPI ---------------------
+#include <mpi.h>
+
+int mpi_globals_nbnodes;
+int mpi_globals_rank;
+int mpi_globals_namelen;
+char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
+
+#define MPI_MASTER		0
+#define MPI_TAG			0
+// <- MPI ---------------------
+
+
 #include "../calculationModel/islandModel/islandModel.h"
 #include "../calculationModel/islandModel/sharedParameter.h"
 #include "../calculationModel/masterWorkers/master.h"
@@ -22,6 +35,8 @@
 #include "../selection/selection_maximization.h"
 #include "../solution/solution.h"
 #include "classBuilder.h"
+
+
 
 void Interface_MPI(int argc, char **argv, const Json::Value &configuration);
 

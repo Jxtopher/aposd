@@ -23,18 +23,6 @@
 
 
 #if MODULE_MPI
-	// -> MPI ---------------------
-	#include <mpi.h>
-
-	int mpi_globals_nbnodes;
-	int mpi_globals_rank;
-	int mpi_globals_namelen;
-	char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
-
-	#define MPI_MASTER		0
-	#define MPI_TAG			0
-	// <- MPI ---------------------
-
 	#include "interface/aposd_mpi.h"
 #endif
 
