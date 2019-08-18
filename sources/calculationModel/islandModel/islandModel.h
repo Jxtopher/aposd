@@ -7,7 +7,7 @@
 #include "../calculationModel.h"
 #include "topologies/topologies.h"
 
-using namespace std;
+
 
 template <class SOL>
 class IslandModel : public CalculationModel {

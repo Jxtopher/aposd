@@ -6,7 +6,7 @@
 #include "../launcher.h"
 #include "stocos/sources/solution/solution.h"
 
-using namespace std;
+
 
 class LauncherStocos : public Launcher {
     public:
@@ -19,11 +19,11 @@ class LauncherStocos : public Launcher {
     }
 
 
-    string initSolution() {
+    std::string initSolution() {
         return "";
     }
 
-	string solve(string solution, unsigned int numParameter) {
+	std::string solve(std::string solution, unsigned int numParameter) {
         return "";
     }
 

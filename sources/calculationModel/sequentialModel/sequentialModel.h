@@ -28,7 +28,7 @@ public:
     void operator()() {
         // Initialisation de la 1er solution
         Solution<unsigned int> s(_launcher->initSolution());
-        cout<<">"<<s<<"<"<<endl;
+        std::cout<<">"<<s<<"<"<<std::endl;
 
         _parameterSelection->reset();
 
@@ -39,14 +39,14 @@ public:
 
             Solution<unsigned int> s_new(_launcher->solve(s.str(), parameter));
 
-            pair<double, unsigned int> rewardOp = _rewardComputation->operator()(s, s_new, parameter);
+            std::pair<double, unsigned int> rewardOp = _rewardComputation->operator()(s, s_new, parameter);
 
             // update
             _parameterSelection->update(rewardOp);
 
             s = s_new;
 
-            cout<<"Out>"<<parameter<<" | "<<s<<"<"<<endl;
+            std::cout<<"Out>"<<parameter<<" | "<<s<<"<"<<std::endl;
         }
     }
 

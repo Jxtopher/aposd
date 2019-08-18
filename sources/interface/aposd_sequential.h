@@ -22,12 +22,12 @@ void Interface_sequential(int argc, char** argv, const Json::Value &configuratio
 
 void Interface_sequential(int argc, char** argv, const Json::Value &configuration) {
     DEBUG_TRACE("CREATE Interface_sequential")
-    std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
+    std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
 
     if (!configuration["seed"].empty())
         mt_rand->seed(configuration["seed"].isInt());
     else
-        mt_rand->seed(static_cast<mt19937::result_type>(time(0)));
+        mt_rand->seed(static_cast<std::mt19937::result_type>(time(0)));
 
     ClassBuilder classBuilder(mt_rand);
 
@@ -37,7 +37,7 @@ void Interface_sequential(int argc, char** argv, const Json::Value &configuratio
     std::unique_ptr<ParameterSelection> parameterSelection = classBuilder.parameterSelection(configuration["CalculationModel"]["ParameterSelection"]);
     std::unique_ptr<RewardComputation<Solution<unsigned int>>> rewardComputation = classBuilder.rewardComputation<Solution<unsigned int>>(configuration["CalculationModel"]["RewardComputation"]);
 
-    cout<<configuration<<endl;
+    std::cout<<configuration<<std::endl;
     SequentialModel<Solution<unsigned int>> calculationmodel(
     	std::move(launcher), 
     	std::move(parameterSelection), 

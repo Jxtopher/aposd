@@ -26,10 +26,17 @@ set(CMAKE_CXX_FLAGS "-std=c++17 -pedantic -Wall -Wextra -Wcast-align -Wctor-dtor
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-## jsoncpp
+
+## PkgConfig
 find_package(PkgConfig REQUIRED)
+
+## jsoncpp
 pkg_check_modules(JSONCPP jsoncpp)
 link_libraries(${JSONCPP_LIBRARIES})
+
+find_package(jsoncpp REQUIRED)
+include_directories(${jsoncpp_INCLUDE_DIR})
+
 
 ## MPI
 if(${MODULE_MPI})
@@ -40,6 +47,9 @@ endif(${MODULE_MPI})
 ## Boost - program_options
 find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
+if (NOT Boost_FOUND )
+    message(FATAL_ERROR "apt-get install libboost-all-dev")
+endif(NOT Boost_FOUND)
 
 ## Cppcms
 if(${MODULE_SAAS})
@@ -48,28 +58,6 @@ if(${MODULE_SAAS})
     # find_library(LIB_CPPCMS cppcms)
     include_directories(/usr/local/include)
 endif(${MODULE_SAAS})
-
-
-
-## Doxygen
-find_package(Doxygen)
-if (DOXYGEN_FOUND)
-    configure_file(Doxyfile.in Doxyfile)
-
-    set(DOXYGEN_INPUT ${CMAKE_BINARY_DIR}/Doxyfile)
-    set(DOXYGEN_OUTPUT ${APIDOC_DIR}/html/index.html)
-
-    add_custom_target(doc ALL
-    COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
-    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} > /dev/null
-    COMMAND ${CMAKE_COMMAND} -E echo "Done."
-    )
-
-    install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html 
-        DESTINATION share/doc/${CMAKE_PROJECT_NAME})
-else (DOXYGEN_FOUND)
-    message("Doxygen need to be installed to generate the doxygen documentation")
-endif (DOXYGEN_FOUND)
 
 
 ## Aposd
@@ -106,3 +94,69 @@ add_test(NAME ${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} COMMAND "${PROJECT_NA
 #     DEPENDS ${PROJECT_NAME}-${CMAKE_BUILD_TYPE}
 #     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
 # )
+
+
+## > Doxygen ##################################################################
+find_package(Doxygen)
+if (DOXYGEN_FOUND)
+    configure_file(Doxyfile.in Doxyfile)
+
+    set(DOXYGEN_INPUT ${CMAKE_BINARY_DIR}/Doxyfile)
+    set(DOXYGEN_OUTPUT ${APIDOC_DIR}/html/index.html)
+
+    add_custom_target(doc ALL
+    COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
+    COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT} > /dev/null
+    COMMAND ${CMAKE_COMMAND} -E echo "Done."
+    )
+
+    install(DIRECTORY ${CMAKE_BINARY_DIR}/doc/html 
+        DESTINATION share/doc/${CMAKE_PROJECT_NAME})
+else (DOXYGEN_FOUND)
+    message("Doxygen need to be installed to generate the doxygen documentation")
+endif (DOXYGEN_FOUND)
+## < Doxygen
+
+## > cppcheck ##################################################################
+SET(PROJECT_TRDPARTY_DIR third-party)
+
+file(GLOB_RECURSE ALL_SOURCE_FILES *.cpp *.h)
+foreach (SOURCE_FILE ${ALL_SOURCE_FILES})
+    string(FIND ${SOURCE_FILE} ${PROJECT_TRDPARTY_DIR} PROJECT_TRDPARTY_DIR_FOUND)
+    if (NOT ${PROJECT_TRDPARTY_DIR_FOUND} EQUAL -1)
+        list(REMOVE_ITEM ALL_SOURCE_FILES ${SOURCE_FILE})
+    endif ()
+endforeach ()
+
+add_custom_target(
+        cppcheck
+        COMMAND /usr/bin/cppcheck
+        --enable=warning,performance,portability,information,missingInclude
+        --std=c++11
+        --library=qt.cfg
+        --template="[{severity}][{id}] {message} {callstack} \(On {file}:{line}\)"
+        --verbose
+        --quiet
+        -DMODULE_SAAS -DMODULE_MPI -DMODULE_SEQ
+        ${ALL_SOURCE_FILES}
+)
+## < cppcheck
+
+
+## > clang-format ##################################################################
+file(GLOB_RECURSE ALL_SOURCE_FILES *.cpp *.h)
+foreach (SOURCE_FILE ${ALL_SOURCE_FILES})
+    string(FIND ${SOURCE_FILE} ${PROJECT_TRDPARTY_DIR} PROJECT_TRDPARTY_DIR_FOUND)
+    if (NOT ${PROJECT_TRDPARTY_DIR_FOUND} EQUAL -1)
+        list(REMOVE_ITEM ALL_SOURCE_FILES ${SOURCE_FILE})
+    endif ()
+endforeach ()
+
+add_custom_target(
+        clangformat
+        COMMAND /usr/bin/clang-format
+        -style=file
+        -i
+        ${ALL_SOURCE_FILES}
+)
+## < clang-format

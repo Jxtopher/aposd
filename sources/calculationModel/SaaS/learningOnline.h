@@ -24,16 +24,16 @@ public:
     }
 
     //
-    pair<SOL, unsigned int> initialSolution(const SOL &s) {
+    std::pair<SOL, unsigned int> initialSolution(const SOL &s) {
         solution_t0 = s;
-        return pair<SOL, unsigned int>(solution_t0, 0);
+        return std::pair<SOL, unsigned int>(solution_t0, 0);
     }
 
-    pair<SOL, unsigned int> run(const SOL &s_t0, const SOL s_t1, unsigned int parameter) {
+    std::pair<SOL, unsigned int> run(const SOL &s_t0, const SOL s_t1, unsigned int parameter) {
         solution_t1 = s_t0;
         solution_t1 = s_t1;
         
-        pair<double, unsigned int> rewardOp = _rewardComputation->operator()(solution_t0, solution_t1, parameter);
+        std::pair<double, unsigned int> rewardOp = _rewardComputation->operator()(solution_t0, solution_t1, parameter);
 
         // update
         _parameterSelection->update(rewardOp);
@@ -42,7 +42,7 @@ public:
 
         solution_t0 = solution_t1;
 
-        return pair<SOL, unsigned int>(solution_t1, new_parameter);
+        return std::pair<SOL, unsigned int>(solution_t1, new_parameter);
     }
 
     void operator()() {

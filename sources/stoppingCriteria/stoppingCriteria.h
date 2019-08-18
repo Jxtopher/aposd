@@ -16,7 +16,7 @@
 
 #include "criteria.h"
 
-using namespace std;
+
 
 template<typename SOL, typename TYPE_FITNESS>
 class StoppingCriteria {

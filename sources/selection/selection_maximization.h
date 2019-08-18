@@ -14,7 +14,7 @@
 
 #include "Selection.h"
 
-using namespace std;
+
 
 template <class SOL>
 class Selection_maximization : public Selection<SOL> {
@@ -27,7 +27,7 @@ class Selection_maximization : public Selection<SOL> {
 
     }
    
-    SOL operator()(const vector<SOL> &solutions) const {
+    SOL operator()(const std::vector<SOL> &solutions) const {
         assert(0 < solutions.size());
         
         double fitness = solutions[0].getFitness();

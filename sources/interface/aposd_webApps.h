@@ -31,13 +31,13 @@
 #include "../calculationModel/SaaS/learningOnline.h"
 
 
-using namespace std;
+
 
 using APOSD_SOL = Solution<unsigned int>;
 
 void Interface_webApps(int argc, char** argv, const Json::Value &configuration);
-string jsonAsString(const Json::Value &json);
-Json::Value stringAsjson(const string &strJson);
+std::string jsonAsString(const Json::Value &json);
+Json::Value stringAsjson(const std::string &strJson);
 cppcms::json::value jsonValueASJsonCppcms(const Json::Value &jsonValue);
 
 //-----------------------------------------------------------------------------
@@ -59,23 +59,23 @@ T* convertAddressStringToPointer(const std::string& address) {
 }
 
 //-----------------------------------------------------------------------------
-string jsonAsString(const Json::Value &json) {
+std::string jsonAsString(const Json::Value &json) {
     Json::StreamWriterBuilder builder;
     builder["commentStyle"] = "None";
     builder["indentation"] = "";
     return Json::writeString(builder, json);
 }
 
-Json::Value stringAsjson(const string &strJson) {
+Json::Value stringAsjson(const std::string &strJson) {
     Json::Value root;
     Json::Reader reader;
     bool parsingSuccessful = reader.parse(strJson.c_str(), root);
-    if (!parsingSuccessful) throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " + reader.getFormattedErrorMessages());
+    if (!parsingSuccessful) throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " + reader.getFormattedErrorMessages());
     return root;
 }
 
 cppcms::json::value jsonValueASJsonCppcms(const Json::Value &jsonValue) {
-    stringstream ss;
+    std::stringstream ss;
     ss << jsonAsString(jsonValue);
     cppcms::json::value tmp;
     tmp.load(ss,true);
@@ -101,7 +101,7 @@ class WebAposd : public Interface, public cppcms::rpc::json_rpc_server {
     }
 
     // curl -i -X POST --header "Content-Type:application/json" -d '{"method":"notify", "params":["msgxxxxxxxxxxxxxxxxxxxxxx"], "id":1}' http://127.0.0.1:8080/
-    void echo(std::string msg) { 
+    void echo(const std::string &msg) { 
         DEBUG_TRACE("echo")
         cppcms::json::value json;
         json["your_msg"] = msg;  // true | false
@@ -123,14 +123,14 @@ class WebAposd : public Interface, public cppcms::rpc::json_rpc_server {
     /// 
     /// @param msg 
     ///
-    void initialization(std::string msg) {
+    void initialization(const std::string &msg) {
         Json::Value configuration = stringAsjson(msg);
 
-        std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
+        std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
         if (!configuration["seed"].empty())
             mt_rand->seed(configuration["seed"].isInt());
         else
-            mt_rand->seed(static_cast<mt19937::result_type>(time(0)));
+            mt_rand->seed(static_cast<std::mt19937::result_type>(time(0)));
 
         std::unique_ptr<ClassBuilder> classBuilder = std::make_unique<ClassBuilder>(mt_rand);
 
@@ -159,7 +159,7 @@ class WebAposd : public Interface, public cppcms::rpc::json_rpc_server {
     /// 
     /// @param msg 
     ///
-    void learning(std::string msg) {
+    void learning(const std::string &msg) {
         Json::Value data = stringAsjson(msg);
         LearningOnline<APOSD_SOL>* calculationmodel = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
         DEBUG_TRACE("learning " + convertPointerToStringAddress(calculationmodel))
@@ -178,7 +178,7 @@ class WebAposd : public Interface, public cppcms::rpc::json_rpc_server {
     /// 
     /// @param msg
     ///
-    void finish(std::string msg) {
+    void finish(const std::string &msg) {
         Json::Value data = stringAsjson(msg);
         if (data["objectId"].empty()) {
             cppcms::json::value r;
@@ -187,7 +187,6 @@ class WebAposd : public Interface, public cppcms::rpc::json_rpc_server {
             response().out()<<r;
             return ;
         }
-
 
         // cppcms::json::value json;
         LearningOnline<APOSD_SOL>* method = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
@@ -209,7 +208,7 @@ class WebAposd : public Interface, public cppcms::rpc::json_rpc_server {
     }
 
    private:
-    vector<LearningOnline<APOSD_SOL> *> methodList;
+    std::vector<LearningOnline<APOSD_SOL> *> methodList;
 };
 
 void Interface_webApps(int argc, char** argv, const Json::Value &configuration) {

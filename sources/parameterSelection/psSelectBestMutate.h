@@ -27,7 +27,7 @@ class PsSelectBestMutate : public ParameterSelection {
 		_windowSize(0),
 		_aggregationFunction(aggregationFunction),
 		_heterogeneityPolicy(heterogeneityPolicy) {
-			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 	}
 
 	PsSelectBestMutate(std::shared_ptr<std::mt19937> mt_rand,
@@ -42,7 +42,7 @@ class PsSelectBestMutate : public ParameterSelection {
 		_windowSize(windowSize),
 		_aggregationFunction(aggregationFunction),
 		_heterogeneityPolicy(heterogeneityPolicy) {
-			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 	}
 
 	PsSelectBestMutate(const PsSelectBestMutate &c) : 
@@ -52,7 +52,7 @@ class PsSelectBestMutate : public ParameterSelection {
 		_windowSize(c._windowSize),
 		_aggregationFunction(c._aggregationFunction),
 		_heterogeneityPolicy(c._heterogeneityPolicy)  {
-			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
     }
 
 	virtual ~PsSelectBestMutate() {
@@ -65,7 +65,7 @@ class PsSelectBestMutate : public ParameterSelection {
 
 	}
 
-	void update(vector<pair<double, unsigned int>> &rewards) {
+	void update(std::vector<std::pair<double, unsigned int>> &rewards) {
 		assert(_windowSize == 0);
 
 		if (_aggregationFunction == AggregationFunction::MAX) {
@@ -78,7 +78,7 @@ class PsSelectBestMutate : public ParameterSelection {
 			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The aggregation function is not defined");
 	}
 
-	void update(pair<double, unsigned int> &rewards) {
+	void update(std::pair<double, unsigned int> &rewards) {
 		assert(_windowSize != 0);
 		// Need implementation
 		
@@ -92,8 +92,8 @@ class PsSelectBestMutate : public ParameterSelection {
 			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The aggregation function is not defined");
 	}
 
-	vector<unsigned int> getParameter(const unsigned int nbNodes) {
-		vector<unsigned int> parameterList;
+	std::vector<unsigned int> getParameter(const unsigned int nbNodes) {
+		std::vector<unsigned int> parameterList;
 
 		if (_heterogeneityPolicy == HeterogeneityPolicy::HETEROGENOUS) {
 			for (unsigned int i = 0 ; i < nbNodes ; i++)
@@ -112,7 +112,7 @@ class PsSelectBestMutate : public ParameterSelection {
 		return uid->operator()(*(this->_mt_rand));
 	}
 
-    string className() const {
+    std::string className() const {
         return "PsSelectBestMutate";
     }
 
@@ -122,7 +122,7 @@ class PsSelectBestMutate : public ParameterSelection {
 	const unsigned int _windowSize;
 	const char* _aggregationFunction;
 	const char* _heterogeneityPolicy;
-	uniform_int_distribution<unsigned int> *uid;
+	std::uniform_int_distribution<unsigned int> *uid;
 };
 
 #endif

@@ -7,7 +7,7 @@
 #include "psEpsilonGreedyW.h"
 
 using namespace CppUnit;
-using namespace std;
+
 
 class UnitTest_PsEspsilonGreedyW : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(UnitTest_PsEspsilonGreedyW);

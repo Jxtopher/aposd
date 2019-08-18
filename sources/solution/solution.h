@@ -20,7 +20,7 @@
 
 #include "../macro.h"
 
-using namespace std;
+
 
 template <typename TYPE_FITNESS>
 class Solution {
@@ -121,14 +121,14 @@ class Solution {
 
     unsigned int numberOfObjective() const { return _numberOfObjective; }
 
-    string getSolution() const { 
+    std::string getSolution() const { 
         Json::StreamWriterBuilder builder;
         builder["commentStyle"] = "None";
         builder["indentation"] = "";
         return Json::writeString(builder, sol);
      }
 
-    string str() {
+    std::string str() {
         std::stringstream ss;
         for (unsigned int i = 0; i < numberOfObjective(); i++) ss << getFitness(i) << " ";
         ss << ":" << getSolution();
@@ -145,7 +145,7 @@ class Solution {
         Json::Value root;
         Json::Reader reader;
         bool parsingSuccessful = reader.parse(strJson.c_str(), root);  // parse process
-        if (!parsingSuccessful) throw runtime_error(reader.getFormattedErrorMessages());
+        if (!parsingSuccessful) throw std::runtime_error(reader.getFormattedErrorMessages());
 		loadJson(root);
     }
 

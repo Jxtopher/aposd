@@ -24,7 +24,7 @@ class WorkersSynchronous : public Workers {
             MPI_Recv(&order, 1, MPI_INT, MPI_ANY_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status);
             switch (order) {
                 case MPI_Order::INIT_SOLUTION: {
-                    string s = _launcher->initSolution();
+                    std::string s = _launcher->initSolution();
                     MPI_Isend((char *)s.c_str(), s.size(), MPI_CHAR, MPI_MASTER, MPI_TAG, MPI_COMM_WORLD, &request);
                 } break;
                 case MPI_Order::COMPUTE_FITNESS: {
@@ -41,7 +41,7 @@ class WorkersSynchronous : public Workers {
                     MPI_Recv(&parameter, 1, MPI_INT, MPI_ANY_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status);
 
                     // Call solver
-                    string s = _launcher->solve(msg, parameter);
+                    std::string s = _launcher->solve(msg, parameter);
                     delete msg;
 
                     // Send message

@@ -5,7 +5,7 @@
 
 #include "../solution/solution.h"
 
-using namespace std;
+
 
 class Launcher {
 	public:
@@ -17,8 +17,8 @@ class Launcher {
 
 		}
 
-		virtual string initSolution() = 0;
-		virtual string solve(string solution, unsigned int numParameter) = 0;
+		virtual std::string initSolution() = 0;
+		virtual std::string solve(std::string solution, unsigned int numParameter) = 0;
 		
 
 		static constexpr const char* LAUNCHEREXEC = "LauncherExec";

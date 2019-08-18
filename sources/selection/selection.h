@@ -22,7 +22,7 @@ class Selection {
 
     }
 
-    virtual SOL operator()(const vector<SOL> &solutions) const = 0;
+    virtual SOL operator()(const std::vector<SOL> &solutions) const = 0;
 
     protected:
 

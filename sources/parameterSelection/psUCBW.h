@@ -18,7 +18,7 @@
 
 #include "parameterSelection.h"
 
-using namespace std;
+
 using namespace boost;
 
 class PsUCBW : public ParameterSelection {
@@ -33,7 +33,7 @@ class PsUCBW : public ParameterSelection {
         _C(C),
         _windowSize(windowSize),
 		_aggregationFunction(aggregationFunction) {
-			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 			slidingWindow.set_capacity(windowSize);
 			rewardAggregation = std::unique_ptr<double []>(new double[nbParameter]);
 			numberSelect = std::unique_ptr<unsigned int []>(new unsigned int[nbParameter]);
@@ -46,7 +46,7 @@ class PsUCBW : public ParameterSelection {
 		_C(c._C),
 		_windowSize(c._windowSize),
 		_aggregationFunction(c._aggregationFunction)  {
-			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
 			slidingWindow.set_capacity(_windowSize);
 			rewardAggregation = std::unique_ptr<double []>(new double[_nbParameter]);
 			numberSelect = std::unique_ptr<unsigned int []>(new unsigned int[_nbParameter]);
@@ -75,8 +75,8 @@ class PsUCBW : public ParameterSelection {
 		}
 	}
 
-	void update(vector<pair<double, unsigned int>> &rewards) {
-		for(std::vector<pair<double, unsigned int>>::iterator it = rewards.begin(); it != rewards.end(); ++it)
+	void update(std::vector<std::pair<double, unsigned int>> &rewards) {
+		for(std::vector<std::pair<double, unsigned int>>::iterator it = rewards.begin(); it != rewards.end(); ++it)
 			update(*it);
 	}
 
@@ -85,7 +85,7 @@ class PsUCBW : public ParameterSelection {
 	/// 
 	/// @param rewards is a pair of raward and parameter
 	///
-	void update(pair<double, unsigned int> &rewards) {
+	void update(std::pair<double, unsigned int> &rewards) {
         // Update rewardAggregation
 		if (_aggregationFunction == AggregationFunction::MAX) {
 			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] function is not defined");
@@ -122,8 +122,8 @@ class PsUCBW : public ParameterSelection {
         }
 	}
 
-	vector<unsigned int> getParameter(const unsigned int nbNodes) {
-		vector<unsigned int> parameterList;
+	std::vector<unsigned int> getParameter(const unsigned int nbNodes) {
+		std::vector<unsigned int> parameterList;
 
         unsigned int pick = getParameter();
         for (unsigned int i = 0 ; i < nbNodes ; i++) {
@@ -141,11 +141,11 @@ class PsUCBW : public ParameterSelection {
         if (initEachParameter < this->_nbParameter) {
 			return initEachParameter++;
 		} else {
-			return distance(Q.get(), max_element(Q.get(), Q.get() + this->_nbParameter));
+			return std::distance(Q.get(), std::max_element(Q.get(), Q.get() + this->_nbParameter));
 		}
 	}
 
-    string className() const {
+    std::string className() const {
         return "PsUCBW";
     }
 
@@ -154,9 +154,9 @@ class PsUCBW : public ParameterSelection {
     const double &_C;
     const unsigned int &_windowSize;
 	const char* _aggregationFunction;
-    circular_buffer<pair<double, unsigned int>> slidingWindow;
+    circular_buffer<std::pair<double, unsigned int>> slidingWindow;
 
-	uniform_int_distribution<unsigned int> *uid;
+	std::uniform_int_distribution<unsigned int> *uid;
     unsigned int initEachParameter;
     std::unique_ptr<double[]> rewardAggregation;
 	std::unique_ptr<unsigned int[]> numberSelect;

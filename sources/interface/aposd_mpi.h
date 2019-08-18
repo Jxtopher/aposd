@@ -27,19 +27,19 @@ void Interface_MPI(int argc, char **argv, const Json::Value &configuration);
 
 void Interface_MPI(int argc, char **argv, const Json::Value &configuration) {
 	DEBUG_TRACE("CREATE Interface_MPI")
-    std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
+    std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
 
     if (!configuration["seed"].empty())
         mt_rand->seed(configuration["seed"].isInt());
     else
-        mt_rand->seed(static_cast<mt19937::result_type>(time(0)));
+        mt_rand->seed(static_cast<std::mt19937::result_type>(time(0)));
 	
     ClassBuilder classBuilder(mt_rand);
     
     std::unique_ptr<Launcher> launcher = classBuilder.launcher(configuration["CalculationModel"]["Launcher"]);
     std::unique_ptr<ParameterSelection> parameterSelection = classBuilder.parameterSelection(configuration["CalculationModel"]["ParameterSelection"]);
     std::unique_ptr<RewardComputation<Solution<unsigned int>>> rewardComputation = classBuilder.rewardComputation<Solution<unsigned int>>(configuration["CalculationModel"]["RewardComputation"]);
-	std::unique_ptr<Selection<Solution<unsigned int>>> selection = make_unique<Selection_maximization<Solution<unsigned int>>>();
+	std::unique_ptr<Selection<Solution<unsigned int>>> selection = std::make_unique<Selection_maximization<Solution<unsigned int>>>();
 	
 
 	if (CalculationModel::MASTER_WORKER_MODEL == configuration["CalculationModel"]["className"].asString()) {

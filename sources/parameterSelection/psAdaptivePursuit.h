@@ -33,7 +33,7 @@ class PsAdaptivePursuit : public ParameterSelection {
         _p_max(p_max),
         _aggregationFunction(aggregationFunction),
 		_heterogeneityPolicy(heterogeneityPolicy) {
-			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
             rewardEstimate = std::unique_ptr<double []>(new double[nbParameter]);
            selectionProbability = std::unique_ptr<double []>(new double[nbParameter]);
     }
@@ -47,7 +47,7 @@ class PsAdaptivePursuit : public ParameterSelection {
 		_p_max(c._p_max),
         _aggregationFunction(c._aggregationFunction),
 		_heterogeneityPolicy(c._heterogeneityPolicy)  {
-			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
             rewardEstimate = std::make_unique<double []>(_nbParameter);
            	selectionProbability = std::make_unique<double []>(_nbParameter);
 			
@@ -70,21 +70,21 @@ class PsAdaptivePursuit : public ParameterSelection {
     ///
     /// @brief Collective version
     ///
-	void update(vector<pair<double, unsigned int>> &rewards) {
+	void update(std::vector<std::pair<double, unsigned int>> &rewards) {
 
 	}
 
     ///
     /// @brief Individual version
     ///
-	void update(pair<double, unsigned int> &rewards) {
+	void update(std::pair<double, unsigned int> &rewards) {
         // rewards.first =  reward (double)
         // rewards.second =  parameter (unsigned int)
         rewardEstimate[rewards.second] = (1 - _alpha) * rewardEstimate[rewards.second] + _alpha * rewards.first;   
 	}
 
-	vector<unsigned int> getParameter(const unsigned int nbNodes) {
-		vector<unsigned int> parameterList;
+	std::vector<unsigned int> getParameter(const unsigned int nbNodes) {
+		std::vector<unsigned int> parameterList;
 		
 		if (_heterogeneityPolicy == HeterogeneityPolicy::HETEROGENOUS) {
 			for (unsigned int i = 0 ; i < nbNodes ; i++)
@@ -104,7 +104,7 @@ class PsAdaptivePursuit : public ParameterSelection {
 		return uid->operator()(*(this->_mt_rand));
 	}
 
-    string className() const {
+    std::string className() const {
         return "PsAdaptivePursuit";
     }
 
@@ -119,7 +119,7 @@ class PsAdaptivePursuit : public ParameterSelection {
 	const char* _heterogeneityPolicy;
 
     unsigned int initEachParameter;
-	uniform_int_distribution<unsigned int> *uid;
+	std::uniform_int_distribution<unsigned int> *uid;
     std::unique_ptr<double []> rewardEstimate;
     std::unique_ptr<double []> selectionProbability;
 };

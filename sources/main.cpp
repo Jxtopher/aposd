@@ -48,11 +48,11 @@
 	#include "interface/aposd_sequential.h"
 #endif
 
-using namespace std;
 
-void version(string name_software, string num_version);
 
-void version(string name_software, string num_version) {
+void version(const std::string &name_software, const std::string &num_version);
+
+void version(const std::string &name_software, const std::string &num_version) {
 	std::cout<<"*************************************"<<std::endl;
 	std::cout<<"[+] *** "<<name_software<<" ***"<<std::endl;
 	std::cout<<"[+] Day compilation : "<<__DATE__<<" "<<__TIME__<<std::endl;
@@ -64,18 +64,18 @@ void version(string name_software, string num_version) {
 }
 
 int main(int argc, char **argv) {
-    string configFile; // Chemin du ficher de configuration json
+    std::string configFile; // Chemin du ficher de configuration json
 
 	boost::program_options::variables_map vm;
 	boost::program_options::options_description argements("[*] main option");
 	argements.add_options()
 						("help,h", "help message")
-						("config,c", boost::program_options::value<string>(&configFile), "File configuration json (default : null)");
+						("config,c", boost::program_options::value<std::string>(&configFile), "File configuration json (default : null)");
 	try {
     	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, argements), vm);
 		boost::program_options::notify(vm);
 	} catch (const boost::program_options::error &ex) {
-        throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] error program_options");
+        throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] error program_options");
   	}
 
 	if (vm.count("version")) {
@@ -84,12 +84,12 @@ int main(int argc, char **argv) {
 	}
 
 	if (vm.count("help")) {
-			cout<<argements<<endl;
+			std::cout<<argements<<std::endl;
 			exit(EXIT_SUCCESS);
 	}
 
     if (configFile.empty()) {
-        cerr<<"./aposd -c config.json"<<endl;
+        std::cerr<<"./aposd -c config.json"<<std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
     bool parsingSuccessful = reader.parse(test, configuration, false);
 
     if (!parsingSuccessful)
-        throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " +reader.getFormattedErrorMessages());
+        throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " +reader.getFormattedErrorMessages());
 
     std::string encoding = configuration.get("encoding", "UTF-8").asString();
 
@@ -108,22 +108,22 @@ int main(int argc, char **argv) {
 		#if MODULE_MPI
 			Interface_MPI(argc, argv, configuration["aposd"]);
 		#else
-			throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The MPI module is not include of the binary. Please turn true of MODULE_MPI in complilation.");
+			throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The MPI module is not include of the binary. Please turn true of MODULE_MPI in complilation.");
 		#endif
 	} else if (configuration["aposd"]["Interface"] == Interface::WEBAPPLICATION) {
 		#if MODULE_SAAS
 		Interface_webApps(argc, argv, configuration["aposd"]);
 		#else
-			throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The SaaS module is not include of the binary. Please turn true of MODULE_SAAS in complilation.");
+			throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The SaaS module is not include of the binary. Please turn true of MODULE_SAAS in complilation.");
 		#endif
 	} else if (configuration["aposd"]["Interface"] == Interface::SEQUENTIAL) {
 		#if MODULE_SEQ
 			Interface_sequential(argc, argv, configuration["aposd"]);
 		#else
-			throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The sequential module is not include of the binary. Please turn true of MODULE_SEQ in complilation.");
+			throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The sequential module is not include of the binary. Please turn true of MODULE_SEQ in complilation.");
 		#endif
 	} else {
-		throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] Communication model "+ configuration["aposd"]["Interface"].asString() +" does not exist.");
+		throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] Communication model "+ configuration["aposd"]["Interface"].asString() +" does not exist.");
 	}
 
 	return EXIT_SUCCESS;
