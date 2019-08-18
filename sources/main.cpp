@@ -1,64 +1,81 @@
 ///
-/// \file main.h
-/// \author Jxtopher
-/// \version 1
-/// \copyright CC-BY-NC-SA
-/// \date 2019-03
-/// \brief 
+/// @file main.cpp
+/// @author Jxtopher
+/// @version 1
+/// @copyright CC-BY-NC-SA
+/// @date 2019-03
+/// @brief 
 ///
 
-// -> MPI ---------------------
-#include <mpi.h>
 
-int mpi_globals_nbnodes;
-int mpi_globals_rank;
-int mpi_globals_namelen;
-char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 
-#define MPI_MASTER		0
-#define MPI_TAG			0
-// <- MPI ---------------------
-
-#include <iostream>
+#include <boost/program_options.hpp>
 #include <cstdlib>
-#include <signal.h>
-#include <map>
-#include <sstream> //for std::stringstream 
-#include <string>  //for std::string
-#include <jsoncpp/json/json.h>
 #include <fstream>
+#include <iostream>
+#include <map>
+#include <signal.h>
+#include <sstream> //for std::stringstream
+#include <stdexcept>
+#include <string>  //for std::string
 
-#include "communicationModel/communicationModel.h"
-#include "communicationModel/aposd_mpi.h"
-#include "communicationModel/aposd_webApps.h"
-#include "communicationModel/aposd_sequential.h"
+#include "interface/interface.h"
 
-using namespace std;
 
-void version(string name_software, string num_version);
+#if MODULE_MPI
+	// -> MPI ---------------------
+	#include <mpi.h>
 
-void version(string name_software, string num_version) {
+	int mpi_globals_nbnodes;
+	int mpi_globals_rank;
+	int mpi_globals_namelen;
+	char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
+
+	#define MPI_MASTER		0
+	#define MPI_TAG			0
+	// <- MPI ---------------------
+
+	#include "interface/aposd_mpi.h"
+#endif
+
+#if MODULE_SAAS
+	#include <jsoncpp/json/json.h>
+
+	#include "interface/aposd_webApps.h"
+#endif
+
+#if MODULE_SEQ
+	#include "interface/aposd_sequential.h"
+#endif
+
+
+
+void version(const std::string &name_software, const std::string &num_version);
+
+void version(const std::string &name_software, const std::string &num_version) {
 	std::cout<<"*************************************"<<std::endl;
 	std::cout<<"[+] *** "<<name_software<<" ***"<<std::endl;
 	std::cout<<"[+] Day compilation : "<<__DATE__<<" "<<__TIME__<<std::endl;
 	std::cout<<"[+] Version : "<<num_version<<std::endl;
+	std::cout<<"[+] MODULE MPI : "<<MODULE_MPI<<std::endl;
+	std::cout<<"[+] MODULE_SAAS : "<<MODULE_SAAS<<std::endl;
+	std::cout<<"[+] MODULE_SEQ : "<<MODULE_SEQ<<std::endl;
 	std::cout<<"*************************************"<<std::endl;
 }
 
 int main(int argc, char **argv) {
-	Settings settings(argc, argv);
-    string configFile; // Chemin du ficher de configuration json
+    std::string configFile; // Chemin du ficher de configuration json
 
 	boost::program_options::variables_map vm;
 	boost::program_options::options_description argements("[*] main option");
 	argements.add_options()
 						("help,h", "help message")
-						("config,c", boost::program_options::value<string>(&configFile), "File configuration json (default : null)");
+						("config,c", boost::program_options::value<std::string>(&configFile), "File configuration json (default : null)");
 	try {
     	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, argements), vm);
 		boost::program_options::notify(vm);
 	} catch (const boost::program_options::error &ex) {
-        throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] error program_options");
+        throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] error program_options");
   	}
 
 	if (vm.count("version")) {
@@ -66,8 +83,13 @@ int main(int argc, char **argv) {
 			exit(EXIT_SUCCESS);
 	}
 
+	if (vm.count("help")) {
+			std::cout<<argements<<std::endl;
+			exit(EXIT_SUCCESS);
+	}
+
     if (configFile.empty()) {
-        cerr<<"./aposd -c config.json"<<endl;
+        std::cerr<<"./aposd -c config.json"<<std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -78,18 +100,30 @@ int main(int argc, char **argv) {
     bool parsingSuccessful = reader.parse(test, configuration, false);
 
     if (!parsingSuccessful)
-        throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " +reader.getFormattedErrorMessages());
+        throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " +reader.getFormattedErrorMessages());
 
     std::string encoding = configuration.get("encoding", "UTF-8").asString();
 
-	if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::MPI) {
-		CommunicationModel_MPI(argc, argv, configuration["aposd"]);
-	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::WEBAPPLICATION) {
-		CommunicationModel_webApps(argc, argv, configuration["aposd"]);
-	} else if (configuration["aposd"]["CommunicationModel"] == CommunicationModel::SEQUENTIAL) {
-		CommunicationModel_sequential(argc, argv, configuration["aposd"]);
+	if (configuration["aposd"]["Interface"] == Interface::MPI) {
+		#if MODULE_MPI
+			Interface_MPI(argc, argv, configuration["aposd"]);
+		#else
+			throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The MPI module is not include of the binary. Please turn true of MODULE_MPI in complilation.");
+		#endif
+	} else if (configuration["aposd"]["Interface"] == Interface::WEBAPPLICATION) {
+		#if MODULE_SAAS
+		Interface_webApps(argc, argv, configuration["aposd"]);
+		#else
+			throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The SaaS module is not include of the binary. Please turn true of MODULE_SAAS in complilation.");
+		#endif
+	} else if (configuration["aposd"]["Interface"] == Interface::SEQUENTIAL) {
+		#if MODULE_SEQ
+			Interface_sequential(argc, argv, configuration["aposd"]);
+		#else
+			throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] The sequential module is not include of the binary. Please turn true of MODULE_SEQ in complilation.");
+		#endif
 	} else {
-		throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] Communication model "+ configuration["aposd"]["CommunicationModel"].asString() +" does not exist.");
+		throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] Communication model "+ configuration["aposd"]["Interface"].asString() +" does not exist.");
 	}
 
 	return EXIT_SUCCESS;

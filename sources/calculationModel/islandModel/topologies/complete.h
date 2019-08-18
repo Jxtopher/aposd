@@ -7,7 +7,7 @@
 
 #include "topologies.h"
 
-using namespace std;
+
 using namespace boost;
 
 class Complete : public Topologies {

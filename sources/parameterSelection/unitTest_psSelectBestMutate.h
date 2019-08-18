@@ -7,7 +7,7 @@
 #include "psSelectBestMutate.h"
 
 using namespace CppUnit;
-using namespace std;
+
 
 class UnitTest_psSelectBestMutate : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(UnitTest_psSelectBestMutate);

@@ -14,7 +14,7 @@
 
 
 
-using namespace std;
+
 
 template <class SOL>
 class SharedParameter : public IslandModel<SOL> {
@@ -53,14 +53,14 @@ class SharedParameter : public IslandModel<SOL> {
                 // Selection solutions and parameter a utiliser
                 unsigned int parameter = _parameterSelection->getParameter();
                 SOL bestSolution = _selection->operator()(solutions);
-                cout<<bestSolution<<endl;
+                std::cout<<bestSolution<<std::endl;
 
                 // Call solver
-                string newSolution = _launcher->solve(bestSolution.str(), parameter);
+                std::string newSolution = _launcher->solve(bestSolution.str(), parameter);
                 solutions.push_back(SOL(newSolution));
                 
                 // Compute reward
-                pair<double, unsigned int> rewardOp = _rewardComputation->operator()(bestSolution, solutions.back(), parameter);
+                std::pair<double, unsigned int> rewardOp = _rewardComputation->operator()(bestSolution, solutions.back(), parameter);
 
                 // Send message : solution, RewardOp
                 order = MPI_Order::COMPUTE_FITNESS;
@@ -129,7 +129,7 @@ class SharedParameter : public IslandModel<SOL> {
         std::unique_ptr<RewardComputation<SOL>> _rewardComputation;
         std::unique_ptr<Selection<SOL>> _selection;
 
-        vector<SOL> solutions;  // liste des solutions candidat
+        std::vector<SOL> solutions;  // liste des solutions candidat
         
         int continued;          // loop
         int order;              // order to send

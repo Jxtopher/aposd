@@ -26,16 +26,16 @@ class PsConstant : public ParameterSelection {
 
 	}
 
-	void update(vector<pair<double, unsigned int>> &rewards) {
+	void update(std::vector<std::pair<double, unsigned int>> &rewards) {
 
 	}
 
-	void update(pair<double, unsigned int> &rewards) {
+	void update(std::pair<double, unsigned int> &rewards) {
 
 	}
 		
-	vector<unsigned int> getParameter(const unsigned int nbNodes) {
-		vector<unsigned int> parameterList;
+	std::vector<unsigned int> getParameter(const unsigned int nbNodes) {
+		std::vector<unsigned int> parameterList;
 		
 		for (unsigned int i = 0 ; i < nbNodes ; i++)
 			parameterList.push_back(_parameterUsed);
@@ -47,7 +47,7 @@ class PsConstant : public ParameterSelection {
 		return _parameterUsed;
 	}
 
-    string className() const {
+    std::string className() const {
         return "PsConstant";
     }
 

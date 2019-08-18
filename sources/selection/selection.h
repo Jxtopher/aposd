@@ -1,10 +1,10 @@
 ///
-/// \file solutionSelection.h
-/// \author Jxtopher
-/// \version 1
-/// \copyright CC-BY-NC-SA
-/// \date 2018-10
-/// \brief
+/// @file selection.h
+/// @author Jxtopher
+/// @version 1
+/// @copyright CC-BY-NC-SA
+/// @date 2018-10
+/// @brief
 ///
 
 #ifndef SELECTION_H
@@ -22,7 +22,7 @@ class Selection {
 
     }
 
-    virtual SOL operator()(const vector<SOL> &solutions) const = 0;
+    virtual SOL operator()(const std::vector<SOL> &solutions) const = 0;
 
     protected:
 

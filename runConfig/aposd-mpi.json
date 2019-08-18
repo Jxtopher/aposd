@@ -1,7 +1,7 @@
 {
     "aposd": {
         "seed": 0,
-        "CommunicationModel": "MPI",
+        "Interface": "MPI",
         "CalculationModel": {
             "className": "MasterWorkersSynchronous",
             "ParameterSelection": {

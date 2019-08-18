@@ -7,7 +7,7 @@
 #include "launcherExec.h"
 
 using namespace CppUnit;
-using namespace std;
+
 
 class UnitTest_LauncherExec : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(UnitTest_LauncherExec);
@@ -23,7 +23,7 @@ class UnitTest_LauncherExec : public CppUnit::TestFixture {
     }
 
     void test_launchExecutable(void) {
-      string x = "echo";
+      std::string x = "echo";
       //LauncherExec lExec(x);
       //string r = lExec.launchExecutable("\"xxx xxxx -1 !\"");
       //CPPUNIT_ASSERT(r == "xxx xxxx -1 !\n");

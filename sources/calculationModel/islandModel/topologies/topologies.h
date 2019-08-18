@@ -8,7 +8,7 @@
 using namespace boost;
 
 ///
-/// \brief Type de graphe
+/// @brief Type de graphe
 ///
 struct VertexProperties {
     float d;

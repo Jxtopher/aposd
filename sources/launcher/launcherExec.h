@@ -8,11 +8,11 @@
 #include "launcher.h"
 #include "../solution/solution.h"
 
-using namespace std;
+
 
 class LauncherExec : public Launcher {
 	public:
-		LauncherExec(const string &pathExecutable) : 
+		LauncherExec(const std::string &pathExecutable) : 
 			Launcher(),
 			_pathExecutable(pathExecutable),
 			_args(""),
@@ -22,7 +22,7 @@ class LauncherExec : public Launcher {
 			buffer = new char[bufferLength];
 		}
 
-		LauncherExec(const string &pathExecutable, const string &args) : 
+		LauncherExec(const std::string &pathExecutable, const std::string &args) : 
 			Launcher(),
 			_pathExecutable(pathExecutable),
 			_args(args),
@@ -36,26 +36,26 @@ class LauncherExec : public Launcher {
 			delete[] buffer;
 		}
 
-		string initSolution() {
-			stringstream ss;
+		std::string initSolution() {
+			std::stringstream ss;
 			ss<<"--initSolution";
 
 			return launchExecutable(ss.str());
 		}
 
-		string solve(string solution, unsigned int numParameter) {
-			stringstream ss;
+		std::string solve(std::string solution, unsigned int numParameter) {
+			std::stringstream ss;
 			ss<<"--solution \""<<solution<<"\" ";
 			ss<<"--parameter "<<numParameter;
 
 			return launchExecutable(ss.str());
 		}
 
-		string launchExecutable(const string &cmdParameter) {
-			stringstream ss;
+		std::string launchExecutable(const std::string &cmdParameter) {
+			std::stringstream ss;
 			
-			string cmd = _pathExecutable + " " + _args + " " + cmdParameter;
-			//cout<<__LINE__<<" : "<<cmd<<endl;
+			std::string cmd = _pathExecutable + " " + _args + " " + cmdParameter;
+			//std::cout<<__LINE__<<" : "<<cmd<<std::endl;
 			FILE* pipe = popen(cmd.c_str(), "r");
 			try {
 				while (!feof(pipe)) {
@@ -77,8 +77,8 @@ class LauncherExec : public Launcher {
 		}
 
 	private:
-	const string _pathExecutable;
-	const string _args;
+	const std::string _pathExecutable;
+	const std::string _args;
 	const unsigned int bufferLength;
 	char *buffer;
 };

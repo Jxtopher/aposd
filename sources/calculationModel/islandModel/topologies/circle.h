@@ -7,7 +7,7 @@
 
 #include "topologies.h"
 
-using namespace std;
+
 using namespace boost;
 
 class Circle : public Topologies {

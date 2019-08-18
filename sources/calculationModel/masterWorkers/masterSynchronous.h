@@ -7,7 +7,7 @@
 #include "../calculationModel.h"
 #include "../../selection/selection.h"
 
-using namespace std;
+
 
 template <class SOL>
 class MasterSynchronous : public Master {
@@ -26,8 +26,8 @@ class MasterSynchronous : public Master {
         DEBUG_TRACE("MASTER")
 
         _parameterSelection->reset();
-        vector<SOL> solutions(mpi_globals_nbnodes - 1);
-        vector<SOL> solutionsAfterMutation(mpi_globals_nbnodes - 1);
+        std::vector<SOL> solutions(mpi_globals_nbnodes - 1);
+        std::vector<SOL> solutionsAfterMutation(mpi_globals_nbnodes - 1);
 
         int order = MPI_Order::INIT_SOLUTION;
         for (int i = 1; i < mpi_globals_nbnodes; i++)
@@ -39,14 +39,14 @@ class MasterSynchronous : public Master {
             MPI_Get_count(&status, MPI_CHAR, &sizeOfmessage);   // Obtain message size
             char *msg = new char[sizeOfmessage + 1];
             MPI_Recv(msg, sizeOfmessage, MPI_CHAR, i, MPI_TAG, MPI_COMM_WORLD, &status); // Finally, receive the message with a correctly sized buffe
-            solutions[i - 1] = SOL(string(msg));
-            cout << "[MASTER] " << msg << endl;
+            solutions[i - 1] = SOL(std::string(msg));
+            std::cout << "[MASTER] " << msg << std::endl;
             delete msg;
         }
 
         do {
                 // Selection parameter a execute
-                vector<unsigned int> parameter = _parameterSelection->getParameter(mpi_globals_nbnodes - 1);
+                std::vector<unsigned int> parameter = _parameterSelection->getParameter(mpi_globals_nbnodes - 1);
                 SOL bestSolution = _selection->operator()(solutions);
 
                 // ------------------------------------------
@@ -55,7 +55,7 @@ class MasterSynchronous : public Master {
                     MPI_Isend(&order, 1, MPI_INT, i, MPI_TAG, MPI_COMM_WORLD, &request);
 
                 for (int i = 1; i < mpi_globals_nbnodes; i++) {
-                        string soluString = bestSolution.str();
+                        std::string soluString = bestSolution.str();
                         MPI_Isend((char *)soluString.c_str(), soluString.size(), MPI_CHAR, i, MPI_TAG, MPI_COMM_WORLD, &request);
                         MPI_Isend(&(parameter[i-1]), 1, MPI_INT, i, MPI_TAG, MPI_COMM_WORLD, &request);
                 }
@@ -66,13 +66,13 @@ class MasterSynchronous : public Master {
                         MPI_Get_count(&status, MPI_CHAR, &sizeOfmessage);
                         char *msg = new char[sizeOfmessage + 1];
                         MPI_Recv(msg, sizeOfmessage, MPI_CHAR, i, MPI_TAG, MPI_COMM_WORLD, &status);
-                        cout << "[MASTER] " << msg << endl;
-                        solutionsAfterMutation[i - 1] = SOL(string(msg));
+                        std::cout << "[MASTER] " << msg << std::endl;
+                        solutionsAfterMutation[i - 1] = SOL(std::string(msg));
                         delete msg;
                 }
 
                 // Compute reward
-                vector<pair<double, unsigned int>> rewardOp = _rewardComputation->operator()(solutions, solutionsAfterMutation, parameter);
+                std::vector<std::pair<double, unsigned int>> rewardOp = _rewardComputation->operator()(solutions, solutionsAfterMutation, parameter);
                 _parameterSelection->update(rewardOp);
                 solutions = solutionsAfterMutation;
         } while(solutions[0].getFitness() < 50);

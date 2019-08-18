@@ -1,10 +1,10 @@
 ///
-/// \file unitTest_criteriaBudget.h
-/// \author Jxtopher
-/// \version 1
-/// \copyright CC-BY-NC-SA
-/// \date 2018-10
-/// \brief 
+/// @file unitTest_criteriaBudget.h
+/// @author Jxtopher
+/// @version 1
+/// @copyright CC-BY-NC-SA
+/// @date 2018-10
+/// @brief 
 ///
 
 #ifndef UNITTEST_CRITERIABUDGET_H

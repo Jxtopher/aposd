@@ -1,10 +1,10 @@
 ///
-/// \file solution.h
-/// \author Jxtopher
-/// \version 1
-/// \copyright CC-BY-NC-SA
-/// \date 2018-10
-/// \brief defined the solution
+/// @file solution.h
+/// @author Jxtopher
+/// @version 1
+/// @copyright CC-BY-NC-SA
+/// @date 2018-10
+/// @brief defined the solution
 ///
 
 #ifndef SOLUTION_H
@@ -20,15 +20,13 @@
 
 #include "../macro.h"
 
-using namespace std;
+
 
 template <typename TYPE_FITNESS>
 class Solution {
    public:
     Solution(const Solution &s) : _numberOfObjective(s._numberOfObjective) {
         DEBUG_TRACE("Constructeur de copie Solution(const Solution &s)");
-        //_fitness = new TYPE_FITNESS[_numberOfObjective];
-        //_fitnessIsValid = new bool[_numberOfObjective];
         _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
         _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) {
@@ -41,8 +39,6 @@ class Solution {
 
     Solution() : _numberOfObjective(1) {
         DEBUG_TRACE("Creation Solution()");
-        //_fitness = new TYPE_FITNESS[_numberOfObjective];
-        //_fitnessIsValid = new bool[_numberOfObjective];
         _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
         _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
@@ -50,8 +46,6 @@ class Solution {
 
     Solution(const unsigned int numberOfObjective) : _numberOfObjective(numberOfObjective) {
         DEBUG_TRACE("Creation Solution(const unsigned int numberOfObjective)");
-        //_fitness = new TYPE_FITNESS[_numberOfObjective];
-        //_fitnessIsValid = new bool[_numberOfObjective];
         _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
         _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
@@ -60,18 +54,14 @@ class Solution {
 	Solution(const Json::Value &jsonValue) :
 		_numberOfObjective(0),
 		_fitness(nullptr),
-		_fitnessIsValid(nullptr)
-		 {
+		_fitnessIsValid(nullptr) {
 		DEBUG_TRACE("Creation Solution");
 		loadJson(jsonValue);
 	}
 
     Solution &operator=(Solution const &s) {
         if (_numberOfObjective != s._numberOfObjective) {
-            //this->~Solution();
             _numberOfObjective = s._numberOfObjective;
-            //_fitness = new TYPE_FITNESS[_numberOfObjective];
-            //_fitnessIsValid = new bool[_numberOfObjective];
             _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
             _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
             for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
@@ -131,14 +121,14 @@ class Solution {
 
     unsigned int numberOfObjective() const { return _numberOfObjective; }
 
-    string getSolution() const { 
+    std::string getSolution() const { 
         Json::StreamWriterBuilder builder;
         builder["commentStyle"] = "None";
         builder["indentation"] = "";
         return Json::writeString(builder, sol);
      }
 
-    string str() {
+    std::string str() {
         std::stringstream ss;
         for (unsigned int i = 0; i < numberOfObjective(); i++) ss << getFitness(i) << " ";
         ss << ":" << getSolution();
@@ -155,7 +145,7 @@ class Solution {
         Json::Value root;
         Json::Reader reader;
         bool parsingSuccessful = reader.parse(strJson.c_str(), root);  // parse process
-        if (!parsingSuccessful) throw runtime_error(reader.getFormattedErrorMessages());
+        if (!parsingSuccessful) throw std::runtime_error(reader.getFormattedErrorMessages());
 		loadJson(root);
     }
 
@@ -173,7 +163,8 @@ class Solution {
             _fitnessIsValid[i] = jsonValue["fitnessIsValid"][i].asBool();
         }
 
-        sol = jsonValue["solution"];
+        sol = jsonValue["solution"].empty() ? Json::Value() : jsonValue["solution"];
+        
     }
 
     Json::Value asJson() {
@@ -182,7 +173,8 @@ class Solution {
             jsonValue["fitness"].append(_fitness[i]);
             jsonValue["fitnessIsValid"].append(_fitnessIsValid[i]);
         }
-        jsonValue["solution"] = sol;
+        
+        if (!sol.empty()) jsonValue["solution"] = sol;
         return jsonValue;
     }
 

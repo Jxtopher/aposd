@@ -8,7 +8,7 @@
 #include "masterSynchronous.h"
 #include "workersSynchronous.h"
 
-using namespace std;
+
 
 template <class SOL>
 class MasterWorkersSynchronous : public CalculationModel {
@@ -29,10 +29,10 @@ class MasterWorkersSynchronous : public CalculationModel {
             throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] Error we have only one node !");
         } else if (mpi_globals_rank == MPI_MASTER) {
             // MASTER
-            mSynchro = make_unique<MasterSynchronous<SOL>>(std::move(parameterSelection), std::move(rewardComputation), std::move(selection));
+            mSynchro = std::make_unique<MasterSynchronous<SOL>>(std::move(parameterSelection), std::move(rewardComputation), std::move(selection));
         } else {
             // WORKER
-            wSynchro = make_unique<WorkersSynchronous>(std::move(launcher));
+            wSynchro = std::make_unique<WorkersSynchronous>(std::move(launcher));
         }
     }
     virtual ~MasterWorkersSynchronous() { MPI_Finalize(); }

@@ -16,11 +16,11 @@
 #define CHILD_WRITE read_pipe[1]
 #define CHILD_READ  write_pipe[0]
 
-using namespace std;
+
 
 class LauncherFork  {//: public Launcher {
 	public:
-		LauncherFork(string subExecName) { // : Launcher()
+		LauncherFork(std::string subExecName) { // : Launcher()
 			 char*  argv[3] = {NULL};
 
 			/* create the pipe */
@@ -40,7 +40,7 @@ class LauncherFork  {//: public Launcher {
 					perror ("fork") ; 
 					exit (1) ;
 				case 0 : /* le fils */
-					cout<<"processus fils"<<endl;
+					std::cout<<"processus fils"<<std::endl;
 					close(PARENT_READ);
 					close(PARENT_WRITE);
 
@@ -56,7 +56,7 @@ class LauncherFork  {//: public Launcher {
 					close(CHILD_WRITE);
 
 					
-					cout<<"pere: a cree processus "<< pid<<endl;
+					std::cout<<"pere: a cree processus "<< pid<<std::endl;
 
 			}
 		}
@@ -64,12 +64,12 @@ class LauncherFork  {//: public Launcher {
 		virtual ~LauncherFork() {
 			wait (&status);
 			if (WIFEXITED (status))
-				cout<<"fils termine normalement: status = "<<WEXITSTATUS(status)<<endl;
+				std::cout<<"fils termine normalement: status = "<<WEXITSTATUS(status)<<std::endl;
 			else
-				cout<<"fils termine anormalement"<<endl;
+				std::cout<<"fils termine anormalement"<<std::endl;
 		}
 
-		string operator()(string solution, double fitness, unsigned int numParameter)  {
+		std::string operator()(std::string solution, double fitness, unsigned int numParameter)  {
 			unsigned int size_msg = 2;
 			unsigned char buf[400];
 			buf[0] = 'A';
@@ -87,7 +87,7 @@ class LauncherFork  {//: public Launcher {
 			read(PARENT_READ, &size_msg_bis, sizeof(unsigned int));
 			read(PARENT_READ, buf_bis, size_msg_bis);
 
-			cout<<"****"<<buf_bis<<"*****"<<endl;
+			std::cout<<"****"<<buf_bis<<"*****"<<std::endl;
 			return "";
 		}
 

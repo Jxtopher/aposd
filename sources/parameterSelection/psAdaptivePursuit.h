@@ -1,9 +1,9 @@
 ///
-/// \file psAdaptivePursuit.h
-/// \author Jxtopher
-/// \version 1
-/// \date 2019-05
-/// \brief Implementation adaptive pursuit strategy
+/// @file psAdaptivePursuit.h
+/// @author Jxtopher
+/// @version 1
+/// @date 2019-05
+/// @brief Implementation adaptive pursuit strategy
 ///		   see : Thierens - 2005 - An adaptive pursuit strategy for allocating operator Probabilities
 ///
 
@@ -23,8 +23,8 @@ class PsAdaptivePursuit : public ParameterSelection {
         const double beta = 0.2,
         const double p_min = 0.1,
         const double p_max = 0.9,
-        AggregationFunction aggregationFunction = AggregationFunction::MEAN,
-		HeterogeneityPolicy heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
+        const char* aggregationFunction = AggregationFunction::MEAN,
+		const char* heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
         ParameterSelection(nbParameter),
 		_mt_rand(mt_rand),
         _alpha(alpha),
@@ -33,7 +33,7 @@ class PsAdaptivePursuit : public ParameterSelection {
         _p_max(p_max),
         _aggregationFunction(aggregationFunction),
 		_heterogeneityPolicy(heterogeneityPolicy) {
-			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
             rewardEstimate = std::unique_ptr<double []>(new double[nbParameter]);
            selectionProbability = std::unique_ptr<double []>(new double[nbParameter]);
     }
@@ -47,9 +47,9 @@ class PsAdaptivePursuit : public ParameterSelection {
 		_p_max(c._p_max),
         _aggregationFunction(c._aggregationFunction),
 		_heterogeneityPolicy(c._heterogeneityPolicy)  {
-			uid = new uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
-            rewardEstimate = std::unique_ptr<double []>(new double[_nbParameter]);
-           	selectionProbability = std::unique_ptr<double []>(new double[_nbParameter]);
+			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
+            rewardEstimate = std::make_unique<double []>(_nbParameter);
+           	selectionProbability = std::make_unique<double []>(_nbParameter);
 			
 			for (unsigned int i = 0 ; i < _nbParameter ; i++) {
 				rewardEstimate[i] = c.rewardEstimate[i]; 
@@ -68,41 +68,35 @@ class PsAdaptivePursuit : public ParameterSelection {
 	}
 
     ///
-    /// \brief Collective version
+    /// @brief Collective version
     ///
-	void update(vector<pair<double, unsigned int>> &rewards) {
+	void update(std::vector<std::pair<double, unsigned int>> &rewards) {
 
 	}
 
     ///
-    /// \brief Individual version
+    /// @brief Individual version
     ///
-	void update(pair<double, unsigned int> &rewards) {
+	void update(std::pair<double, unsigned int> &rewards) {
         // rewards.first =  reward (double)
         // rewards.second =  parameter (unsigned int)
         rewardEstimate[rewards.second] = (1 - _alpha) * rewardEstimate[rewards.second] + _alpha * rewards.first;   
 	}
 
-	vector<unsigned int> getParameter(const unsigned int nbNodes) {
-		vector<unsigned int> parameterList;
+	std::vector<unsigned int> getParameter(const unsigned int nbNodes) {
+		std::vector<unsigned int> parameterList;
 		
-		switch (_heterogeneityPolicy) {
-			case HeterogeneityPolicy::HETEROGENOUS:
-				for (unsigned int i = 0 ; i < nbNodes ; i++)
-					parameterList.push_back(uid->operator()(*(this->_mt_rand)));
-				break;
-			case HeterogeneityPolicy::HOMOGENEOUS:
-				{
-				unsigned int pick = uid->operator()(*(this->_mt_rand));
-				for (unsigned int i = 0 ; i < nbNodes ; i++)
-					parameterList.push_back(pick);
-				}
-				break;
-			default:
-				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The policy model is not defined");
-				break;
+		if (_heterogeneityPolicy == HeterogeneityPolicy::HETEROGENOUS) {
+			for (unsigned int i = 0 ; i < nbNodes ; i++)
+				parameterList.push_back(uid->operator()(*(this->_mt_rand)));
+		} else if (_heterogeneityPolicy == HeterogeneityPolicy::HOMOGENEOUS) {
+			unsigned int pick = uid->operator()(*(this->_mt_rand));
+			for (unsigned int i = 0 ; i < nbNodes ; i++)
+				parameterList.push_back(pick);
+		} else {
+			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The policy model is not defined");
 		}
-
+		
 		return parameterList;
 	}
 
@@ -110,7 +104,7 @@ class PsAdaptivePursuit : public ParameterSelection {
 		return uid->operator()(*(this->_mt_rand));
 	}
 
-    string className() const {
+    std::string className() const {
         return "PsAdaptivePursuit";
     }
 
@@ -121,11 +115,11 @@ class PsAdaptivePursuit : public ParameterSelection {
     const double _p_min;
 	const double _p_max;
 	
-    const AggregationFunction _aggregationFunction;
-	const HeterogeneityPolicy _heterogeneityPolicy;
+    const char* _aggregationFunction;
+	const char* _heterogeneityPolicy;
 
     unsigned int initEachParameter;
-	uniform_int_distribution<unsigned int> *uid;
+	std::uniform_int_distribution<unsigned int> *uid;
     std::unique_ptr<double []> rewardEstimate;
     std::unique_ptr<double []> selectionProbability;
 };

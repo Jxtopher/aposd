@@ -7,7 +7,7 @@
 #include "solution.h"
 
 using namespace CppUnit;
-using namespace std;
+
 
 class UnitTest_Solution : public CppUnit::TestFixture {
     CPPUNIT_TEST_SUITE(UnitTest_Solution);
@@ -22,22 +22,22 @@ class UnitTest_Solution : public CppUnit::TestFixture {
     void tearDown(void) {
     }
 
-    Json::Value stringAsjson(const string &strJson) {
+    Json::Value stringAsjson(const std::string &strJson) {
         Json::Value root;
         Json::Reader reader;
         bool parsingSuccessful = reader.parse(strJson.c_str(), root);
-        if (!parsingSuccessful) throw runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " + reader.getFormattedErrorMessages());
+        if (!parsingSuccessful) throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " + reader.getFormattedErrorMessages());
         return root;
     }
 
     void test_toSolution(void) {
-        string str_solution = string("{\"fitness\" : [12, 4.2], \"fitnessIsValid\" : [true, true], \"solution\" : [0, 0, 3, 1, 4]}");
+        std::string str_solution = string("{\"fitness\" : [12, 4.2], \"fitnessIsValid\" : [true, true], \"solution\" : [0, 0, 3, 1, 4]}");
         Solution<double> s(stringAsjson(str_solution));
     
         CPPUNIT_ASSERT(s.getFitness(0) == 12);
         CPPUNIT_ASSERT(s.getFitness(1) == 4.2);
         CPPUNIT_ASSERT(s.getSolution() == "[0, 0, 3, 1, 4]");
-        stringstream solution;
+        std::stringstream solution;
         solution <<s;
         //CPPUNIT_ASSERT(solution.str() == "12 4.2 : 0 0 3 1 4");
     }
