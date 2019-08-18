@@ -90,7 +90,7 @@ cppcms::json::value jsonValueASJsonCppcms(const Json::Value &jsonValue) {
 /// @brief Définie l'application web de Aposd avec cppcms.
 ///        Automate : initialization -> learning (many time) ->finish
 ///
-class WebAposd : public Interface, public cppcms::rpc::json_rpc_server {
+class WebAposd : public cppcms::rpc::json_rpc_server {
    public:
     WebAposd(cppcms::service& srv) : cppcms::rpc::json_rpc_server(srv) {
         bind("echo", cppcms::rpc::json_method(&WebAposd::echo, this));
