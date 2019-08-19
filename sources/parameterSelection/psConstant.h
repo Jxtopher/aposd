@@ -5,8 +5,8 @@
 
 class PsConstant : public ParameterSelection {
 	public:
-		PsConstant(unsigned int nbParameter, unsigned int parameterUsed) :
-			ParameterSelection(nbParameter),
+		PsConstant(unsigned int number_of_parameters, unsigned int parameterUsed) :
+			ParameterSelection(number_of_parameters),
 			_parameterUsed(parameterUsed) {
 
 		}
@@ -16,7 +16,7 @@ class PsConstant : public ParameterSelection {
 		}
 
 	PsConstant(const PsConstant &c) : 
-		ParameterSelection(c._nbParameter),
+		ParameterSelection(c._number_of_parameters),
 		_parameterUsed(c._parameterUsed) {
     }
 
@@ -34,10 +34,10 @@ class PsConstant : public ParameterSelection {
 
 	}
 		
-	std::vector<unsigned int> getParameter(const unsigned int nbNodes) {
+	std::vector<unsigned int> getParameter(const unsigned int number_of_nodes) {
 		std::vector<unsigned int> parameterList;
 		
-		for (unsigned int i = 0 ; i < nbNodes ; i++)
+		for (unsigned int i = 0 ; i < number_of_nodes ; i++)
 			parameterList.push_back(_parameterUsed);
 		
 		return parameterList;

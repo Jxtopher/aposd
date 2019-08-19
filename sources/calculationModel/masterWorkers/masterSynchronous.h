@@ -26,14 +26,14 @@ class MasterSynchronous : public Master {
         DEBUG_TRACE("MASTER")
 
         _parameterSelection->reset();
-        std::vector<SOL> solutions(mpi_globals_nbnodes - 1);
-        std::vector<SOL> solutionsAfterMutation(mpi_globals_nbnodes - 1);
+        std::vector<SOL> solutions(mpi_globals_number_of_nodes - 1);
+        std::vector<SOL> solutionsAfterMutation(mpi_globals_number_of_nodes - 1);
 
         int order = MPI_Order::INIT_SOLUTION;
-        for (int i = 1; i < mpi_globals_nbnodes; i++)
+        for (int i = 1; i < mpi_globals_number_of_nodes; i++)
             MPI_Isend(&order, 1, MPI_INT, i, MPI_TAG, MPI_COMM_WORLD, &request);
 
-        for (int i = 1; i < mpi_globals_nbnodes; i++) {
+        for (int i = 1; i < mpi_globals_number_of_nodes; i++) {
             int sizeOfmessage;
             MPI_Probe(i, MPI_TAG, MPI_COMM_WORLD, &status);     // It will block the caller until a message is ready
             MPI_Get_count(&status, MPI_CHAR, &sizeOfmessage);   // Obtain message size
@@ -46,21 +46,21 @@ class MasterSynchronous : public Master {
 
         do {
                 // Selection parameter a execute
-                std::vector<unsigned int> parameter = _parameterSelection->getParameter(mpi_globals_nbnodes - 1);
+                std::vector<unsigned int> parameter = _parameterSelection->getParameter(mpi_globals_number_of_nodes - 1);
                 SOL bestSolution = _selection->operator()(solutions);
 
                 // ------------------------------------------
                 order = MPI_Order::COMPUTE_FITNESS;
-                for (int i = 1; i < mpi_globals_nbnodes; i++)
+                for (int i = 1; i < mpi_globals_number_of_nodes; i++)
                     MPI_Isend(&order, 1, MPI_INT, i, MPI_TAG, MPI_COMM_WORLD, &request);
 
-                for (int i = 1; i < mpi_globals_nbnodes; i++) {
+                for (int i = 1; i < mpi_globals_number_of_nodes; i++) {
                         std::string soluString = bestSolution.str();
                         MPI_Isend((char *)soluString.c_str(), soluString.size(), MPI_CHAR, i, MPI_TAG, MPI_COMM_WORLD, &request);
                         MPI_Isend(&(parameter[i-1]), 1, MPI_INT, i, MPI_TAG, MPI_COMM_WORLD, &request);
                 }
 
-                for (int i = 1; i < mpi_globals_nbnodes; i++) {
+                for (int i = 1; i < mpi_globals_number_of_nodes; i++) {
                         int sizeOfmessage;
                         MPI_Probe(i, MPI_TAG, MPI_COMM_WORLD, &status);
                         MPI_Get_count(&status, MPI_CHAR, &sizeOfmessage);
@@ -78,7 +78,7 @@ class MasterSynchronous : public Master {
         } while(solutions[0].getFitness() < 50);
         // ------------------------------------------
         order = MPI_Order::FINISH;
-        for (int i = 1; i < mpi_globals_nbnodes; i++)
+        for (int i = 1; i < mpi_globals_number_of_nodes; i++)
             MPI_Isend(&order, 1, MPI_INT, i, MPI_TAG, MPI_COMM_WORLD, &request);
     }
 

@@ -31,7 +31,7 @@ class UnitTest_Solution : public CppUnit::TestFixture {
     }
 
     void test_toSolution(void) {
-        std::string str_solution = string("{\"fitness\" : [12, 4.2], \"fitnessIsValid\" : [true, true], \"solution\" : [0, 0, 3, 1, 4]}");
+        std::string str_solution = std::string("{\"fitness\" : [12, 4.2], \"fitnessIsValid\" : [true, true], \"solution\" : [0, 0, 3, 1, 4]}");
         Solution<double> s(stringAsjson(str_solution));
     
         CPPUNIT_ASSERT(s.getFitness(0) == 12);

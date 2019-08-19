@@ -9,7 +9,7 @@
 // -> MPI ---------------------
 #include <mpi.h>
 
-int mpi_globals_nbnodes;
+int mpi_globals_number_of_nodes;
 int mpi_globals_rank;
 int mpi_globals_namelen;
 char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];

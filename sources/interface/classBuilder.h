@@ -50,17 +50,17 @@ public:
     std::unique_ptr<ParameterSelection> parameterSelection(const Json::Value &configuration) {
         std::unique_ptr<ParameterSelection> _parameterSelection;
         if (configuration["className"].asString() == ParameterSelection::ADAPTIVEPURSUIT) {
-            _parameterSelection = std::make_unique<PsAdaptivePursuit>(_mt_rand, configuration["nbParameter"].asUInt());
+            _parameterSelection = std::make_unique<PsAdaptivePursuit>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::CONSTANT) {
-            _parameterSelection = std::make_unique<PsConstant>(configuration["nbParameter"].asUInt(), 0);
+            _parameterSelection = std::make_unique<PsConstant>(configuration["number_of_parameters"].asUInt(), 0);
         } else if (configuration["className"].asString() == ParameterSelection::EPSILONGREEDY) {
-            _parameterSelection = std::make_unique<PsEspsilonGreedy>(_mt_rand, configuration["nbParameter"].asUInt());
+            _parameterSelection = std::make_unique<PsEspsilonGreedy>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::RANDOM) {
-            _parameterSelection = std::make_unique<PsRandom>(_mt_rand, configuration["nbParameter"].asUInt());
+            _parameterSelection = std::make_unique<PsRandom>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::SELECTBESTMUTATE) {
-            //_parameterSelection = std::make_unique<PsSelectBestMutate>(_mt_rand, configuration["nbParameter"].asUInt());
+            //_parameterSelection = std::make_unique<PsSelectBestMutate>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::UCBW) {
-            _parameterSelection = std::make_unique<PsUCBW>(_mt_rand, configuration["nbParameter"].asUInt()); 
+            _parameterSelection = std::make_unique<PsUCBW>(_mt_rand, configuration["number_of_parameters"].asUInt()); 
         } else {
             throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The calculation model is not defined");
         }

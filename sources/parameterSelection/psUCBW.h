@@ -24,38 +24,39 @@ using namespace boost;
 class PsUCBW : public ParameterSelection {
 	public:
 	PsUCBW(std::shared_ptr<std::mt19937> mt_rand,
-		unsigned int nbParameter,
+		unsigned int number_of_parameters,
         const double C = 0.03,
         const unsigned int windowSize = 300,
 		const char* aggregationFunction = AggregationFunction::MEAN) :
-		ParameterSelection(nbParameter),
+		ParameterSelection(number_of_parameters),
 		_mt_rand(mt_rand),
         _C(C),
         _windowSize(windowSize),
-		_aggregationFunction(aggregationFunction) {
-			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
-			slidingWindow.set_capacity(windowSize);
-			rewardAggregation = std::unique_ptr<double []>(new double[nbParameter]);
-			numberSelect = std::unique_ptr<unsigned int []>(new unsigned int[nbParameter]);
-            Q = std::unique_ptr<double []>(new double[nbParameter]);
+		_aggregation_function(aggregationFunction) {
+			uid = new std::uniform_int_distribution<unsigned int>(0, this->_number_of_parameters -1);
+			sliding_window.set_capacity(windowSize);
+			reward_aggregation = std::unique_ptr<double []>(new double[number_of_parameters]);
+			number_select = std::unique_ptr<unsigned int []>(new unsigned int[number_of_parameters]);
+            Q = std::unique_ptr<double []>(new double[number_of_parameters]);
+			reset();
 	}
 
 	PsUCBW(const PsUCBW &c) : 
-		ParameterSelection(c._nbParameter),
+		ParameterSelection(c._number_of_parameters),
 		_mt_rand(c._mt_rand),
 		_C(c._C),
 		_windowSize(c._windowSize),
-		_aggregationFunction(c._aggregationFunction)  {
-			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
-			slidingWindow.set_capacity(_windowSize);
-			rewardAggregation = std::unique_ptr<double []>(new double[_nbParameter]);
-			numberSelect = std::unique_ptr<unsigned int []>(new unsigned int[_nbParameter]);
-            Q = std::unique_ptr<double []>(new double[_nbParameter]);
+		_aggregation_function(c._aggregation_function)  {
+			uid = new std::uniform_int_distribution<unsigned int>(0, this->_number_of_parameters -1);
+			sliding_window.set_capacity(_windowSize);
+			reward_aggregation = std::unique_ptr<double []>(new double[_number_of_parameters]);
+			number_select = std::unique_ptr<unsigned int []>(new unsigned int[_number_of_parameters]);
+            Q = std::unique_ptr<double []>(new double[_number_of_parameters]);
 			
-			slidingWindow = c.slidingWindow;
-			for (unsigned int i = 0 ; i < _nbParameter ; i++) {
-				rewardAggregation[i] = c.rewardAggregation[i];
-				numberSelect[i] = c.numberSelect[i];
+			sliding_window = c.sliding_window;
+			for (unsigned int i = 0 ; i < _number_of_parameters ; i++) {
+				reward_aggregation[i] = c.reward_aggregation[i];
+				number_select[i] = c.number_select[i];
 				Q[i] = c.Q[i];
 			}
     }
@@ -67,10 +68,10 @@ class PsUCBW : public ParameterSelection {
 	ParameterSelection* clone() const { return new PsUCBW(*this); }
 
 	void reset() {
-		initEachParameter = 0;
-		for(unsigned int i = 0 ; i < this->_nbParameter ; i++) {
-			rewardAggregation[i] = 0;
-			numberSelect[i] = 0;
+		init_each_parameter = 0;
+		for(unsigned int i = 0 ; i < this->_number_of_parameters ; i++) {
+			reward_aggregation[i] = 0;
+			number_select[i] = 0;
             Q[i] = 0;
 		}
 	}
@@ -86,63 +87,67 @@ class PsUCBW : public ParameterSelection {
 	/// @param rewards is a pair of raward and parameter
 	///
 	void update(std::pair<double, unsigned int> &rewards) {
-        // Update rewardAggregation
-		if (_aggregationFunction == AggregationFunction::MAX) {
-			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] function is not defined");
-			slidingWindow.push_front(rewards);
-			{
+        // Update reward_aggregation
+		if (_aggregation_function == AggregationFunction::MAX) {
+			sliding_window.push_front(rewards);
 
+			const auto p = std::minmax_element(sliding_window.begin(), sliding_window.end());
+			auto min = p.first->second;
+			auto max = p.second->second;
+			for (unsigned int i = 0 ; i < _number_of_parameters ; i++) {
+				if(p.second->second == p.second->second)
+					reward_aggregation[i] = p.second->first;
+				else 
+					reward_aggregation[i] = p.first->first;
 			}
-		} else if (_aggregationFunction == AggregationFunction::MEAN) {
-			if (slidingWindow.full()) {
-				unsigned int r = slidingWindow.back().first;  // Reward
-				unsigned int p = slidingWindow.back().second; // Parameter
-				assert(p < this->_nbParameter);
-				rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] - r) / (numberSelect[p] - 1);
-				numberSelect[p]--;
+		} else if (_aggregation_function == AggregationFunction::MEAN) {
+			if (sliding_window.full()) {
+				unsigned int r = sliding_window.back().first;  // Reward
+				unsigned int p = sliding_window.back().second; // Parameter
+				assert(p < this->_number_of_parameters);
+				reward_aggregation[p] = (reward_aggregation[p] * number_select[p] - r) / (number_select[p] - 1);
+				number_select[p]--;
 			}
-
-			slidingWindow.push_front(rewards);
+			
+			sliding_window.push_front(rewards);
 
 			{
-				unsigned int r = slidingWindow.begin()->first;  // Reward
-				unsigned int p = slidingWindow.begin()->second; // Parameter
-				assert(p < this->_nbParameter);
-				rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] + r) / (numberSelect[p] + 1);
-				numberSelect[p]++;
+				unsigned int r = sliding_window.begin()->first;  // Reward
+				unsigned int p = sliding_window.begin()->second; // Parameter
+				assert(p < this->_number_of_parameters);
+				reward_aggregation[p] = (reward_aggregation[p] * number_select[p] + r) / (number_select[p] + 1);
+				number_select[p]++;
 			}
 		} else
 			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The aggregation function is not defined");
 
         // Update Q
-        for (unsigned int i = 0 ; i < this->_nbParameter ; i++) {
-            if (numberSelect[i] != 0) {
-                Q[i] = rewardAggregation[i] + _C * sqrt((2 * log(slidingWindow.size())) / numberSelect[i]);
-            }
+        for (unsigned int i = 0 ; i < this->_number_of_parameters ; i++) {
+            if (number_select[i] != 0)
+                Q[i] = reward_aggregation[i] + _C * sqrt((2 * log(sliding_window.size())) / number_select[i]);
         }
 	}
 
-	std::vector<unsigned int> getParameter(const unsigned int nbNodes) {
+	std::vector<unsigned int> getParameter(const unsigned int number_of_nodes) {
 		std::vector<unsigned int> parameterList;
 
         unsigned int pick = getParameter();
-        for (unsigned int i = 0 ; i < nbNodes ; i++) {
+        for (unsigned int i = 0 ; i < number_of_nodes ; i++)
             parameterList.push_back(pick);
-        }
 
 		return parameterList;
 	}
 
 	unsigned int getParameter() {
-        for (unsigned int i = 0 ; i < this->_nbParameter ; i++) {
+        for (unsigned int i = 0 ; i < this->_number_of_parameters ; i++) {
             if(Q[i] == 0)
                 return i;
         }
-        if (initEachParameter < this->_nbParameter) {
-			return initEachParameter++;
-		} else {
-			return std::distance(Q.get(), std::max_element(Q.get(), Q.get() + this->_nbParameter));
-		}
+		
+        if (init_each_parameter < this->_number_of_parameters)
+			return init_each_parameter++;
+		else
+			return std::distance(Q.get(), std::max_element(Q.get(), Q.get() + this->_number_of_parameters));
 	}
 
     std::string className() const {
@@ -153,13 +158,13 @@ class PsUCBW : public ParameterSelection {
 	std::shared_ptr<std::mt19937> _mt_rand;
     const double &_C;
     const unsigned int &_windowSize;
-	const char* _aggregationFunction;
-    circular_buffer<std::pair<double, unsigned int>> slidingWindow;
+	const char* _aggregation_function;
+    circular_buffer<std::pair<double, unsigned int>> sliding_window;
 
 	std::uniform_int_distribution<unsigned int> *uid;
-    unsigned int initEachParameter;
-    std::unique_ptr<double[]> rewardAggregation;
-	std::unique_ptr<unsigned int[]> numberSelect;
+    unsigned int init_each_parameter;
+    std::unique_ptr<double[]> reward_aggregation;
+	std::unique_ptr<unsigned int[]> number_select;
     std::unique_ptr<double[]> Q;
 };
 

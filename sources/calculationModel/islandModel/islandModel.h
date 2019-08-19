@@ -16,7 +16,7 @@ class IslandModel : public CalculationModel {
         _topologies(std::move(topologies)) {
         // Variable MPI init
         MPI_Init(&argc, &argv);
-        MPI_Comm_size(MPI_COMM_WORLD, &mpi_globals_nbnodes);
+        MPI_Comm_size(MPI_COMM_WORLD, &mpi_globals_number_of_nodes);
         MPI_Comm_rank(MPI_COMM_WORLD, &mpi_globals_rank);
         MPI_Get_processor_name(mpi_globals_name, &mpi_globals_namelen);
     }
