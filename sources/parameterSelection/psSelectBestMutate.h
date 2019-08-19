@@ -19,23 +19,6 @@ class PsSelectBestMutate : public ParameterSelection {
 	PsSelectBestMutate(std::shared_ptr<std::mt19937> mt_rand,
 		unsigned int number_of_parameters,
 		const double espilon = 0.15,
-		const char* aggregationFunction = AggregationFunction::MEAN,
-		const char* heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
-		ParameterSelection(number_of_parameters),
-		_mt_rand(mt_rand),
-		_espilon(espilon),
-		_windowSize(0),
-		_aggregation_function(aggregationFunction),
-		_heterogeneity_policy(heterogeneityPolicy) {
-			urd = std::make_unique<std::uniform_real_distribution<>>(0.0, 1.0);
-			uid = new std::uniform_int_distribution<unsigned int>(0, this->_number_of_parameters -1);
-			reward_aggregation = std::unique_ptr<double []>(new double[number_of_parameters]);
-			number_select = std::unique_ptr<unsigned int []>(new unsigned int[number_of_parameters]);
-	}
-
-	PsSelectBestMutate(std::shared_ptr<std::mt19937> mt_rand,
-		unsigned int number_of_parameters,
-		const double espilon = 0.15,
 		const unsigned int windowSize = 150,
 		const char* aggregationFunction = AggregationFunction::MEAN,
 		const char* heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :

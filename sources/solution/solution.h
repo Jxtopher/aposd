@@ -18,15 +18,13 @@
 
 #include <jsoncpp/json/json.h>
 
-#include "../macro.h"
-
 
 
 template <typename TYPE_FITNESS>
 class Solution {
    public:
     Solution(const Solution &s) : _numberOfObjective(s._numberOfObjective) {
-        DEBUG_TRACE("Constructeur de copie Solution(const Solution &s)");
+        BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":"<<__LINE__<<" Constructeur de copie Solution(const Solution &s)";
         _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
         _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) {
@@ -38,14 +36,14 @@ class Solution {
     }
 
     Solution() : _numberOfObjective(1) {
-        DEBUG_TRACE("Creation Solution()");
+        BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":"<<__LINE__<<" Creation Solution()";
         _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
         _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
     }
 
     Solution(const unsigned int numberOfObjective) : _numberOfObjective(numberOfObjective) {
-        DEBUG_TRACE("Creation Solution(const unsigned int numberOfObjective)");
+        BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":"<<__LINE__<<" Creation Solution(const unsigned int numberOfObjective)";
         _fitness = std::unique_ptr<TYPE_FITNESS []>(new TYPE_FITNESS[_numberOfObjective]);
         _fitnessIsValid = std::unique_ptr<bool []>(new bool[_numberOfObjective]);
         for (unsigned int i = 0; i < _numberOfObjective; i++) _fitnessIsValid[i] = false;
@@ -55,7 +53,7 @@ class Solution {
 		_numberOfObjective(0),
 		_fitness(nullptr),
 		_fitnessIsValid(nullptr) {
-		DEBUG_TRACE("Creation Solution");
+		BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":"<<__LINE__<<" Creation Solution";
 		loadJson(jsonValue);
 	}
 
@@ -77,7 +75,7 @@ class Solution {
     }
 
     ~Solution() {
-        DEBUG_TRACE("Delete Solution");
+        BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":"<<__LINE__<<" Delete Solution";
     }
 
     bool fitnessIsValid(unsigned int numObjectif) const {

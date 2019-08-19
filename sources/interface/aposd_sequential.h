@@ -21,7 +21,7 @@
 void Interface_sequential(int argc, char** argv, const Json::Value &configuration);
 
 void Interface_sequential(int argc, char** argv, const Json::Value &configuration) {
-    DEBUG_TRACE("CREATE Interface_sequential")
+    BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" CREATE Interface_sequential";
     std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
 
     if (!configuration["seed"].empty())

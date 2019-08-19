@@ -23,7 +23,7 @@ class MasterSynchronous : public Master {
     virtual ~MasterSynchronous() {}
 
     virtual void operator()() {
-        DEBUG_TRACE("MASTER")
+        BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" MASTER";
 
         _parameterSelection->reset();
         std::vector<SOL> solutions(mpi_globals_number_of_nodes - 1);

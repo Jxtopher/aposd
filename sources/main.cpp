@@ -7,9 +7,12 @@
 /// @brief 
 ///
 
-
+#define BOOST_LOG_DYN_LINK 1
 
 #include <boost/program_options.hpp>
+#include <boost/log/core.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -52,6 +55,7 @@ void version(const std::string &name_software, const std::string &num_version) {
 }
 
 int main(int argc, char **argv) {
+
     std::string configFile; // Chemin du ficher de configuration json
 
 	boost::program_options::variables_map vm;
@@ -76,6 +80,9 @@ int main(int argc, char **argv) {
 			exit(EXIT_SUCCESS);
 	}
 
+	// Defined the show log siverity level
+    boost::log::core::get()->set_filter(boost::log::trivial::severity <= boost::log::trivial::info);
+	
     if (configFile.empty()) {
         std::cerr<<"./aposd -c config.json"<<std::endl;
         exit(EXIT_FAILURE);

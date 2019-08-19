@@ -50,16 +50,22 @@ public:
     std::unique_ptr<ParameterSelection> parameterSelection(const Json::Value &configuration) {
         std::unique_ptr<ParameterSelection> _parameterSelection;
         if (configuration["className"].asString() == ParameterSelection::ADAPTIVEPURSUIT) {
+            std::cout<<__FILE__<<":"<<__LINE__<<" "<<configuration["className"].asString()<<std::endl;
             _parameterSelection = std::make_unique<PsAdaptivePursuit>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::CONSTANT) {
+            std::cout<<__FILE__<<":"<<__LINE__<<" "<<configuration["className"].asString()<<std::endl;
             _parameterSelection = std::make_unique<PsConstant>(configuration["number_of_parameters"].asUInt(), 0);
         } else if (configuration["className"].asString() == ParameterSelection::EPSILONGREEDY) {
+            std::cout<<__FILE__<<":"<<__LINE__<<" "<<configuration["className"].asString()<<std::endl;
             _parameterSelection = std::make_unique<PsEspsilonGreedy>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::RANDOM) {
+            std::cout<<__FILE__<<":"<<__LINE__<<" "<<configuration["className"].asString()<<std::endl;
             _parameterSelection = std::make_unique<PsRandom>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::SELECTBESTMUTATE) {
-            //_parameterSelection = std::make_unique<PsSelectBestMutate>(_mt_rand, configuration["number_of_parameters"].asUInt());
+            std::cout<<__FILE__<<":"<<__LINE__<<" "<<configuration["className"].asString()<<std::endl;
+            _parameterSelection = std::make_unique<PsSelectBestMutate>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::UCBW) {
+            std::cout<<__FILE__<<":"<<__LINE__<<" "<<configuration["className"].asString()<<std::endl;
             _parameterSelection = std::make_unique<PsUCBW>(_mt_rand, configuration["number_of_parameters"].asUInt()); 
         } else {
             throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The calculation model is not defined");

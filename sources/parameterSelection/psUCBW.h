@@ -13,6 +13,7 @@
 
 #include <random>
 #include <memory>
+#include <cmath>
 
 #include <boost/circular_buffer.hpp>
 
@@ -124,7 +125,7 @@ class PsUCBW : public ParameterSelection {
         // Update Q
         for (unsigned int i = 0 ; i < this->_number_of_parameters ; i++) {
             if (number_select[i] != 0)
-                Q[i] = reward_aggregation[i] + _C * sqrt((2 * log(sliding_window.size())) / number_select[i]);
+                Q[i] = reward_aggregation[i] + _C * std::sqrt((2 * std::log(sliding_window.size())) / number_select[i]);
         }
 	}
 

@@ -44,12 +44,13 @@ if(${MODULE_MPI})
     include_directories(${MPI_INCLUDE_PATH})
 endif(${MODULE_MPI})
 
-## Boost - program_options
-find_package(Boost 1.40 COMPONENTS program_options REQUIRED)
+## Boost - program_options + log
+find_package(Boost 1.40 COMPONENTS program_options log REQUIRED)
 include_directories(${Boost_INCLUDE_DIR})
 if (NOT Boost_FOUND )
     message(FATAL_ERROR "apt-get install libboost-all-dev")
 endif(NOT Boost_FOUND)
+
 
 ## Cppcms
 if(${MODULE_SAAS})

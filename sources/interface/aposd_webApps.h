@@ -102,7 +102,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
 
     // curl -i -X POST --header "Content-Type:application/json" -d '{"method":"notify", "params":["msgxxxxxxxxxxxxxxxxxxxxxx"], "id":1}' http://127.0.0.1:8080/
     void echo(const std::string &msg) { 
-        DEBUG_TRACE("echo")
+        BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" echo";
         cppcms::json::value json;
         json["your_msg"] = msg;  // true | false
         json["help"] = "initialization | learning | finish";
@@ -151,7 +151,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
         r["num_paramter"] = buff.second;
         response().out()<<r;
 
-        DEBUG_TRACE("initialization " + convertPointerToStringAddress(calculationmodel))
+        BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" initialization " << convertPointerToStringAddress(calculationmodel);
     }
 
     ///
@@ -162,7 +162,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
     void learning(const std::string &msg) {
         Json::Value data = stringAsjson(msg);
         LearningOnline<APOSD_SOL>* calculationmodel = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
-        DEBUG_TRACE("learning " + convertPointerToStringAddress(calculationmodel))
+        BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":"<<__LINE__<<"learning " + convertPointerToStringAddress(calculationmodel);
         
         // Response
         cppcms::json::value r;
@@ -190,7 +190,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
 
         // cppcms::json::value json;
         LearningOnline<APOSD_SOL>* method = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
-        DEBUG_TRACE("finish " + data["objectId"].asString())
+        BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":"<<__LINE__<<" finish " + data["objectId"].asString();
 
         // Vérifie que l'objet existe
         std::vector<LearningOnline<APOSD_SOL>*>::iterator it = std::find(methodList.begin(), methodList.end(), method);
@@ -212,7 +212,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
 };
 
 void Interface_webApps(int argc, char** argv, const Json::Value &configuration) {
-    DEBUG_TRACE("CREATE Interface_webApps")
+    BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":"<<__LINE__<<" CREATE Interface_webApps";
     try {
         cppcms::service srv(argc, argv);
         srv.applications_pool().mount(cppcms::applications_factory<WebAposd>());

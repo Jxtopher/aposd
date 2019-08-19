@@ -15,7 +15,7 @@ class WorkersSynchronous : public Workers {
     virtual ~WorkersSynchronous() {}
 
     void operator()() {
-        DEBUG_TRACE("Workers")
+        BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" Workers";
 
         int continued = true;
         int order;
