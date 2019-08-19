@@ -1,16 +1,16 @@
-#ifndef UNITTEST_PSUCBW_H
-#define UNITTEST_PSUCBW_H
+#ifndef UNITTEST_PSRANDOM_H
+#define UNITTEST_PSRANDOM_H
 
 #include <iostream>
 #include <sstream>
 
-#include "psUCBW.h"
+#include "psRandom.h"
 
 using namespace CppUnit;
 
 
-class UnitTest_psUCBW : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(UnitTest_psUCBW);
+class UnitTest_psRandom : public CppUnit::TestFixture {
+    CPPUNIT_TEST_SUITE(UnitTest_psRandom);
     CPPUNIT_TEST(update);
     CPPUNIT_TEST_SUITE_END();
 
@@ -27,30 +27,26 @@ class UnitTest_psUCBW : public CppUnit::TestFixture {
 		unsigned int number_of_parameters = 2;
 		const double espilon = 0.01;
 		const unsigned int windowSize = 5;
-        PsUCBW ucbw(mt_rand,
-                        number_of_parameters,
-                        0.03,
-                        300,
-                        AggregationFunction::MEAN);
+        PsRandom random(mt_rand, 
+                        number_of_parameters, 
+                        AggregationFunction::MEAN, 
+                        HeterogeneityPolicy::HETEROGENOUS);
+
         std::pair<double, unsigned int> r0(5, 0);    // Parameter 0, reward = 5
         std::pair<double, unsigned int> r1(1, 1);    // Parameter 1, reward = 1
 
-        for (unsigned int i = 0 ; i++ < 10;) {
-            ucbw.update(r0);
-            ucbw.update(r1);
-        }
+        random.update(r0);
+        random.update(r1);
 
         unsigned int p0 = 0, p1 = 0;
         for (unsigned int i = 0 ; i < 100 ; i++) {
-            unsigned int p = ucbw.getParameter();
+            unsigned int p = random.getParameter();
             if (p == 0)
                 p0++;
             else if (p == 1)
                 p1++;
         }
-        
-        CPPUNIT_ASSERT(p1 < p0);
-        CPPUNIT_ASSERT(25 < (p0 - p1));
+        CPPUNIT_ASSERT(abs(p1 - p0) < 10);
     }
 
     private:

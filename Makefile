@@ -7,7 +7,7 @@
 #
 
 CC = mpic++ #g++
-CFLAGS = -std=c++1z -lcppcms -ljsoncpp
+CFLAGS = -std=c++1z -lcppcms -ljsoncpp -lboost_log -lboost_system
 OFLAGS = #-Os # Optimization flags
 GFLAGS =  -pedantic -Wall -Wextra -Wcast-align -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept  -Woverloaded-virtual -Wredundant-decls  -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused # -Wsign-conversion -Wshadow  -Wcast-qual -Wold-style-cast
 DFLAGS = -g3 -DMODULE_SEQ=1 -DMODULE_SAAS=1 -DMODULE_MPI=1 #-DDEBUG  -DDEBUG -g3

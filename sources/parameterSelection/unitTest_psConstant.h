@@ -1,16 +1,16 @@
-#ifndef UNITTEST_PSUCBW_H
-#define UNITTEST_PSUCBW_H
+#ifndef UNITTEST_PSCONSTANT_H
+#define UNITTEST_PSCONSTANT_H
 
 #include <iostream>
 #include <sstream>
 
-#include "psUCBW.h"
+#include "psConstant.h"
 
 using namespace CppUnit;
 
 
-class UnitTest_psUCBW : public CppUnit::TestFixture {
-    CPPUNIT_TEST_SUITE(UnitTest_psUCBW);
+class UnitTest_psConstant : public CppUnit::TestFixture {
+    CPPUNIT_TEST_SUITE(UnitTest_psConstant);
     CPPUNIT_TEST(update);
     CPPUNIT_TEST_SUITE_END();
 
@@ -27,28 +27,22 @@ class UnitTest_psUCBW : public CppUnit::TestFixture {
 		unsigned int number_of_parameters = 2;
 		const double espilon = 0.01;
 		const unsigned int windowSize = 5;
-        PsUCBW ucbw(mt_rand,
-                        number_of_parameters,
-                        0.03,
-                        300,
-                        AggregationFunction::MEAN);
+        PsConstant constant(2, 0);
+
         std::pair<double, unsigned int> r0(5, 0);    // Parameter 0, reward = 5
         std::pair<double, unsigned int> r1(1, 1);    // Parameter 1, reward = 1
 
-        for (unsigned int i = 0 ; i++ < 10;) {
-            ucbw.update(r0);
-            ucbw.update(r1);
-        }
+        constant.update(r0);
+        constant.update(r1);
 
         unsigned int p0 = 0, p1 = 0;
         for (unsigned int i = 0 ; i < 100 ; i++) {
-            unsigned int p = ucbw.getParameter();
+            unsigned int p = constant.getParameter();
             if (p == 0)
                 p0++;
             else if (p == 1)
                 p1++;
         }
-        
         CPPUNIT_ASSERT(p1 < p0);
         CPPUNIT_ASSERT(25 < (p0 - p1));
     }

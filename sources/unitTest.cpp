@@ -25,6 +25,8 @@
 #include "parameterSelection/unitTest_psUCBW.h"
 #include "parameterSelection/unitTest_psAdaptivePursuit.h"
 #include "parameterSelection/unitTest_psSelectBestMutate.h"
+#include "parameterSelection/unitTest_psRandom.h"
+#include "parameterSelection/unitTest_psConstant.h"
 
 
 CPPUNIT_TEST_SUITE_REGISTRATION(UnitTest_LauncherExec);
@@ -32,6 +34,9 @@ CPPUNIT_TEST_SUITE_REGISTRATION(UnitTest_Solution);
 CPPUNIT_TEST_SUITE_REGISTRATION(UnitTest_PsEspsilonGreedyW);
 CPPUNIT_TEST_SUITE_REGISTRATION(UnitTest_psAdaptivePursuit);
 CPPUNIT_TEST_SUITE_REGISTRATION(UnitTest_psSelectBestMutate);
+CPPUNIT_TEST_SUITE_REGISTRATION(UnitTest_psUCBW);
+CPPUNIT_TEST_SUITE_REGISTRATION(UnitTest_psRandom);
+CPPUNIT_TEST_SUITE_REGISTRATION(UnitTest_psConstant);
 
 int main(int argc, char* argv[])
 {

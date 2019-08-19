@@ -28,8 +28,8 @@ class ParameterSelection {
         static constexpr const char* SELECTBESTMUTATE = "PsSelectBestMutate";
         static constexpr const char* UCBW = "PsUCBW";
 
-		ParameterSelection(unsigned int nbParameter) : 
-			_nbParameter(nbParameter) {
+		ParameterSelection(unsigned int number_of_parameters) : 
+			_number_of_parameters(number_of_parameters) {
 		}
 
 		virtual ~ParameterSelection() {
@@ -44,12 +44,12 @@ class ParameterSelection {
 			std::pair<double, unsigned int> p(reward, parameter);
 			update(p);
 		}
-		virtual std::vector<unsigned int> getParameter(const unsigned int nbNodes) = 0;
+		virtual std::vector<unsigned int> getParameter(const unsigned int number_of_nodes) = 0;
 		virtual unsigned int getParameter() = 0;
 		virtual std::string className() const = 0;
 
 	protected:
-		const unsigned int _nbParameter;
+		const unsigned int _number_of_parameters;
 };
 
 #endif

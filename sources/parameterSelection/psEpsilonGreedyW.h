@@ -1,3 +1,13 @@
+/// 
+/// @file psEpsilonGreedyW.h
+/// @author Jxtopher
+/// @brief 
+/// @version 0.1
+/// @date 2019-08-19
+/// 
+/// @copyright Copyright (c) 2019
+/// 
+///
 #ifndef PSEPSILONGREEDYW_H
 #define	PSEPSILONGREEDYW_H
 
@@ -17,46 +27,46 @@ using namespace boost;
 class PsEspsilonGreedy : public ParameterSelection {
 	public:
 	PsEspsilonGreedy(std::shared_ptr<std::mt19937> mt_rand,
-		unsigned int nbParameter, 
+		unsigned int number_of_parameters, 
 		const double espilon = 0.01,
 		const unsigned int windowSize = 150,
-		const char* aggregationFunction = AggregationFunction::MEAN,
-		const char* heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
-		ParameterSelection(nbParameter),
+		const char* aggregation_function = AggregationFunction::MEAN,
+		const char* heterogeneity_policy = HeterogeneityPolicy::HETEROGENOUS) :
+		ParameterSelection(number_of_parameters),
 		_mt_rand(mt_rand),
 		_espilon(espilon),
 		_windowSize(windowSize),
-		_aggregationFunction(aggregationFunction),
-		_heterogeneityPolicy(heterogeneityPolicy) {
+		_aggregation_function(aggregation_function),
+		_heterogeneity_policy(heterogeneity_policy) {
 			assert(0 <= _espilon && _espilon <= 1);
 			
-			initEachParameter = 0;
-			urd = new std::uniform_real_distribution<>(0.0, 1.0);
-			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
-			slidingWindow.set_capacity(windowSize);
-			rewardAggregation = std::unique_ptr<double []>(new double[nbParameter]);
-			numberSelect = std::unique_ptr<unsigned int []>(new unsigned int[nbParameter]);
+			init_each_parameter = 0;
+			urd = std::make_unique<std::uniform_real_distribution<>>(0.0, 1.0);
+			uid = std::make_unique<std::uniform_int_distribution<unsigned int>>(0, this->_number_of_parameters -1);
+			sliding_window.set_capacity(windowSize);
+			reward_aggregation = std::unique_ptr<double []>(new double[number_of_parameters]);
+			number_select = std::unique_ptr<unsigned int []>(new unsigned int[number_of_parameters]);
 			reset();
 	}
 	
 	PsEspsilonGreedy(const PsEspsilonGreedy &c) : 
-		ParameterSelection(c._nbParameter),
+		ParameterSelection(c._number_of_parameters),
 		_mt_rand(c._mt_rand),
 		_espilon(c._espilon),
 		_windowSize(c._windowSize),
-		_aggregationFunction(c._aggregationFunction),
-		_heterogeneityPolicy(c._heterogeneityPolicy),
-		initEachParameter(c.initEachParameter)  {
-			urd = new std::uniform_real_distribution<>(0.0, 1.0);
-			uid = new std::uniform_int_distribution<unsigned int>(0, this->_nbParameter -1);
-			slidingWindow.set_capacity(_windowSize);
-			rewardAggregation = std::unique_ptr<double []>(new double[_nbParameter]);
-			numberSelect = std::unique_ptr<unsigned int []>(new unsigned int[_nbParameter]);
+		_aggregation_function(c._aggregation_function),
+		_heterogeneity_policy(c._heterogeneity_policy),
+		init_each_parameter(c.init_each_parameter)  {
+			urd = std::make_unique<std::uniform_real_distribution<>>(0.0, 1.0);
+			uid = std::make_unique<std::uniform_int_distribution<unsigned int>>(0, this->_number_of_parameters -1);
+			sliding_window.set_capacity(_windowSize);
+			reward_aggregation = std::unique_ptr<double []>(new double[_number_of_parameters]);
+			number_select = std::unique_ptr<unsigned int []>(new unsigned int[_number_of_parameters]);
 
-			slidingWindow = c.slidingWindow;
-			for (unsigned int i = 0 ; i < _nbParameter ; i++) {
-				rewardAggregation[i] = c.rewardAggregation[i];
-				numberSelect[i] = c.numberSelect[i];
+			sliding_window = c.sliding_window;
+			for (unsigned int i = 0 ; i < _number_of_parameters ; i++) {
+				reward_aggregation[i] = c.reward_aggregation[i];
+				number_select[i] = c.number_select[i];
 			}
     }
 
@@ -67,10 +77,10 @@ class PsEspsilonGreedy : public ParameterSelection {
 	ParameterSelection* clone() const { return new PsEspsilonGreedy(*this); }
 
 	void reset() {
-		initEachParameter = 0;
-		for(unsigned int i = 0 ; i < this->_nbParameter ; i++) {
-			rewardAggregation[i] = 0;
-			numberSelect[i] = 0;
+		init_each_parameter = 0;
+		for(unsigned int i = 0 ; i < this->_number_of_parameters ; i++) {
+			reward_aggregation[i] = 0;
+			number_select[i] = 0;
 		}
 	}
 
@@ -85,81 +95,95 @@ class PsEspsilonGreedy : public ParameterSelection {
 	/// @param rewards : rewards is a pair of raward and parameter
 	///
 	void update(std::pair<double, unsigned int> &rewards) {
-		if (_aggregationFunction == AggregationFunction::MAX) {
-			assert(false);
-			// NEED implementation
-			slidingWindow.push_front(rewards);
-			{
+		if (_aggregation_function == AggregationFunction::MAX) {
+			sliding_window.push_front(rewards);
 
+			const auto p = std::minmax_element(sliding_window.begin(), sliding_window.end());
+			auto min = p.first->second;
+			auto max = p.second->second;
+			for (unsigned int i = 0 ; i < _number_of_parameters ; i++) {
+				if(p.second->second == p.second->second)
+					reward_aggregation[i] = p.second->first;
+				else 
+					reward_aggregation[i] = p.first->first;
 			}
-		} else if (_aggregationFunction == AggregationFunction::MEAN) {
-			if (slidingWindow.full()) {
-				unsigned int r = slidingWindow.back().first;  // Reward
-				unsigned int p = slidingWindow.back().second; // Parameter
-				assert(p < this->_nbParameter);
-				rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] - r) / (numberSelect[p] - 1);
-				numberSelect[p]--;
+		} else if (_aggregation_function == AggregationFunction::MEAN) {
+			if (sliding_window.full()) {
+				unsigned int r = sliding_window.back().first;  // Reward
+				unsigned int p = sliding_window.back().second; // Parameter
+				assert(p < this->_number_of_parameters);
+				reward_aggregation[p] = (reward_aggregation[p] * number_select[p] - r) / (number_select[p] - 1);
+				number_select[p]--;
 			}
 
-			slidingWindow.push_front(rewards);
+			sliding_window.push_front(rewards);
 
 			{
-				unsigned int r = slidingWindow.begin()->first;  // Reward
-				unsigned int p = slidingWindow.begin()->second; // Parameter
-				assert(p < this->_nbParameter);
-				rewardAggregation[p] = (rewardAggregation[p] * numberSelect[p] + r) / (numberSelect[p] + 1);
-				numberSelect[p]++;
+				unsigned int r = sliding_window.begin()->first;  // Reward
+				unsigned int p = sliding_window.begin()->second; // Parameter
+				assert(p < this->_number_of_parameters);
+				reward_aggregation[p] = (reward_aggregation[p] * number_select[p] + r) / (number_select[p] + 1);
+				number_select[p]++;
 			}
 		} else {
 			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The aggregation function is not defined");
 		}
 	}
 
-	std::vector<unsigned int> getParameter(const unsigned int nbNodes) {
+	std::vector<unsigned int> getParameter(const unsigned int number_of_nodes) {
 		std::vector<unsigned int> parameterList;
 		
-		if (initEachParameter < this->_nbParameter) {
-			for (unsigned int i = 0 ; i < nbNodes ; i++)
-				parameterList.push_back(initEachParameter);
-			initEachParameter++;
-		} else {
-			unsigned int bestParameter = std::distance(rewardAggregation.get(), std::max_element(rewardAggregation.get(), rewardAggregation.get() + this->_nbParameter));
-			if (_heterogeneityPolicy == HeterogeneityPolicy::HETEROGENOUS) {
-				for (unsigned int i = 0 ; i < nbNodes ; i++) {
+
+		unsigned int bestParameter = std::distance(reward_aggregation.get(), std::max_element(reward_aggregation.get(), reward_aggregation.get() + this->_number_of_parameters));
+		if (_heterogeneity_policy == HeterogeneityPolicy::HETEROGENOUS) {
+			if (init_each_parameter < this->_number_of_parameters) {
+				for (unsigned int i = 0 ; i < number_of_nodes ; i++) {
+					parameterList.push_back(number_of_nodes % init_each_parameter);
+					init_each_parameter = _number_of_parameters;
+				}
+			} else {
+				for (unsigned int i = 0 ; i < number_of_nodes ; i++) {
 					if (urd->operator()(*(this->_mt_rand)) <= _espilon)
 						parameterList.push_back(uid->operator()(*(this->_mt_rand)));
 					else
 						parameterList.push_back(bestParameter);
 				}
-			} else if (_heterogeneityPolicy == HeterogeneityPolicy::HOMOGENEOUS) {
+			}
+		} else if (_heterogeneity_policy == HeterogeneityPolicy::HOMOGENEOUS) {
+			if (init_each_parameter < this->_number_of_parameters) {
+				for (unsigned int i = 0 ; i < number_of_nodes ; i++)
+					parameterList.push_back(init_each_parameter);
+				init_each_parameter++;
+			} else {
 				if (urd->operator()(*(this->_mt_rand)) <= _espilon) {
-					for (unsigned int i = 0 ; i < nbNodes ; i++)
+					for (unsigned int i = 0 ; i < number_of_nodes ; i++)
 						parameterList.push_back(uid->operator()(*(this->_mt_rand)));
 				} else {
-					for (unsigned int i = 0 ; i < nbNodes ; i++)
+					for (unsigned int i = 0 ; i < number_of_nodes ; i++)
 						parameterList.push_back(bestParameter);
 				}
-			} else 
-				throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The policy model is not defined");
-		}
+			}
+		} else 
+			throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The policy model is not defined");
+	
 				
 		return parameterList;
 	}
 
 	unsigned int getParameter() {
-		if (initEachParameter < this->_nbParameter) {
-			return initEachParameter++;
+		if (init_each_parameter < this->_number_of_parameters) {
+			return init_each_parameter++;
 		} else if (urd->operator()(*(this->_mt_rand)) <= _espilon) {
 			return uid->operator()(*(this->_mt_rand));
 		} else {
-			return std::distance(rewardAggregation.get(), std::max_element(rewardAggregation.get(), rewardAggregation.get() + this->_nbParameter));
+			return std::distance(reward_aggregation.get(), std::max_element(reward_aggregation.get(), reward_aggregation.get() + this->_number_of_parameters));
 		}
 	}
 
 
 	double getreward(const unsigned int parameter) const {
-		assert(parameter < this->_nbParameter);
-		return rewardAggregation[parameter];
+		assert(parameter < this->_number_of_parameters);
+		return reward_aggregation[parameter];
 	}
 
     std::string className() const {
@@ -170,15 +194,15 @@ class PsEspsilonGreedy : public ParameterSelection {
 	std::shared_ptr<std::mt19937> _mt_rand;
 	const double _espilon;
 	const unsigned int _windowSize;
-	const char* _aggregationFunction;
-	const char* _heterogeneityPolicy;
-	std::uniform_real_distribution<> *urd;
-	std::uniform_int_distribution<unsigned int> *uid;
-	circular_buffer<std::pair<double, unsigned int>> slidingWindow;
+	const char* _aggregation_function;
+	const char* _heterogeneity_policy;
+	std::unique_ptr<std::uniform_real_distribution<>> urd;
+	std::unique_ptr<std::uniform_int_distribution<unsigned int>> uid;
+	circular_buffer<std::pair<double, unsigned int>> sliding_window;
 
-	unsigned int initEachParameter;
-	std::unique_ptr<double[]> rewardAggregation;
-	std::unique_ptr<unsigned int[]> numberSelect;
+	unsigned int init_each_parameter;
+	std::unique_ptr<double[]> reward_aggregation;
+	std::unique_ptr<unsigned int[]> number_select;
 };
 
 #endif

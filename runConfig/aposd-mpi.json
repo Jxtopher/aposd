@@ -6,7 +6,7 @@
             "className": "MasterWorkersSynchronous",
             "ParameterSelection": {
                 "className": "PsAdaptivePursuit",
-                "nbParameter": 3
+                "number_of_parameters": 3
             },
             "Launcher": {
                 "className": "LauncherExec",

@@ -102,7 +102,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
 
     // curl -i -X POST --header "Content-Type:application/json" -d '{"method":"notify", "params":["msgxxxxxxxxxxxxxxxxxxxxxx"], "id":1}' http://127.0.0.1:8080/
     void echo(const std::string &msg) { 
-        DEBUG_TRACE("echo")
+        BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" echo";
         cppcms::json::value json;
         json["your_msg"] = msg;  // true | false
         json["help"] = "initialization | learning | finish";
@@ -124,34 +124,41 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
     /// @param msg 
     ///
     void initialization(const std::string &msg) {
-        Json::Value configuration = stringAsjson(msg);
+        try {
+            Json::Value configuration = stringAsjson(msg);
 
-        std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
-        if (!configuration["seed"].empty())
-            mt_rand->seed(configuration["seed"].isInt());
-        else
-            mt_rand->seed(static_cast<std::mt19937::result_type>(time(0)));
+            std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
+            if (!configuration["seed"].empty())
+                mt_rand->seed(configuration["seed"].isInt());
+            else
+                mt_rand->seed(static_cast<std::mt19937::result_type>(time(0)));
 
-        std::unique_ptr<ClassBuilder> classBuilder = std::make_unique<ClassBuilder>(mt_rand);
+            std::unique_ptr<ClassBuilder> classBuilder = std::make_unique<ClassBuilder>(mt_rand);
 
-        std::unique_ptr<ParameterSelection> parameterSelection = classBuilder->parameterSelection(configuration["CalculationModel"]["ParameterSelection"]);
-        std::unique_ptr<RewardComputation<APOSD_SOL>> rewardComputation = classBuilder->rewardComputation<APOSD_SOL>(configuration["CalculationModel"]["RewardComputation"]);
+            std::unique_ptr<ParameterSelection> parameterSelection = classBuilder->parameterSelection(configuration["CalculationModel"]["ParameterSelection"]);
+            std::unique_ptr<RewardComputation<APOSD_SOL>> rewardComputation = classBuilder->rewardComputation<APOSD_SOL>(configuration["CalculationModel"]["RewardComputation"]);
 
-        LearningOnline<APOSD_SOL> *calculationmodel = new LearningOnline<APOSD_SOL>( 
-            std::move(parameterSelection), 
-            std::move(rewardComputation));
+            LearningOnline<APOSD_SOL> *calculationmodel = new LearningOnline<APOSD_SOL>( 
+                std::move(parameterSelection), 
+                std::move(rewardComputation));
 
-        methodList.push_back(std::move(calculationmodel));
+            methodList.push_back(std::move(calculationmodel));
 
-        // Response
-        cppcms::json::value r;
-        std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->initialSolution(APOSD_SOL(configuration["initialSolution"]));
-        r["objectId"] = convertPointerToStringAddress(calculationmodel);
-        r["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
-        r["num_paramter"] = buff.second;
-        response().out()<<r;
+            // Response
+            cppcms::json::value r;
+            std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->initialSolution(APOSD_SOL(configuration["initialSolution"]));
+            r["objectId"] = convertPointerToStringAddress(calculationmodel);
+            r["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
+            r["num_paramter"] = buff.second;
+            response().out()<<r;
 
-        DEBUG_TRACE("initialization " + convertPointerToStringAddress(calculationmodel))
+            BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" initialization " << convertPointerToStringAddress(calculationmodel);
+        } catch (...) {
+            cppcms::json::value r;
+            r["error"] = -1;
+            r["error_msg"] = "[-] can't build class";
+            response().out()<<r;
+        }
     }
 
     ///
@@ -162,7 +169,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
     void learning(const std::string &msg) {
         Json::Value data = stringAsjson(msg);
         LearningOnline<APOSD_SOL>* calculationmodel = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
-        DEBUG_TRACE("learning " + convertPointerToStringAddress(calculationmodel))
+        BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":"<<__LINE__<<"learning " + convertPointerToStringAddress(calculationmodel);
         
         // Response
         cppcms::json::value r;
@@ -190,7 +197,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
 
         // cppcms::json::value json;
         LearningOnline<APOSD_SOL>* method = convertAddressStringToPointer<LearningOnline<APOSD_SOL>>(data["objectId"].asString());
-        DEBUG_TRACE("finish " + data["objectId"].asString())
+        BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":"<<__LINE__<<" finish " + data["objectId"].asString();
 
         // Vérifie que l'objet existe
         std::vector<LearningOnline<APOSD_SOL>*>::iterator it = std::find(methodList.begin(), methodList.end(), method);
@@ -212,7 +219,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
 };
 
 void Interface_webApps(int argc, char** argv, const Json::Value &configuration) {
-    DEBUG_TRACE("CREATE Interface_webApps")
+    BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":"<<__LINE__<<" CREATE Interface_webApps";
     try {
         cppcms::service srv(argc, argv);
         srv.applications_pool().mount(cppcms::applications_factory<WebAposd>());

@@ -9,7 +9,7 @@
 // -> MPI ---------------------
 #include <mpi.h>
 
-int mpi_globals_nbnodes;
+int mpi_globals_number_of_nodes;
 int mpi_globals_rank;
 int mpi_globals_namelen;
 char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
@@ -27,8 +27,6 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 
 #include "../launcher/launcher.h"
 
-#include "../macro.h"
-
 #include "../parameterSelection/parameterSelection.h"
 #include "../rewardComputation/rewardComputation.h"
 #include "../selection/selection.h"
@@ -41,7 +39,7 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 void Interface_MPI(int argc, char **argv, const Json::Value &configuration);
 
 void Interface_MPI(int argc, char **argv, const Json::Value &configuration) {
-	DEBUG_TRACE("CREATE Interface_MPI")
+	BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" CREATE Interface_MPI";
     std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
 
     if (!configuration["seed"].empty())

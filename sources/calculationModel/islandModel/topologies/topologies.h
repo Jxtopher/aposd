@@ -44,8 +44,8 @@ class Topologies {
         static constexpr const char* RANDOMEDGE = "RandomEdge";
         static constexpr const char* STAR = "Star";
 
-		Topologies(unsigned int nbNodes) : 
-            _nbNodes(nbNodes) {
+		Topologies(unsigned int number_of_nodes) : 
+            _number_of_nodes(number_of_nodes) {
 
 		}
 		virtual ~Topologies() {
@@ -67,7 +67,7 @@ class Topologies {
         }
 	protected:
         Graph g; /// < graphe g
-        unsigned int _nbNodes;
+        unsigned int _number_of_nodes;
 };
 
 

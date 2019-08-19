@@ -24,18 +24,18 @@ class UnitTest_PsEspsilonGreedyW : public CppUnit::TestFixture {
     }
 
     void update(void) {
-        std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
-		unsigned int nbParameter = 4;
+        std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
+		unsigned int number_of_parameters = 4;
 		const double espilon = 1;
 		const unsigned int windowSize = 5;
-        PsEspsilonGreedy egreedy(mt_rand, nbParameter, espilon, windowSize);
+        PsEspsilonGreedy egreedy(mt_rand, number_of_parameters, espilon, windowSize);
 
-        pair<double, unsigned int> r1(55, 2);
-        pair<double, unsigned int> r2(60, 2);
-        pair<double, unsigned int> r3(14, 2);
-        pair<double, unsigned int> r4(22, 2);
-        pair<double, unsigned int> r5(14, 2);
-        pair<double, unsigned int> r6(42, 2);
+        std::pair<double, unsigned int> r1(55, 2);
+        std::pair<double, unsigned int> r2(60, 2);
+        std::pair<double, unsigned int> r3(14, 2);
+        std::pair<double, unsigned int> r4(22, 2);
+        std::pair<double, unsigned int> r5(14, 2);
+        std::pair<double, unsigned int> r6(42, 2);
         egreedy.update(r1);
         CPPUNIT_ASSERT(egreedy.getreward(2) == 55);
         egreedy.update(r2);
@@ -56,14 +56,14 @@ class UnitTest_PsEspsilonGreedyW : public CppUnit::TestFixture {
     }
 
     void getParameter(void) {
-        std::shared_ptr<std::mt19937> mt_rand = make_shared<std::mt19937>();
-		unsigned int nbParameter = 2;
+        std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
+		unsigned int number_of_parameters = 2;
 		const double espilon = 0.01;
 		const unsigned int windowSize = 5;
-        PsEspsilonGreedy egreedy(mt_rand, nbParameter, espilon, windowSize);
+        PsEspsilonGreedy egreedy(mt_rand, number_of_parameters, espilon, windowSize);
 
-        pair<double, unsigned int> r0(5, 0);    // Parameter 0, reward = 1
-        pair<double, unsigned int> r1(1, 1);    // Parameter 1, reward = 5
+        std::pair<double, unsigned int> r0(5, 0);    // Parameter 0, reward = 5
+        std::pair<double, unsigned int> r1(1, 1);    // Parameter 1, reward = 1
 
         egreedy.update(r0);
         egreedy.update(r1);
@@ -71,11 +71,10 @@ class UnitTest_PsEspsilonGreedyW : public CppUnit::TestFixture {
         unsigned int p0 = 0, p1 = 0;
         for (unsigned int i = 0 ; i < 50 ; i++) {
             unsigned int p = egreedy.getParameter();
-            if (p == 0) {
+            if (p == 0)
                 p0++;
-            } else if (p == 1) {
+            else if (p == 1)
                 p1++;
-            }
         }
         CPPUNIT_ASSERT(p1 < p0);
         CPPUNIT_ASSERT(25 < (p0 - p1));
