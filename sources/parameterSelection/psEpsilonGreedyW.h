@@ -30,14 +30,14 @@ class PsEspsilonGreedy : public ParameterSelection {
 		unsigned int number_of_parameters, 
 		const double espilon = 0.01,
 		const unsigned int windowSize = 150,
-		const char* aggregationFunction = AggregationFunction::MEAN,
-		const char* heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
+		const char* aggregation_function = AggregationFunction::MEAN,
+		const char* heterogeneity_policy = HeterogeneityPolicy::HETEROGENOUS) :
 		ParameterSelection(number_of_parameters),
 		_mt_rand(mt_rand),
 		_espilon(espilon),
 		_windowSize(windowSize),
-		_aggregation_function(aggregationFunction),
-		_heterogeneity_policy(heterogeneityPolicy) {
+		_aggregation_function(aggregation_function),
+		_heterogeneity_policy(heterogeneity_policy) {
 			assert(0 <= _espilon && _espilon <= 1);
 			
 			init_each_parameter = 0;

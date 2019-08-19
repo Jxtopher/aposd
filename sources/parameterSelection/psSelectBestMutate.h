@@ -20,14 +20,14 @@ class PsSelectBestMutate : public ParameterSelection {
 		unsigned int number_of_parameters,
 		const double espilon = 0.15,
 		const unsigned int windowSize = 150,
-		const char* aggregationFunction = AggregationFunction::MEAN,
-		const char* heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
+		const char* aggregation_function = AggregationFunction::MEAN,
+		const char* heterogeneity_policy = HeterogeneityPolicy::HETEROGENOUS) :
 		ParameterSelection(number_of_parameters),
 		_mt_rand(mt_rand),
 		_espilon(espilon),
 		_windowSize(windowSize),
-		_aggregation_function(aggregationFunction),
-		_heterogeneity_policy(heterogeneityPolicy) {
+		_aggregation_function(aggregation_function),
+		_heterogeneity_policy(heterogeneity_policy) {
 			urd = std::make_unique<std::uniform_real_distribution<>>(0.0, 1.0);
 			uid = new std::uniform_int_distribution<unsigned int>(0, this->_number_of_parameters -1);
 			reward_aggregation = std::unique_ptr<double []>(new double[number_of_parameters]);

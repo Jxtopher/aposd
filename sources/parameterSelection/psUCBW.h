@@ -28,12 +28,12 @@ class PsUCBW : public ParameterSelection {
 		unsigned int number_of_parameters,
         const double C = 0.03,
         const unsigned int windowSize = 300,
-		const char* aggregationFunction = AggregationFunction::MEAN) :
+		const char* aggregation_function = AggregationFunction::MEAN) :
 		ParameterSelection(number_of_parameters),
 		_mt_rand(mt_rand),
         _C(C),
         _windowSize(windowSize),
-		_aggregation_function(aggregationFunction) {
+		_aggregation_function(aggregation_function) {
 			uid = new std::uniform_int_distribution<unsigned int>(0, this->_number_of_parameters -1);
 			sliding_window.set_capacity(windowSize);
 			reward_aggregation = std::unique_ptr<double []>(new double[number_of_parameters]);

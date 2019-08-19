@@ -23,16 +23,16 @@ class PsAdaptivePursuit : public ParameterSelection {
         const double beta = 0.2,
         const double p_min = 0.1,
         const double p_max = 0.9,
-        const char* aggregationFunction = AggregationFunction::MEAN,
-		const char* heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
+        const char* aggregation_function = AggregationFunction::MEAN,
+		const char* heterogeneity_policy = HeterogeneityPolicy::HETEROGENOUS) :
         ParameterSelection(number_of_parameters),
 		_mt_rand(mt_rand),
         _alpha(alpha),
         _beta(beta),
         _p_min(p_min),
         _p_max(p_max),
-        _aggregation_function(aggregationFunction),
-		_heterogeneity_policy(heterogeneityPolicy) {
+        _aggregation_function(aggregation_function),
+		_heterogeneity_policy(heterogeneity_policy) {
 			uid = std::make_unique<std::uniform_int_distribution<unsigned int>>(0, this->_number_of_parameters -1);
             reward_estimate = std::make_unique<double []>(number_of_parameters);
             selection_probability = std::make_unique<double []>(number_of_parameters);

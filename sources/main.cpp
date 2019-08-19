@@ -57,12 +57,14 @@ void version(const std::string &name_software, const std::string &num_version) {
 int main(int argc, char **argv) {
 
     std::string configFile; // Chemin du ficher de configuration json
+	std::string loggin;
 
 	boost::program_options::variables_map vm;
 	boost::program_options::options_description argements("[*] main option");
 	argements.add_options()
 						("help,h", "help message")
-						("config,c", boost::program_options::value<std::string>(&configFile), "File configuration json (default : null)");
+						("config,c", boost::program_options::value<std::string>(&configFile), "File configuration json (default : null)")
+						("loggin,l", boost::program_options::value<std::string>(&loggin), "loggin (default : null)");
 	try {
     	boost::program_options::store(boost::program_options::parse_command_line(argc, argv, argements), vm);
 		boost::program_options::notify(vm);
@@ -81,8 +83,11 @@ int main(int argc, char **argv) {
 	}
 
 	// Defined the show log siverity level
-    boost::log::core::get()->set_filter(boost::log::trivial::severity <= boost::log::trivial::info);
-	
+	if (loggin == "debug") 
+    	boost::log::core::get()->set_filter(boost::log::trivial::severity == boost::log::trivial::debug);
+	else
+		boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::info);
+
     if (configFile.empty()) {
         std::cerr<<"./aposd -c config.json"<<std::endl;
         exit(EXIT_FAILURE);

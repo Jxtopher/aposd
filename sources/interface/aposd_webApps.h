@@ -124,34 +124,41 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
     /// @param msg 
     ///
     void initialization(const std::string &msg) {
-        Json::Value configuration = stringAsjson(msg);
+        try {
+            Json::Value configuration = stringAsjson(msg);
 
-        std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
-        if (!configuration["seed"].empty())
-            mt_rand->seed(configuration["seed"].isInt());
-        else
-            mt_rand->seed(static_cast<std::mt19937::result_type>(time(0)));
+            std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
+            if (!configuration["seed"].empty())
+                mt_rand->seed(configuration["seed"].isInt());
+            else
+                mt_rand->seed(static_cast<std::mt19937::result_type>(time(0)));
 
-        std::unique_ptr<ClassBuilder> classBuilder = std::make_unique<ClassBuilder>(mt_rand);
+            std::unique_ptr<ClassBuilder> classBuilder = std::make_unique<ClassBuilder>(mt_rand);
 
-        std::unique_ptr<ParameterSelection> parameterSelection = classBuilder->parameterSelection(configuration["CalculationModel"]["ParameterSelection"]);
-        std::unique_ptr<RewardComputation<APOSD_SOL>> rewardComputation = classBuilder->rewardComputation<APOSD_SOL>(configuration["CalculationModel"]["RewardComputation"]);
+            std::unique_ptr<ParameterSelection> parameterSelection = classBuilder->parameterSelection(configuration["CalculationModel"]["ParameterSelection"]);
+            std::unique_ptr<RewardComputation<APOSD_SOL>> rewardComputation = classBuilder->rewardComputation<APOSD_SOL>(configuration["CalculationModel"]["RewardComputation"]);
 
-        LearningOnline<APOSD_SOL> *calculationmodel = new LearningOnline<APOSD_SOL>( 
-            std::move(parameterSelection), 
-            std::move(rewardComputation));
+            LearningOnline<APOSD_SOL> *calculationmodel = new LearningOnline<APOSD_SOL>( 
+                std::move(parameterSelection), 
+                std::move(rewardComputation));
 
-        methodList.push_back(std::move(calculationmodel));
+            methodList.push_back(std::move(calculationmodel));
 
-        // Response
-        cppcms::json::value r;
-        std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->initialSolution(APOSD_SOL(configuration["initialSolution"]));
-        r["objectId"] = convertPointerToStringAddress(calculationmodel);
-        r["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
-        r["num_paramter"] = buff.second;
-        response().out()<<r;
+            // Response
+            cppcms::json::value r;
+            std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->initialSolution(APOSD_SOL(configuration["initialSolution"]));
+            r["objectId"] = convertPointerToStringAddress(calculationmodel);
+            r["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
+            r["num_paramter"] = buff.second;
+            response().out()<<r;
 
-        BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" initialization " << convertPointerToStringAddress(calculationmodel);
+            BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" initialization " << convertPointerToStringAddress(calculationmodel);
+        } catch (...) {
+            cppcms::json::value r;
+            r["error"] = -1;
+            r["error_msg"] = "[-] can't build class";
+            response().out()<<r;
+        }
     }
 
     ///

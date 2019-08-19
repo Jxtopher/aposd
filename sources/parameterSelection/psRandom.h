@@ -8,11 +8,11 @@ class PsRandom : public ParameterSelection {
 	public:
 	PsRandom(std::shared_ptr<std::mt19937> mt_rand,
 		unsigned int number_of_parameters,
-		const char* aggregationFunction = AggregationFunction::MEAN,
-		const char* heterogeneityPolicy = HeterogeneityPolicy::HETEROGENOUS) :
+		const char* aggregation_function = AggregationFunction::MEAN,
+		const char* heterogeneity_policy = HeterogeneityPolicy::HETEROGENOUS) :
 		ParameterSelection(number_of_parameters),
 		_mt_rand(mt_rand),
-		_heterogeneity_policy(heterogeneityPolicy),
+		_heterogeneity_policy(heterogeneity_policy),
 		_law(0) {
 			uid = new std::uniform_int_distribution<unsigned int>(0, this->_number_of_parameters -1);
 	}
