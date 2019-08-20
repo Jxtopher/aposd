@@ -17,7 +17,7 @@ class MasterWorkersSynchronous : public CalculationModel {
                             std::unique_ptr<Launcher> launcher, 
                             std::unique_ptr<ParameterSelection> parameterSelection,
                             std::unique_ptr<RewardComputation<SOL>> rewardComputation,
-                            std::unique_ptr<Selection<SOL>> selection) {
+                            std::unique_ptr<SolutionSelection<SOL>> selection) {
         // Variable MPI init
         MPI_Init(&argc, &argv);
         MPI_Comm_size(MPI_COMM_WORLD, &mpi_globals_number_of_nodes);

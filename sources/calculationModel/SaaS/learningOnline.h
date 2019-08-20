@@ -1,60 +1,20 @@
-#ifndef SAAS_LEARNING_H
-#define	SAAS_LEARNING_H
+#ifndef SAAS_LEARNINGONL_H
+#define	SAAS_LEARNINGONL_H
 
-#include <memory>
-#include <utility>
-
-#include "../calculationModel.h"
-#include "../../rewardComputation/rewardComputation.h"
-#include "../../parameterSelection/parameterSelection.h"
-#include "../../launcher/launcher.h"
 
 template<class SOL>
-class LearningOnline : public CalculationModel {
-public:
-    LearningOnline(std::unique_ptr<ParameterSelection> parameterSelection,
-                    std::unique_ptr<RewardComputation<SOL>> rewardComputation) :
-        _parameterSelection(std::move(parameterSelection)),
-        _rewardComputation(std::move(rewardComputation)) {
+class LearningOnline {
+    public:
+    LearningOnline() {
 
     }
-    
+
     virtual ~LearningOnline() {
 
     }
 
-    //
-    std::pair<SOL, unsigned int> initialSolution(const SOL &s) {
-        solution_t0 = s;
-        return std::pair<SOL, unsigned int>(solution_t0, 0);
-    }
-
-    std::pair<SOL, unsigned int> run(const SOL &s_t0, const SOL s_t1, unsigned int parameter) {
-        solution_t1 = s_t0;
-        solution_t1 = s_t1;
-        
-        std::pair<double, unsigned int> rewardOp = _rewardComputation->operator()(solution_t0, solution_t1, parameter);
-
-        // update
-        _parameterSelection->update(rewardOp);
-
-        unsigned int new_parameter = _parameterSelection->getParameter();
-
-        solution_t0 = solution_t1;
-
-        return std::pair<SOL, unsigned int>(solution_t1, new_parameter);
-    }
-
-    void operator()() {
-
-    }
-
-protected:
-    std::unique_ptr<ParameterSelection> _parameterSelection;
-    std::unique_ptr<RewardComputation<SOL>> _rewardComputation;
-    SOL solution_t0;
-    SOL solution_t1;
-
+    virtual std::pair<SOL, unsigned int> initialSolution(const SOL &s) = 0;
+    virtual std::pair<SOL, unsigned int> run(const SOL &s_t0, const SOL s_t1, unsigned int parameter) = 0;
 };
 
 #endif

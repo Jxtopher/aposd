@@ -7,17 +7,19 @@
 /// @brief 
 ///
 
-#ifndef SELECTION_MAXIMIZATION_H
-#define SELECTION_MAXIMIZATION_H
+#include "solutionSelection.h"
+
+#ifndef SELECTION_MINIMIZATION_H
+#define SELECTION_MINIMIZATION_H
 
 template<class SOL>
-class Selection_maximization : public SolutionSelection<SOL> {
+class Selection_minimization : public SolutionSelection<SOL> {
     public:
-    Selection_maximization() {
+    Selection_minimization()  {
 
     }
 
-    virtual ~Selection_maximization() {
+    virtual ~Selection_minimization() {
 
     }
 
@@ -27,7 +29,7 @@ class Selection_maximization : public SolutionSelection<SOL> {
         double fitness = solutions[0].getFitness();
         int index = 0;
         for (unsigned int i = 0 ; i < solutions.size() ; i++) {
-            if (fitness < solutions[i].getFitness()) {
+            if (solutions[i].getFitness() < fitness) {
                 fitness = solutions[i].getFitness();
                 index = i;
             }
@@ -38,17 +40,16 @@ class Selection_maximization : public SolutionSelection<SOL> {
     bool operator()(const SOL &s1, const SOL &s2) {
         assert(s1.fitnessIsValid());
         assert(s2.fitnessIsValid());
-
-        return s2.getFitness() < s1.getFitness();
+        
+        return s1.getFitness() < s2.getFitness();
     }
 
     bool operator()(const SOL &s1, const SOL &s2, const unsigned int numObjectif) {
         assert(s1.fitnessIsValid(numObjectif));
         assert(s2.fitnessIsValid(numObjectif));
-
-        return s2.getFitness(numObjectif) < s1.getFitness(numObjectif);
+        
+        return s1.getFitness(numObjectif) < s2.getFitness(numObjectif);
     }
-    
 };
 
 #endif

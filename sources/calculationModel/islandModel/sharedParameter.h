@@ -7,7 +7,7 @@
 
 #include "islandModel.h"
 #include "topologies/topologies.h"
-#include "../../selection/selection.h"
+#include "../../selection/solutionSelection.h"
 #include "../../parameterSelection/parameterSelection.h"
 #include "../../rewardComputation/rewardComputation.h"
 #include "../../launcher/launcher.h"
@@ -24,7 +24,7 @@ class SharedParameter : public IslandModel<SOL> {
                         std::unique_ptr<Launcher> launcher, 
                         std::unique_ptr<ParameterSelection> parameterSelection, 
                         std::unique_ptr<RewardComputation<SOL>> rewardComputation,
-                        std::unique_ptr<Selection<SOL>> selection) : 
+                        std::unique_ptr<SolutionSelection<SOL>> selection) : 
             IslandModel<SOL>(argc, argv, std::move(topologies)),
             _launcher(std::move(launcher)),
             _parameterSelection(std::move(parameterSelection)),
@@ -127,7 +127,7 @@ class SharedParameter : public IslandModel<SOL> {
         std::unique_ptr<Launcher> _launcher;
         std::unique_ptr<ParameterSelection> _parameterSelection;
         std::unique_ptr<RewardComputation<SOL>> _rewardComputation;
-        std::unique_ptr<Selection<SOL>> _selection;
+        std::unique_ptr<SolutionSelection<SOL>> _selection;
 
         std::vector<SOL> solutions;  // liste des solutions candidat
         

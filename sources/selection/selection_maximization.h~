@@ -1,26 +1,32 @@
 ///
-/// @file selection_minimization.h
+/// @file selection_maximization.h
 /// @author Jxtopher
 /// @version 1
 /// @copyright CC-BY-NC-SA
 /// @date 2018-10
-/// @brief 
+/// @brief
 ///
 
 #ifndef SELECTION_MAXIMIZATION_H
 #define SELECTION_MAXIMIZATION_H
 
-template<class SOL>
+#include <vector>
+
+#include "Selection.h"
+
+
+
+template <class SOL>
 class Selection_maximization : public SolutionSelection<SOL> {
     public:
-    Selection_maximization() {
+    Selection_maximization() : SolutionSelection<SOL>() {
 
     }
 
     virtual ~Selection_maximization() {
 
     }
-
+   
     SOL operator()(const std::vector<SOL> &solutions) const {
         assert(0 < solutions.size());
         
@@ -35,20 +41,8 @@ class Selection_maximization : public SolutionSelection<SOL> {
         return solutions[index];
     }
 
-    bool operator()(const SOL &s1, const SOL &s2) {
-        assert(s1.fitnessIsValid());
-        assert(s2.fitnessIsValid());
+    protected:
 
-        return s2.getFitness() < s1.getFitness();
-    }
-
-    bool operator()(const SOL &s1, const SOL &s2, const unsigned int numObjectif) {
-        assert(s1.fitnessIsValid(numObjectif));
-        assert(s2.fitnessIsValid(numObjectif));
-
-        return s2.getFitness(numObjectif) < s1.getFitness(numObjectif);
-    }
-    
 };
 
 #endif

@@ -35,12 +35,12 @@ class Aposd:
         aposd = {
             "seed": 0,
             "CommunicationModel": "WEBAPPLICATION",
+            "group_id": "Learning",
             "CalculationModel": {
-                "className": "Learning",
                 # "ParameterSelection": {
                 #     "className": "PsConstant", # learning method constant
-                #     #"className": "PsRandom", # learning method Random
-                #     #"className": "PsEspsilonGreedy", # learning method E-Greedy
+                # #     #"className": "PsRandom", # learning method Random
+                # #     #"className": "PsEspsilonGreedy", # learning method E-Greedy
                 #     "number_of_parameters": 2,
                 # },
                 "ParameterSelection": {
@@ -53,20 +53,21 @@ class Aposd:
                     "heterogeneity_policy":"heterogenous",
                     "number_of_parameters": 2,
                 },
+                "SolutionSelection" : "max"
             },
             "initialSolution": {"fitness": [0], "fitnessIsValid": [1], "solution": ["empty"]},
         }
         recv = self.aposd_client.send("initialization", aposd)
         if 'error' in recv:
-            print("Error")
+            print("Error initialization")
             exit(0)
         else :
-            self.object_id = recv["objectId"]
+            self.object_id = recv["object_id"]
             return recv
 
     def learning(self, fitness_t0 : int, fitness_t1 : int, num_paramter: int):
         aposd = {
-            "objectId": self.object_id,
+            "object_id": self.object_id,
             "Solution_t0" : {
                 "fitness" : [fitness_t0],
                 "fitnessIsValid" : [1],
@@ -82,7 +83,7 @@ class Aposd:
         return self.aposd_client.send("learning", aposd)
 
     def finish(self):
-        aposd = {"objectId": self.object_id}
+        aposd = {"object_id": self.object_id}
         return self.aposd_client.send("finish", aposd)
 
 

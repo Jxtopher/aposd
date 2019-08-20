@@ -7,18 +7,21 @@
 /// @brief
 ///
 
-#ifndef SELECTION_H
-#define SELECTION_H
+#ifndef SOLUTIONSELECTION_H
+#define SOLUTIONSELECTION_H
 
 
 template <class SOL>
-class Selection {
+class SolutionSelection {
     public:
-    Selection() {
+    static constexpr const char* MAX = "max";
+    static constexpr const char* MIN = "min";
+
+    SolutionSelection() {
 
     }
 
-    virtual ~Selection() {
+    virtual ~SolutionSelection() {
 
     }
 

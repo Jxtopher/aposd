@@ -23,6 +23,9 @@
 #include "../calculationModel/islandModel/topologies/randomEdge.h"
 #include "../calculationModel/islandModel/topologies/star.h"
 
+#include "../selection/solutionSelection.h"
+#include "../selection/selection_maximization.h"
+#include "../selection/selection_minimization.h"
 
 
 class ClassBuilder {
@@ -48,6 +51,7 @@ public:
 
 
     std::unique_ptr<ParameterSelection> parameterSelection(const Json::Value &configuration) {
+        BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" ClassBuilder " << configuration["className"].asString();
         std::unique_ptr<ParameterSelection> _parameterSelection;
         if (configuration["className"].asString() == ParameterSelection::ADAPTIVEPURSUIT) {
             if (!configuration["alpha"].empty() && 
@@ -137,6 +141,19 @@ public:
     template <typename SOL>
     std::unique_ptr<RewardComputation<SOL>> rewardComputation(const Json::Value &configuration) {
         return std::make_unique<RewardComputation<SOL>>();
+    }
+
+    template <typename SOL>
+    std::unique_ptr<SolutionSelection<SOL>> solutionSelection(const Json::Value &configuration) {
+        std::unique_ptr<SolutionSelection<SOL>> _solutionSelection;
+        if (SolutionSelection<SOL>::MAX == configuration.asString())
+            _solutionSelection = std::make_unique<Selection_maximization<SOL>>();
+        else if (SolutionSelection<SOL>::MIN == configuration.asString())
+            _solutionSelection = std::make_unique<Selection_minimization<SOL>>();
+        else
+            throw std::runtime_error(std::string(__FILE__) + ":" + std::to_string(__LINE__)  + " [-] The SolutionSelection is not defined");
+        
+        return std::move(_solutionSelection);
     }
 
 private:

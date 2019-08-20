@@ -29,7 +29,7 @@ char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 
 #include "../parameterSelection/parameterSelection.h"
 #include "../rewardComputation/rewardComputation.h"
-#include "../selection/selection.h"
+#include "../selection/solutionSelection.h"
 #include "../selection/selection_maximization.h"
 #include "../solution/solution.h"
 #include "classBuilder.h"
@@ -52,7 +52,7 @@ void Interface_MPI(int argc, char **argv, const Json::Value &configuration) {
     std::unique_ptr<Launcher> launcher = classBuilder.launcher(configuration["CalculationModel"]["Launcher"]);
     std::unique_ptr<ParameterSelection> parameterSelection = classBuilder.parameterSelection(configuration["CalculationModel"]["ParameterSelection"]);
     std::unique_ptr<RewardComputation<Solution<unsigned int>>> rewardComputation = classBuilder.rewardComputation<Solution<unsigned int>>(configuration["CalculationModel"]["RewardComputation"]);
-	std::unique_ptr<Selection<Solution<unsigned int>>> selection = std::make_unique<Selection_maximization<Solution<unsigned int>>>();
+	std::unique_ptr<SolutionSelection<Solution<unsigned int>>> selection = std::make_unique<Selection_maximization<Solution<unsigned int>>>();
 	
 
 	if (CalculationModel::MASTER_WORKER_MODEL == configuration["CalculationModel"]["className"].asString()) {

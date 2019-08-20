@@ -5,7 +5,7 @@
 
 #include "master.h"
 #include "../calculationModel.h"
-#include "../../selection/selection.h"
+#include "../../selection/solutionSelection.h"
 
 
 
@@ -14,7 +14,7 @@ class MasterSynchronous : public Master {
    public:
     MasterSynchronous(std::unique_ptr<ParameterSelection> parameterSelection, 
                         std::unique_ptr<RewardComputation<SOL>> rewardComputation,
-                        std::unique_ptr<Selection<SOL>> selection)
+                        std::unique_ptr<SolutionSelection<SOL>> selection)
         : Master(), 
         _parameterSelection(std::move(parameterSelection)), 
         _rewardComputation(std::move(rewardComputation)),
@@ -89,7 +89,7 @@ class MasterSynchronous : public Master {
 
     std::unique_ptr<ParameterSelection> _parameterSelection;
     std::unique_ptr<RewardComputation<SOL>> _rewardComputation;
-    std::unique_ptr<Selection<SOL>> _selection;
+    std::unique_ptr<SolutionSelection<SOL>> _selection;
 };
 
 #endif
