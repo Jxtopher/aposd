@@ -64,16 +64,18 @@ class PsAdaptivePursuit : public ParameterSelection {
 
 	template<typename T>
 	static unsigned int roulette_wheel(const T *array, unsigned int size, std::mt19937 &mt_rand) {
-		T sum  = 0;
-    	sum = std::accumulate(array, array + size, sum);
+    	T sum = std::accumulate(array, array + size, 0.0);
+		std::cout<<"0 "<<array[0]<<std::endl;
+		std::cout<<"1 "<<array[1]<<std::endl;
 
 		std::uniform_real_distribution<> urd(0, sum);
 		T pick = urd(mt_rand);
 
 		sum = 0;
 		unsigned int index = 0;
-		while (index < size && sum < pick)
+		while (index < size && sum < pick) {
 			sum += array[index++];
+		}
 		return index - 1;
 	}
 
@@ -105,7 +107,6 @@ class PsAdaptivePursuit : public ParameterSelection {
         // rewards.first =  reward (double)
         // rewards.second =  parameter (unsigned int)
         reward_estimate[rewards.second] = (1 - _alpha) * reward_estimate[rewards.second] + _alpha * rewards.first;
-
 		_selection_probability();
 	}
 
@@ -132,21 +133,23 @@ class PsAdaptivePursuit : public ParameterSelection {
 		
 		if (_heterogeneity_policy == HeterogeneityPolicy::HETEROGENOUS) {
 			if (init_each_parameter < this->_number_of_parameters) {
+				init_each_parameter = number_of_nodes < _number_of_parameters ? number_of_nodes : _number_of_parameters;
 				for (unsigned int i = 0 ; i < number_of_nodes ; i++) {
-					parameterList.push_back(number_of_nodes % init_each_parameter);
-					init_each_parameter = _number_of_parameters;
+					parameterList.push_back(i % init_each_parameter);
 				}
 			} else {
-			for (unsigned int i = 0 ; i < number_of_nodes ; i++)
-				parameterList.push_back(roulette_wheel(selection_probability.get(), _number_of_parameters, *_mt_rand));
+				for (unsigned int i = 0 ; i < number_of_nodes ; i++) {
+					parameterList.push_back(roulette_wheel<double>(selection_probability.get(), _number_of_parameters, *_mt_rand));
+				}
 			}
+			
 		} else if (_heterogeneity_policy == HeterogeneityPolicy::HOMOGENEOUS) {
 			if (init_each_parameter < this->_number_of_parameters) {
 				for (unsigned int i = 0 ; i < number_of_nodes ; i++)
 					parameterList.push_back(init_each_parameter);
 				init_each_parameter++;
 			} else {
-				unsigned int pick = roulette_wheel(selection_probability.get(), _number_of_parameters, *_mt_rand);
+				unsigned int pick = roulette_wheel<double>(selection_probability.get(), _number_of_parameters, *_mt_rand);
 				for (unsigned int i = 0 ; i < number_of_nodes ; i++)
 					parameterList.push_back(pick);
 			}

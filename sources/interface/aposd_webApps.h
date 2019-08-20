@@ -147,7 +147,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
                 methodList[calculationmodel] = std::pair<unsigned int, unsigned int>(0, 0);
 
                 // Build answer
-                std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->initialSolution(APOSD_SOL(configuration["initialSolution"]));
+                std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->initial_solution(APOSD_SOL(configuration["initial_solution"]));
                 answer["object_id"] = convertPointerToStringAddress(calculationmodel);
                 answer["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
                 answer["num_paramter"] = buff.second;
@@ -157,7 +157,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
                 if (group_id.count(configuration["group_id"].asString()) > 0) { // Found
                     // Build answer
                     cppcms::json::value answer;
-                    std::pair<APOSD_SOL, unsigned int> buff = group_id[configuration["group_id"].asString()]->initialSolution(APOSD_SOL(configuration["initialSolution"]));
+                    std::pair<APOSD_SOL, unsigned int> buff = group_id[configuration["group_id"].asString()]->initial_solution(APOSD_SOL(configuration["initial_solution"]));
                     answer["object_id"] = convertPointerToStringAddress(group_id[configuration["group_id"].asString()]);
                     answer["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
                     answer["num_paramter"] = buff.second;
@@ -186,7 +186,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
                     group_id[configuration["group_id"].asString()] = calculationmodel;
 
                     // Build answer
-                    std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->initialSolution(APOSD_SOL(configuration["initialSolution"]));
+                    std::pair<APOSD_SOL, unsigned int> buff = calculationmodel->initial_solution(APOSD_SOL(configuration["initial_solution"]));
                     answer["object_id"] = convertPointerToStringAddress(calculationmodel);
                     answer["Solution"] = jsonValueASJsonCppcms(buff.first.asJson());
                     answer["num_paramter"] = buff.second;
@@ -216,7 +216,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
         
         std::map<LearningOnline<APOSD_SOL> *, std::pair<unsigned int, unsigned int>>::iterator it;
         if ((it = methodList.find(calculationmodel)) == methodList.end()) {// not found
-            answer["ack"] = -1;
+            answer["error"] = -1;
             answer["error_msg"] = "[-] The method was not initialize";
             response().out()<<answer;
         } else {// found
@@ -253,6 +253,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
         std::map<LearningOnline<APOSD_SOL> *, std::pair<unsigned int, unsigned int>>::iterator it;
         if ((it = methodList.find(calculationmodel)) == methodList.end()) {// not found
             answer["ack"] = 0;
+            answer["error"] = -1;
             answer["error_msg"] = "[-] The method was not initialize";
             response().out()<<answer;
         } else {// found

@@ -34,19 +34,19 @@ class Aposd:
     def initialization(self):
         aposd = {
             "seed": 0,
-            "CommunicationModel": "WEBAPPLICATION",
+            "Interface": "WEBAPPLICATION",
             "group_id": "Learning",
             "CalculationModel": {
                 # "ParameterSelection": {
-                #     "className": "PsConstant", # learning method constant
-                # #     #"className": "PsRandom", # learning method Random
-                # #     #"className": "PsEspsilonGreedy", # learning method E-Greedy
+                #     # "className": "PsConstant", # learning method constant
+                #     # "className": "PsRandom", # learning method Random
+                #     # "className": "PsEspsilonGreedy", # learning method E-Greedy
                 #     "number_of_parameters": 2,
                 # },
                 "ParameterSelection": {
                     "className": "PsAdaptivePursuit", # learning method AP
-                    "alpha" : 0.5,
-                    "beta" : 0.5,
+                    "alpha" : 0.2,
+                    "beta" : 0.2,
                     "p_min" : 0.1,
                     "p_max" : 0.9,
                     "aggregation_function":"max",
@@ -55,7 +55,7 @@ class Aposd:
                 },
                 "SolutionSelection" : "max"
             },
-            "initialSolution": {"fitness": [0], "fitnessIsValid": [1], "solution": ["empty"]},
+            "initial_solution": {"fitness": [0], "fitnessIsValid": [1], "solution": ["empty"]},
         }
         recv = self.aposd_client.send("initialization", aposd)
         if 'error' in recv:
@@ -95,8 +95,11 @@ def main(is_development: bool, is_echo_test: bool):
         aposd_client.echo_test()
         return
 
+    reward_parameter_0 = 5
+    reward_parameter_1 = 1
     cout_parameter_0 = 0
     cout_parameter_1 = 0
+
 
     a = Aposd(aposd_client)
     recv = a.initialization()
@@ -106,11 +109,11 @@ def main(is_development: bool, is_echo_test: bool):
 
     for i in range(NUM_ITERATION):
         if recv["num_paramter"] == 0:
-            new_fitness = recv["Solution"]["fitness"][0] + 5  # NOTE (vivi): what's that "5"?
+            new_fitness = recv["Solution"]["fitness"][0] + reward_parameter_0
             cout_parameter_0 += 1
 
         elif recv["num_paramter"] == 1:
-            new_fitness = recv["Solution"]["fitness"][0] + 1  # NOTE (vivi): what's that "1"?
+            new_fitness = recv["Solution"]["fitness"][0] + reward_parameter_1 
             cout_parameter_1 += 1
 
         recv = a.learning(recv["Solution"]["fitness"][0], new_fitness, recv["num_paramter"])

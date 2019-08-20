@@ -34,7 +34,7 @@ class Aposd:
     def initialization(self):
         aposd = {
             "seed": 0,
-            "CommunicationModel": "WEBAPPLICATION",
+            "Interface": "WEBAPPLICATION",
             "CalculationModel": {
                 # "ParameterSelection": {
                 #     "className": "PsConstant", # learning method constant
@@ -44,8 +44,8 @@ class Aposd:
                 # },
                 "ParameterSelection": {
                     "className": "PsAdaptivePursuit", # learning method AP
-                    "alpha" : 0.5,
-                    "beta" : 0.5,
+                    "alpha" : 0.2,
+                    "beta" : 0.2,
                     "p_min" : 0.1,
                     "p_max" : 0.9,
                     "aggregation_function":"max",
@@ -54,7 +54,7 @@ class Aposd:
                 },
                 "SolutionSelection" : "max"
             },
-            "initialSolution": {"fitness": [0], "fitnessIsValid": [1], "solution": ["empty"]},
+            "initial_solution": {"fitness": [0], "fitnessIsValid": [1], "solution": ["empty"]},
         }
         recv = self.aposd_client.send("initialization", aposd)
         if 'error' in recv:

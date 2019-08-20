@@ -37,14 +37,14 @@ class Selection_minimization : public SolutionSelection<SOL> {
         return solutions[index];
     }
 
-    bool operator()(const SOL &s1, const SOL &s2) {
+    bool operator()(const SOL &s1, const SOL &s2) const {
         assert(s1.fitnessIsValid());
         assert(s2.fitnessIsValid());
         
         return s1.getFitness() < s2.getFitness();
     }
 
-    bool operator()(const SOL &s1, const SOL &s2, const unsigned int numObjectif) {
+    bool operator()(const SOL &s1, const SOL &s2, const unsigned int numObjectif) const {
         assert(s1.fitnessIsValid(numObjectif));
         assert(s2.fitnessIsValid(numObjectif));
         

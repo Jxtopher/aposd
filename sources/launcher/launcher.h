@@ -18,7 +18,7 @@ class Launcher {
 		}
 
 		virtual std::string initSolution() = 0;
-		virtual std::string solve(std::string solution, unsigned int numParameter) = 0;
+		virtual std::string solve(std::string solution, unsigned int parameter_id) = 0;
 		
 
 		static constexpr const char* LAUNCHEREXEC = "LauncherExec";

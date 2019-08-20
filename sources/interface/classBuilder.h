@@ -52,6 +52,25 @@ public:
 
     std::unique_ptr<ParameterSelection> parameterSelection(const Json::Value &configuration) {
         BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" ClassBuilder " << configuration["className"].asString();
+
+        const char* heterogeneity_policy;
+        if (!configuration["heterogeneity_policy"].empty()) {
+            if (configuration["heterogeneity_policy"].asString() == HeterogeneityPolicy::HETEROGENOUS) {
+                heterogeneity_policy = HeterogeneityPolicy::HETEROGENOUS;
+            } else if (configuration["heterogeneity_policy"].asString() == HeterogeneityPolicy::HOMOGENEOUS) {
+                heterogeneity_policy = HeterogeneityPolicy::HOMOGENEOUS;
+            }
+        }
+
+        const char* aggregation_function;
+        if (configuration["aggregation_function"].empty()) {
+            if (configuration["aggregation_function"].asString() == AggregationFunction::MAX) {
+                aggregation_function = AggregationFunction::MAX;
+            } else if (configuration["aggregation_function"].asString() == AggregationFunction::MEAN) {
+                aggregation_function = AggregationFunction::MEAN;
+            }
+        }
+
         std::unique_ptr<ParameterSelection> _parameterSelection;
         if (configuration["className"].asString() == ParameterSelection::ADAPTIVEPURSUIT) {
             if (!configuration["alpha"].empty() && 
@@ -60,14 +79,15 @@ public:
                 !configuration["p_max"].empty() &&
                 !configuration["aggregation_function"].empty() &&
                 !configuration["heterogeneity_policy"].empty()) {
-                _parameterSelection = std::make_unique<PsAdaptivePursuit>(_mt_rand, 
-                                                                          configuration["number_of_parameters"].asUInt(),
-                                                                          configuration["alpha"].asDouble(),
-                                                                          configuration["beta"].asDouble(),
-                                                                          configuration["p_min"].asDouble(),
-                                                                          configuration["p_max"].asDouble(),
-                                                                          configuration["aggregation_function"].asCString(),
-                                                                          configuration["heterogeneity_policy"].asCString());
+                _parameterSelection = std::make_unique<PsAdaptivePursuit>(
+                                _mt_rand, 
+                                configuration["number_of_parameters"].asUInt(),
+                                configuration["alpha"].asDouble(),
+                                configuration["beta"].asDouble(),
+                                configuration["p_min"].asDouble(),
+                                configuration["p_max"].asDouble(),
+                                aggregation_function,
+                                heterogeneity_policy);
             } else 
                 _parameterSelection = std::make_unique<PsAdaptivePursuit>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::CONSTANT) {
@@ -85,8 +105,8 @@ public:
                                                                          configuration["number_of_parameters"].asUInt(),
                                                                          configuration["espilon"].asDouble(),
                                                                          configuration["windowSize"].asUInt(),
-                                                                         configuration["aggregation_function"].asCString(),
-                                                                         configuration["heterogeneity_policy"].asCString());
+                                                                         aggregation_function,
+                                                                         heterogeneity_policy);
             else
                 _parameterSelection = std::make_unique<PsEspsilonGreedy>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::RANDOM) {
@@ -94,8 +114,8 @@ public:
                 !configuration["heterogeneity_policy"].empty())
                 _parameterSelection = std::make_unique<PsRandom>(_mt_rand, 
                                                                  configuration["number_of_parameters"].asUInt(),
-                                                                 configuration["aggregation_function"].asCString(),
-                                                                 configuration["heterogeneity_policy"].asCString());
+                                                                 aggregation_function,
+                                                                 heterogeneity_policy);
             else
                 _parameterSelection = std::make_unique<PsRandom>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::SELECTBESTMUTATE) {
@@ -107,8 +127,8 @@ public:
                                                                            configuration["number_of_parameters"].asUInt(),
                                                                            configuration["espilon"].asDouble(),
                                                                            configuration["windowSize"].asUInt(),
-                                                                           configuration["aggregation_function"].asCString(),
-                                                                           configuration["heterogeneity_policy"].asCString());
+                                                                           aggregation_function,
+                                                                           heterogeneity_policy);
             else
                 _parameterSelection = std::make_unique<PsSelectBestMutate>(_mt_rand, configuration["number_of_parameters"].asUInt());
         } else if (configuration["className"].asString() == ParameterSelection::UCBW) {
@@ -119,7 +139,7 @@ public:
                                                                 configuration["number_of_parameters"].asUInt(),
                                                                 configuration["C"].asDouble(),
                                                                 configuration["windowSize"].asUInt(),
-                                                                configuration["aggregation_function"].asCString()); 
+                                                                aggregation_function); 
             else
                 _parameterSelection = std::make_unique<PsUCBW>(_mt_rand, configuration["number_of_parameters"].asUInt()); 
         } else {

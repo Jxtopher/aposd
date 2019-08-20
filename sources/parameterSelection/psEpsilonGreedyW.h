@@ -137,9 +137,9 @@ class PsEspsilonGreedy : public ParameterSelection {
 		unsigned int bestParameter = std::distance(reward_aggregation.get(), std::max_element(reward_aggregation.get(), reward_aggregation.get() + this->_number_of_parameters));
 		if (_heterogeneity_policy == HeterogeneityPolicy::HETEROGENOUS) {
 			if (init_each_parameter < this->_number_of_parameters) {
+				init_each_parameter = number_of_nodes < _number_of_parameters ? number_of_nodes : _number_of_parameters;
 				for (unsigned int i = 0 ; i < number_of_nodes ; i++) {
-					parameterList.push_back(number_of_nodes % init_each_parameter);
-					init_each_parameter = _number_of_parameters;
+					parameterList.push_back(i % init_each_parameter);
 				}
 			} else {
 				for (unsigned int i = 0 ; i < number_of_nodes ; i++) {

@@ -26,6 +26,7 @@ class SolutionSelection {
     }
 
     virtual SOL operator()(const std::vector<SOL> &solutions) const = 0;
+    virtual bool operator()(const SOL &s1, const SOL &s2) const = 0;
 
     protected:
 

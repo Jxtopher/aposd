@@ -27,14 +27,14 @@ public:
     }
 
     //
-    std::pair<SOL, unsigned int> initialSolution(const SOL &s) {
+    std::pair<SOL, unsigned int> initial_solution(const SOL &s) {
         solution_t0 = s;
         return std::pair<SOL, unsigned int>(solution_t0, 0);
     }
 
     std::pair<SOL, unsigned int> run(const SOL &s_t0, const SOL s_t1, unsigned int parameter) {
         BOOST_LOG_TRIVIAL(debug)<<__FILE__ << ":"<<__LINE__<<" run Individual ";
-        solution_t1 = s_t0;
+        solution_t0 = s_t0;
         solution_t1 = s_t1;
         
         std::pair<double, unsigned int> rewardOp = _rewardComputation->operator()(solution_t0, solution_t1, parameter);

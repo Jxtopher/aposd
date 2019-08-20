@@ -43,10 +43,10 @@ class LauncherExec : public Launcher {
 			return launchExecutable(ss.str());
 		}
 
-		std::string solve(std::string solution, unsigned int numParameter) {
+		std::string solve(std::string solution, unsigned int parameter_id) {
 			std::stringstream ss;
 			ss<<"--solution \""<<solution<<"\" ";
-			ss<<"--parameter "<<numParameter;
+			ss<<"--parameter "<<parameter_id;
 
 			return launchExecutable(ss.str());
 		}

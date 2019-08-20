@@ -69,7 +69,7 @@ class LauncherFork  {//: public Launcher {
 				std::cout<<"fils termine anormalement"<<std::endl;
 		}
 
-		std::string operator()(std::string solution, double fitness, unsigned int numParameter)  {
+		std::string operator()(std::string solution, double fitness, unsigned int parameter_id)  {
 			unsigned int size_msg = 2;
 			unsigned char buf[400];
 			buf[0] = 'A';

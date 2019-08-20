@@ -22,7 +22,7 @@ class LauncherStocos : public Launcher {
         return "";
     }
 
-	std::string solve(std::string solution, unsigned int numParameter) {
+	std::string solve(std::string solution, unsigned int parameter_id) {
         return "";
     }
 
