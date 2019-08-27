@@ -143,7 +143,7 @@ class Solution {
         Json::Value root;
         Json::Reader reader;
         bool parsingSuccessful = reader.parse(strJson.c_str(), root);  // parse process
-        if (!parsingSuccessful) throw std::runtime_error(reader.getFormattedErrorMessages());
+        if (!parsingSuccessful) throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " " + reader.getFormattedErrorMessages());
 		loadJson(root);
     }
 

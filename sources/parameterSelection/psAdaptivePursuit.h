@@ -65,8 +65,6 @@ class PsAdaptivePursuit : public ParameterSelection {
 	template<typename T>
 	static unsigned int roulette_wheel(const T *array, unsigned int size, std::mt19937 &mt_rand) {
     	T sum = std::accumulate(array, array + size, 0.0);
-		std::cout<<"0 "<<array[0]<<std::endl;
-		std::cout<<"1 "<<array[1]<<std::endl;
 
 		std::uniform_real_distribution<> urd(0, sum);
 		T pick = urd(mt_rand);

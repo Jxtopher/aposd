@@ -10,7 +10,7 @@
             },
             "Launcher": {
                 "className": "LauncherExec",
-                "pathExecutable": "../stocos/build/stocos",
+                "pathExecutable": "../stocos/build/stocos-Release",
                 "string_args": ""
             }
         }
