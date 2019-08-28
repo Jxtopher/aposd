@@ -129,7 +129,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
                 
                 std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
                 if (!configuration["seed"].empty())
-                    mt_rand->seed(configuration["seed"].isInt());
+                    mt_rand->seed(configuration["seed"].asInt());
                 else
                     mt_rand->seed(static_cast<std::mt19937::result_type>(time(0)));
                 
@@ -166,7 +166,7 @@ class WebAposd : public cppcms::rpc::json_rpc_server {
                 } else { // Not Found
                     std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
                     if (!configuration["seed"].empty())
-                        mt_rand->seed(configuration["seed"].isInt());
+                        mt_rand->seed(configuration["seed"].asInt());
                     else
                         mt_rand->seed(static_cast<std::mt19937::result_type>(time(0)));
                     
