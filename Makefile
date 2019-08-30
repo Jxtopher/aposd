@@ -8,16 +8,19 @@
 .PHONY: all test check run
 MAKEFLAGS += --no-print-directory
 
-all : check
+
+all : check 
 	@cd build && cmake ..
 	@cd build && make
 
 test: check
+	export LD_LIBRARY_PATH=/usr/local/lib
 	@cd build && cmake ..
 	@cd build && make
 	@cd build && make test
 
-run:
+run: 
+	export LD_LIBRARY_PATH=/usr/local/lib
 	./build/aposd-Release -c configuration/aposd-webApps.json -ldebug
 
 check:
