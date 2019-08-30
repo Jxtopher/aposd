@@ -22,21 +22,21 @@
 #include <stdexcept>
 #include <string>  //for std::string
 
-#include "interface/interface.h"
+#include "interface/interface.hpp"
 
 
 #if MODULE_MPI
-	#include "interface/aposd_mpi.h"
+	#include "interface/aposd_mpi.hpp"
 #endif
 
 #if MODULE_SAAS
 	#include <jsoncpp/json/json.h>
 
-	#include "interface/aposd_webApps.h"
+	#include "interface/aposd_webApps.hpp"
 #endif
 
 #if MODULE_SEQ
-	#include "interface/aposd_sequential.h"
+	#include "interface/aposd_sequential.hpp"
 #endif
 
 
