@@ -35,7 +35,7 @@ class UnitTest_psUCBW : public CppUnit::TestFixture {
         std::pair<double, unsigned int> r0(5, 0);    // Parameter 0, reward = 5
         std::pair<double, unsigned int> r1(1, 1);    // Parameter 1, reward = 1
 
-        for (unsigned int i = 0 ; i++ < 10;) {
+        for (unsigned int i = 0 ; i < 10 ; i++) {
             ucbw.update(r0);
             ucbw.update(r1);
         }

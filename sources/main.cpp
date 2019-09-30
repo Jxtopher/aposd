@@ -93,6 +93,9 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
+	if (!std::ifstream(configFile.c_str()).good())
+		throw std::runtime_error(std::string{} + __FILE__ + ":" + std::to_string(__LINE__) + " [-] the file does not exist : \""+ configFile + "\"");
+
     // Read json file
     Json::Value configuration;
     Json::Reader reader;

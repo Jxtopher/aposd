@@ -124,6 +124,21 @@ target_link_libraries(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} LINK_PUBLIC $
 enable_testing()
 add_test(NAME ${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} COMMAND "${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE}")
 
+## Detection du programme python3.7
+FIND_PROGRAM(PYTHON3.7_EXECUTABLE python3.7)
+if (NOT PYTHON3.7_EXECUTABLE)
+    packageManager("python3.7")
+    FIND_PROGRAM(PYTHON3.7_EXECUTABLE python3.7)
+endif(NOT PYTHON3.7_EXECUTABLE)
+
+set(LIST_OF_FILES 
+aposd_saas_collective
+aposd_saas_individual
+)
+foreach(FILE  ${LIST_OF_FILES})
+    add_test(NAME ${FILE} COMMAND ${PYTHON3.7_EXECUTABLE} ./tests-aposd/${FILE}.py WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+endforeach()
+
 
 # add_custom_target(run
 #     COMMAND ${PROJECT_NAME}-${CMAKE_BUILD_TYPE}
