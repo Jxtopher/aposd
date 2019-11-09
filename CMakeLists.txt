@@ -16,7 +16,7 @@ include(cppcheck)       #
 #include(doxygen)        # Create le doc
 
 project(aposd)
-set(MODULE_MPI true)
+set(MODULE_MPI false)
 set(MODULE_SAAS true)
 set(MODULE_SEQ true)
 
