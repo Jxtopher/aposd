@@ -1,0 +1,38 @@
+#
+# @Author: Jxtopher
+# @Date: 2020-01-07
+# @Purpose: Travis !
+# @copyright CC-BY-NC-SA
+# @see : https://devhints.io/travis
+#
+#########################
+# project configuration #
+#########################
+language: cpp
+#install: make cmake get-deps
+
+dist: bionic  #trusty
+#sudo: required
+#group: edge
+
+
+
+
+before_install:
+  - travis_retry sudo apt-get update -qq
+  - travis_retry sudo apt-get install -qq cmake libpcre3-dev zlib1g-dev libgcrypt11-dev libicu-dev python
+
+script:
+  - pushd .
+  - cd /tmp
+  - git clone https://github.com/artyom-beilis/cppcms.git cppcms
+  - cd cppcms
+  - mkdir build
+  - cd build
+  - cmake .. && make
+  - make install
+  - export LD_LIBRARY_PATH=/usr/local/lib
+  - popd
+  - cd build
+  - cmake ..
+  - make
