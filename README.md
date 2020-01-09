@@ -11,7 +11,7 @@ APOSD sélectionne de manière automatique les paramètres d'un solver d'optimis
 
 	
 ~~~~
-apt-get install cmake libpcre3-dev zlib1g-dev libgcrypt11-dev libicu-dev python openmpi-bin
+apt-get install cmake libpcre3-dev zlib1g-dev libgcrypt11-dev libicu-dev python
 git clone https://github.com/artyom-beilis/cppcms.git cppcms
 cd cppcms
 mkdir build
