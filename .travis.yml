@@ -20,7 +20,7 @@ dist: bionic  #trusty
 
 before_install:
   - travis_retry sudo apt-get update -qq
-  - travis_retry sudo apt-get install -qq cmake libpcre3-dev zlib1g-dev libgcrypt11-dev libicu-dev python libcppunit-dev openmpi-bin libboost-mpi-dev libboost-program-options-dev libboost-log-dev 
+  - travis_retry sudo apt-get install -qq cmake libpcre3-dev zlib1g-dev libgcrypt11-dev libicu-dev python libcppunit-dev openmpi-bin libboost-mpi-dev libboost-program-options-dev libboost-log-dev g++-8 
 
 script:
   - pushd .
@@ -33,6 +33,8 @@ script:
   - sudo make install
   - export LD_LIBRARY_PATH=/usr/local/lib
   - popd
+  - sudo rm /usr/bin/g++
+  - sudo ln -s /usr/bin/g++-8 /usr/bin/g++
   - cd build
   - cmake ..
   - make
