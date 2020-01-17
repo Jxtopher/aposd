@@ -20,7 +20,7 @@ dist: bionic  #trusty
 
 before_install:
   - travis_retry sudo apt-get update -qq
-  - travis_retry sudo apt-get install -qq cmake libpcre3-dev zlib1g-dev libgcrypt11-dev libicu-dev python libcppunit-dev openmpi-bin libboost-mpi-dev libboost-program-options-dev libboost-log-dev g++-8 libc6 libc6-dev  
+  - travis_retry sudo apt-get install -qq cmake libpcre3-dev zlib1g-dev libgcrypt11-dev libicu-dev python libcppunit-dev openmpi-bin libboost-mpi-dev libboost-program-options-dev libboost-log-dev g++-8
 
 script:
   - pushd .
