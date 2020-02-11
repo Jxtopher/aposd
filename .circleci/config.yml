@@ -6,6 +6,25 @@ jobs:
     working_directory: ~/project
     steps:
       - checkout
+      - run:
+          name: Install Dependencies
+          command: >
+            apt-get update && apt-get install -y
+            build-essential
+            cmake
+            libpcre3-dev 
+            zlib1g-dev
+            libgcrypt11-dev
+            libicu-dev
+            python
+            libcppunit-dev
+            openmpi-bin
+            libboost-mpi-dev
+            libboost-program-options-dev
+            libboost-log-dev
+            g++-8
+            libc6
+            libc6-dev
       - run: 
           name: make
           command: cmake .. && make
