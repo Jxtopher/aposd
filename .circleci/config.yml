@@ -24,6 +24,7 @@ jobs:
             libboost-log-dev
             libc6
             libc6-dev
+            git
       - run:
           name: install  cppcms
           command: >
