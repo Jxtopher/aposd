@@ -25,16 +25,16 @@ jobs:
             libc6
             libc6-dev
       - run:
-        name: install  cppcms
-        command: >
-          git clone https://github.com/artyom-beilis/cppcms.git cppcms &&
-          cd cppcms &&
-          mkdir build &&
-          cd build &&
-          cmake .. && make &&
-          make install &&
-          export LD_LIBRARY_PATH=/usr/local/lib
-        working_directory: /tmp
+          name: install  cppcms
+          command: >
+            git clone https://github.com/artyom-beilis/cppcms.git cppcms &&
+            cd cppcms &&
+            mkdir build &&
+            cd build &&
+            cmake .. && make &&
+            make install &&
+            export LD_LIBRARY_PATH=/usr/local/lib
+          working_directory: /tmp
       - run: 
           name: make
           command: cmake .. && make
