@@ -22,7 +22,6 @@ jobs:
             libboost-mpi-dev
             libboost-program-options-dev
             libboost-log-dev
-            g++-8
             libc6
             libc6-dev
       - run: 
