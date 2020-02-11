@@ -19,7 +19,6 @@ jobs:
             python
             libcppunit-dev
             libjsoncpp-dev
-            libjsoncpp
             openmpi-bin
             libboost-mpi-dev
             libboost-program-options-dev
