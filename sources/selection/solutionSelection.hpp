@@ -10,26 +10,19 @@
 #ifndef SOLUTIONSELECTION_H
 #define SOLUTIONSELECTION_H
 
+template<class SOL> class SolutionSelection {
+  public:
+	static constexpr const char* MAX = "max";
+	static constexpr const char* MIN = "min";
 
-template <class SOL>
-class SolutionSelection {
-    public:
-    static constexpr const char* MAX = "max";
-    static constexpr const char* MIN = "min";
+	SolutionSelection() {}
 
-    SolutionSelection() {
+	virtual ~SolutionSelection() {}
 
-    }
+	virtual SOL operator()(const std::vector<SOL>& solutions) const = 0;
+	virtual bool operator()(const SOL& s1, const SOL& s2) const = 0;
 
-    virtual ~SolutionSelection() {
-
-    }
-
-    virtual SOL operator()(const std::vector<SOL> &solutions) const = 0;
-    virtual bool operator()(const SOL &s1, const SOL &s2) const = 0;
-
-    protected:
-
+  protected:
 };
 
 #endif

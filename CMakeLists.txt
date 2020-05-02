@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.0)
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(auto-install)   # auto install package
 include(cppcheck)       # 
-#include(clang-format)  #
+include(clang-format)  #
 #include(doxygen)       # Create le doc
 
 project(aposd)

@@ -4,7 +4,7 @@
 /// @version 1
 /// @copyright CC-BY-NC-SA
 /// @date 2018-10
-/// @brief 
+/// @brief
 ///
 
 #ifndef UNITTEST_CRITERIABUDGET_H
@@ -16,49 +16,36 @@ using namespace CppUnit;
 #include "stoppingCriteria/criteriaBudget.hpp"
 
 class UnitTest_criteriaBudget : public CppUnit::TestFixture {
+	CPPUNIT_TEST_SUITE(UnitTest_criteriaBudget);
+	CPPUNIT_TEST(constructor);
+	CPPUNIT_TEST_SUITE_END();
 
-    CPPUNIT_TEST_SUITE(UnitTest_criteriaBudget);
-    CPPUNIT_TEST(constructor);
-    CPPUNIT_TEST_SUITE_END();
+  public:
+	void setUp(void) { o = new CriteriaBudget<Solution<int>, unsigned int>(1000); }
+	void tearDown(void) { delete o; }
 
-    public:
+	void constructor(void) {
+		Solution<int> s;
+		for(unsigned int i = 0; i < 200; i++) { o->operator()(s); }
 
-    void setUp(void) {
-        o = new CriteriaBudget<Solution<int>, unsigned int>(1000);
-    }
-    void tearDown(void) {
-        delete o;
-    }
+		CPPUNIT_ASSERT(o->getConsumedBudget() == 200);
+		CPPUNIT_ASSERT(o->operator()(s) == true);
+		CPPUNIT_ASSERT(o->getConsumedBudget() == 201);
 
-    void constructor(void) {
-        Solution<int> s;
-        for (unsigned int i = 0 ; i < 200 ; i++) {
-            o->operator()(s);
-        }
+		for(unsigned int i = 0; i < 1200; i++) { o->operator()(s); }
 
-        CPPUNIT_ASSERT(o->getConsumedBudget() == 200);
-        CPPUNIT_ASSERT(o->operator()(s) == true);
-        CPPUNIT_ASSERT(o->getConsumedBudget() == 201);
+		CPPUNIT_ASSERT(o->operator()(s) == false);
 
-        for (unsigned int i = 0 ; i < 1200 ; i++) {
-            o->operator()(s);
-        }
+		o->resetConsumedBudget();
 
-        CPPUNIT_ASSERT(o->operator()(s) == false);
+		for(unsigned int i = 0; i < 999; i++) { o->operator()(s); }
 
-        o->resetConsumedBudget();
+		CPPUNIT_ASSERT(o->operator()(s) == true);
+		CPPUNIT_ASSERT(o->operator()(s) == false);
+	}
 
-        for (unsigned int i = 0 ; i < 999 ; i++) {
-            o->operator()(s);
-        }
-
-        CPPUNIT_ASSERT(o->operator()(s) == true);
-        CPPUNIT_ASSERT(o->operator()(s) == false);
-    }
-
-    private:
-    CriteriaBudget<Solution<int>, unsigned int> *o;
-
+  private:
+	CriteriaBudget<Solution<int>, unsigned int>* o;
 };
 
 #endif
