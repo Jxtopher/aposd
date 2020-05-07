@@ -5,6 +5,10 @@ import json
 import signal
 import sys
 
+import os
+import signal
+import subprocess
+import logging
 
 class AposdClient:
     def __init__(self, is_development: bool):
@@ -100,7 +104,6 @@ def main(is_development: bool, is_echo_test: bool):
     cout_parameter_0 = 0
     cout_parameter_1 = 0
 
-
     a = Aposd(aposd_client)
     recv = a.initialization()
     print("[Recv]", recv)
@@ -125,9 +128,17 @@ def main(is_development: bool, is_echo_test: bool):
     print("Parameter 0", cout_parameter_0)
     print("Parameter 1", cout_parameter_1)
 
+    assert cout_parameter_1 < cout_parameter_0 
+
 
 if __name__ == "__main__":
+    process = subprocess.Popen(["build/aposd-Release", "-c", "configuration/aposd-webApps.json"], stdout=subprocess.PIPE)
+    logging.debug("[+] Launch aposd in backgroud")
+
     is_echo_test = False
     is_development = True
     main(is_development, is_echo_test)
+
+    logging.debug("[+] Send end signals to aposd")
+    process.send_signal(signal.SIGTERM)
     exit(0)

@@ -23,6 +23,7 @@ class UnitTest_psUCBW : public CppUnit::TestFixture {
 		unsigned int number_of_parameters = 2;
 		const double espilon = 0.01;
 		const unsigned int windowSize = 5;
+
 		PsUCBW ucbw(mt_rand, number_of_parameters, 0.03, 300, AggregationFunction::MEAN);
 		std::pair<double, unsigned int> r0(5, 0); // Parameter 0, reward = 5
 		std::pair<double, unsigned int> r1(1, 1); // Parameter 1, reward = 1
