@@ -9,13 +9,13 @@
 #ifndef JXTOPHER_APOSD_WEBAPPS_H
 #define JXTOPHER_APOSD_WEBAPPS_H
 
-#include <cppcms/application.h>
-#include <cppcms/applications_pool.h>
-#include <cppcms/http_response.h>
-#include <cppcms/rpc_json.h>
-#include <cppcms/service.h>
-#include <cppcms/url_dispatcher.h>
-#include <cppcms/url_mapper.h>
+#include "cppcms/cppcms/application.h"
+#include "cppcms/cppcms/applications_pool.h"
+#include "cppcms/cppcms/http_response.h"
+#include "cppcms/cppcms/rpc_json.h"
+#include "cppcms/cppcms/service.h"
+#include "cppcms/cppcms/url_dispatcher.h"
+#include "cppcms/cppcms/url_mapper.h"
 #include <iostream>
 #include <map>
 #include <memory>
