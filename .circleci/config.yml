@@ -1,0 +1,43 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: debian:buster
+    working_directory: ~/project
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: >
+            apt-get update && apt-get install -y
+            build-essential
+            cmake
+            pkg-config
+            libpcre3-dev 
+            zlib1g-dev
+            libicu-dev
+            python
+            libcppunit-dev
+            libjsoncpp-dev
+            openmpi-bin
+            libboost-mpi-dev
+            libboost-program-options-dev
+            libboost-log-dev
+            libc6
+            libc6-dev
+            git
+      - run:
+          name: install  cppcms
+          command: >
+            git clone https://github.com/artyom-beilis/cppcms.git cppcms &&
+            cd cppcms &&
+            mkdir build &&
+            cd build &&
+            cmake .. && make &&
+            make install &&
+            export LD_LIBRARY_PATH=/usr/local/lib
+          working_directory: /tmp
+      - run: 
+          name: make
+          command: cmake .. && make
+          working_directory: ~/project/build

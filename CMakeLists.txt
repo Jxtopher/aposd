@@ -8,12 +8,12 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-# Load modul
+# Load module
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(auto-install)   # auto install package
 include(cppcheck)       # 
-#include(clang-format)   #
-#include(doxygen)        # Create le doc
+include(clang-format)  #
+#include(doxygen)       # Create le doc
 
 project(aposd)
 set(MODULE_MPI false)
@@ -89,6 +89,8 @@ endif(${MODULE_SAAS})
 
 ## Aposd
 add_executable(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} sources/main.cpp)
+target_include_directories(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} PRIVATE "modules")
+
 if(${MODULE_MPI})
     target_link_libraries(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${MPI_LIBRARIES})
 endif(${MODULE_MPI})
@@ -112,6 +114,7 @@ link_libraries(${CPPUNIT_LIBRARIES})
 
 # ## Aposd unit test
 add_executable(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} tests-unitaires/unitTest.cpp)
+target_include_directories(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} PRIVATE "modules")
 target_include_directories(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} PUBLIC sources/)
 target_link_libraries(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${Boost_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}-unittest-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${MPI_LIBRARIES})

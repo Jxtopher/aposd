@@ -4,7 +4,7 @@
 /// @version 1
 /// @copyright CC-BY-NC-SA
 /// @date 2018-10
-/// @brief 
+/// @brief
 ///
 
 #ifndef CRITERIABUDGET_H
@@ -14,32 +14,22 @@
 
 template<typename SOL, typename TYPE_FITNESS>
 class CriteriaBudget : public Criteria<SOL, TYPE_FITNESS> {
-    public:
-    CriteriaBudget(unsigned int _budget) : 
-        Criteria<SOL, TYPE_FITNESS>(), 
-        budget(_budget) {
-        consumedBudget = 0;
-    }
+  public:
+	CriteriaBudget(unsigned int _budget) : Criteria<SOL, TYPE_FITNESS>(), budget(_budget) {
+		consumedBudget = 0;
+	}
 
-    virtual ~CriteriaBudget(){
+	virtual ~CriteriaBudget() {}
 
-    }
+	virtual bool operator()(const SOL& s) { return consumedBudget++ < budget; }
 
-    virtual bool operator()(const SOL &s) {
-        return consumedBudget++ < budget;
-    }
+	unsigned int getConsumedBudget() const { return consumedBudget; }
 
-    unsigned int getConsumedBudget() const {
-        return consumedBudget;
-    }
+	void resetConsumedBudget() { consumedBudget = 0; }
 
-    void resetConsumedBudget() {
-        consumedBudget = 0;
-    }
-
-    protected:
-    unsigned int consumedBudget;
-    unsigned int budget;
+  protected:
+	unsigned int consumedBudget;
+	unsigned int budget;
 };
 
 #endif

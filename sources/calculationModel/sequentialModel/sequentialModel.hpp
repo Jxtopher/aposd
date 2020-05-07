@@ -1,60 +1,53 @@
 #ifndef SEQUENTIALMODEL_H
-#define	SEQUENTIALMODEL_H
+#define SEQUENTIALMODEL_H
 
 #include <memory>
 #include <utility>
 
-#include "../calculationModel.hpp"
-#include "../../rewardComputation/rewardComputation.hpp"
-#include "../../parameterSelection/parameterSelection.hpp"
 #include "../../launcher/launcher.hpp"
+#include "../../parameterSelection/parameterSelection.hpp"
+#include "../../rewardComputation/rewardComputation.hpp"
+#include "../calculationModel.hpp"
 
-template<class SOL>
-class SequentialModel : public CalculationModel {
-public:
-    SequentialModel(std::unique_ptr<Launcher> launcher,
-                    std::unique_ptr<ParameterSelection> parameterSelection,
-                    std::unique_ptr<RewardComputation<SOL>> rewardComputation) : 
-        _launcher(std::move(launcher)),
-        _parameterSelection(std::move(parameterSelection)),
-        _rewardComputation(std::move(rewardComputation)) {
+template<class SOL> class SequentialModel : public CalculationModel {
+  public:
+	SequentialModel(std::unique_ptr<Launcher> launcher,
+					std::unique_ptr<ParameterSelection> parameterSelection,
+					std::unique_ptr<RewardComputation<SOL>> rewardComputation)
+		: _launcher(std::move(launcher)), _parameterSelection(std::move(parameterSelection)),
+		  _rewardComputation(std::move(rewardComputation)) {}
 
-    }
-    
-    virtual ~SequentialModel() {
+	virtual ~SequentialModel() {}
 
-    }
+	void operator()() {
+		// Initialisation de la 1er solution
+		Solution<unsigned int> s(_launcher->initSolution());
+		std::cout << ">" << s << "<" << std::endl;
 
-    void operator()() {
-        // Initialisation de la 1er solution
-        Solution<unsigned int> s(_launcher->initSolution());
-        std::cout<<">"<<s<<"<"<<std::endl;
+		_parameterSelection->reset();
 
-        _parameterSelection->reset();
+		while(s.getFitness() < 50) {
+			// Get list operators to apply
+			unsigned int parameter = _parameterSelection->getParameter();
 
+			Solution<unsigned int> s_new(_launcher->solve(s.str(), parameter));
 
-        while(s.getFitness() < 50) {
-            // Get list operators to apply
-            unsigned int parameter = _parameterSelection->getParameter();
+			std::pair<double, unsigned int> rewardOp =
+				_rewardComputation->operator()(s, s_new, parameter);
 
-            Solution<unsigned int> s_new(_launcher->solve(s.str(), parameter));
+			// update
+			_parameterSelection->update(rewardOp);
 
-            std::pair<double, unsigned int> rewardOp = _rewardComputation->operator()(s, s_new, parameter);
+			s = s_new;
 
-            // update
-            _parameterSelection->update(rewardOp);
+			std::cout << "Out>" << parameter << " | " << s << "<" << std::endl;
+		}
+	}
 
-            s = s_new;
-
-            std::cout<<"Out>"<<parameter<<" | "<<s<<"<"<<std::endl;
-        }
-    }
-
-protected:
-    std::unique_ptr<Launcher> _launcher;
-    std::unique_ptr<ParameterSelection> _parameterSelection;
-    std::unique_ptr<RewardComputation<SOL>> _rewardComputation;
-
+  protected:
+	std::unique_ptr<Launcher> _launcher;
+	std::unique_ptr<ParameterSelection> _parameterSelection;
+	std::unique_ptr<RewardComputation<SOL>> _rewardComputation;
 };
 
 #endif
