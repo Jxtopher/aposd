@@ -89,8 +89,6 @@ endif(${MODULE_SAAS})
 
 ## Aposd
 add_executable(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} sources/main.cpp)
-target_include_directories(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} PRIVATE "modules")
-
 if(${MODULE_MPI})
     target_link_libraries(${PROJECT_NAME}-${CMAKE_BUILD_TYPE} LINK_PUBLIC ${MPI_LIBRARIES})
 endif(${MODULE_MPI})
