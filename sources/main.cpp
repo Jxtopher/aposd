@@ -22,6 +22,8 @@
 #include <stdexcept>
 #include <string> //for std::string
 
+#include "version.h"
+
 #include "interface/interface.hpp"
 
 #if MODULE_MPI
@@ -45,6 +47,8 @@ void version(const std::string& name_software, const std::string& num_version) {
 	std::cout << "[+] *** " << name_software << " ***" << std::endl;
 	std::cout << "[+] Day compilation : " << __DATE__ << " " << __TIME__ << std::endl;
 	std::cout << "[+] Version : " << num_version << std::endl;
+	std::cout << "[+] Git branch : "<< GIT_BRANCH <<std::endl;
+	std::cout << "[+] Git commit hash : "<< GIT_COMMIT_HASH <<std::endl;
 	std::cout << "[+] MODULE MPI : " << MODULE_MPI << std::endl;
 	std::cout << "[+] MODULE_SAAS : " << MODULE_SAAS << std::endl;
 	std::cout << "[+] MODULE_SEQ : " << MODULE_SEQ << std::endl;
@@ -58,6 +62,7 @@ int main(int argc, char** argv) {
 	boost::program_options::variables_map vm;
 	boost::program_options::options_description argements("[*] main option");
 	argements.add_options()("help,h", "help message")(
+		"version,v","version")(
 		"config,c", boost::program_options::value<std::string>(&configFile),
 		"File configuration json (default : null)")(
 		"loggin,l", boost::program_options::value<std::string>(&loggin), "loggin (default : null)");
