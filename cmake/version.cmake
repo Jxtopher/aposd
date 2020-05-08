@@ -7,6 +7,8 @@ if (NOT EXISTS "${CMAKE_SOURCE_DIR}/version.h.in")
 
 #define GIT_BRANCH \"@GIT_BRANCH@\"
 #define GIT_COMMIT_HASH \"@GIT_COMMIT_HASH@\"
+#define CMAKE_BUILD_TYPE \"@CMAKE_BUILD_TYPE@\"
+#define VERSION_PROJECT \"@VERSION_PROJECT@\"
 
 #endif
 ")
@@ -26,13 +28,19 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
     OUTPUT_VARIABLE GIT_COMMIT_HASH
     OUTPUT_STRIP_TRAILING_WHITESPACE
   )
+
+  execute_process(
+    COMMAND git describe --exact-match --tags ${GIT_COMMIT_HASH}
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE VERSION_PROJECT
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  
 else(EXISTS "${CMAKE_SOURCE_DIR}/.git")
   set(GIT_BRANCH "")
   set(GIT_COMMIT_HASH "")
 endif(EXISTS "${CMAKE_SOURCE_DIR}/.git")
 
-message(STATUS "Git current branch: ${GIT_BRANCH}")
-message(STATUS "Git commit hash: ${GIT_COMMIT_HASH}")
 configure_file(
   ${CMAKE_SOURCE_DIR}/version.h.in
   ${CMAKE_BINARY_DIR}/generated/version.h

@@ -40,13 +40,13 @@
 #include "interface/aposd_sequential.hpp"
 #endif
 
-void version(const std::string& name_software, const std::string& num_version);
+void version(const std::string& name_software);
 
-void version(const std::string& name_software, const std::string& num_version) {
+void version(const std::string& name_software) {
 	std::cout << "*************************************" << std::endl;
 	std::cout << "[+] *** " << name_software << " ***" << std::endl;
 	std::cout << "[+] Day compilation : " << __DATE__ << " " << __TIME__ << std::endl;
-	std::cout << "[+] Version : " << num_version << std::endl;
+	std::cout << "[+] Version ("<< CMAKE_BUILD_TYPE <<") : " << VERSION_PROJECT << std::endl;
 	std::cout << "[+] Git branch : "<< GIT_BRANCH <<std::endl;
 	std::cout << "[+] Git commit hash : "<< GIT_COMMIT_HASH <<std::endl;
 	std::cout << "[+] MODULE MPI : " << MODULE_MPI << std::endl;
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 	}
 
 	if(vm.count("version")) {
-		version("Adaptive Portfolio Selection Distributed", "1");
+		version("Adaptive Portfolio Selection Distributed");
 		exit(EXIT_SUCCESS);
 	}
 
