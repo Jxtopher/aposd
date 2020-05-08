@@ -8,23 +8,51 @@
 
 cmake_minimum_required(VERSION 3.0)
 
-# Load module
+###############################################################################
+# Load modules cmake
+###############################################################################
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(auto-install)   # auto install package
 include(cppcheck)       # 
-include(clang-format)  #
+include(clang-format)   #
+include(version)        # Version name generator form git branch, hash
 #include(doxygen)       # Create le doc
 
+###############################################################################
+# Load modules of the projet
+###############################################################################
 project(aposd)
 set(MODULE_MPI false)
 set(MODULE_SAAS true)
 set(MODULE_SEQ true)
 
+###############################################################################
+# Load modules of external libs
+###############################################################################
+find_package(Git QUIET)
+if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+# Update submodules as needed
+    option(GIT_SUBMODULE "Check submodules during build" ON)
+    if(GIT_SUBMODULE)
+        message(STATUS "Submodule update")
+        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git submodule update --init failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+        endif()
+    endif()
+endif()
 
+add_subdirectory("modules")
+
+###############################################################################
+# Set of parameters
+###############################################################################
 set(CMAKE_BUILD_TYPE Release)
 #set(CMAKE_BUILD_TYPE Debug)
 
-set(CMAKE_CXX_FLAGS "-std=c++2a ")
+set(CMAKE_CXX_FLAGS "-std=c++2a")
 # -pedantic -Wall -Wextra -Wcast-align -Wctor-dtor-privacy    \
 #                                 -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op \
 #                                 -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept    \
