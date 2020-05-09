@@ -5,10 +5,10 @@ if (NOT EXISTS "${CMAKE_SOURCE_DIR}/version.h.in")
     file(WRITE "${CMAKE_SOURCE_DIR}/version.h.in" "#ifndef VERSION_H
 #define VERSION_H
 
-#define GIT_BRANCH \"@GIT_BRANCH@\"
-#define GIT_COMMIT_HASH \"@GIT_COMMIT_HASH@\"
-#define CMAKE_BUILD_TYPE \"@CMAKE_BUILD_TYPE@\"
-#define VERSION_PROJECT \"@VERSION_PROJECT@\"
+#define GIT_BRANCH \"\@GIT_BRANCH\@\"
+#define GIT_COMMIT_HASH \"\@GIT_COMMIT_HASH\@\"
+#define CMAKE_BUILD_TYPE \"\@CMAKE_BUILD_TYPE\@\"
+#define VERSION_PROJECT \"\@VERSION_PROJECT\@\"
 
 #endif
 ")
