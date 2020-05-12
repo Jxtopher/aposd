@@ -38,7 +38,7 @@ include(version)        # Version name generator form git branch, hash
 # Load modules of the projet
 ###############################################################################
 project(aposd)
-set(MODULE_MPI false)
+set(MODULE_MPI true)
 set(MODULE_SAAS true)
 set(MODULE_SEQ true)
 
@@ -114,63 +114,69 @@ if(${MODULE_SAAS})
     include_directories(/usr/local/include)
 endif(${MODULE_SAAS})
 
-
 ## Aposd
-add_executable(${PROJECT_NAME} sources/main.cpp)
+file(GLOB_RECURSE ALL_SOURCE_FILES  src/*.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/solution/solution.cpp)#${ALL_SOURCE_FILES}
+add_library(${PROJECT_NAME} PUBLIC "build/CMakeFiles/aposd.dir/solution/solution.cpp.o")
+target_include_directories(${PROJECT_NAME} PUBLIC include/)
+target_compile_definitions(${PROJECT_NAME} PRIVATE 
+    BOOST_LOG_DYN_LINK=1
+    MODULE_MPI=${MODULE_MPI} 
+    MODULE_SAAS=${MODULE_SAAS} 
+    MODULE_SEQ=${MODULE_SEQ} 
+)
+target_link_libraries(${PROJECT_NAME} LINK_PUBLIC 
+    ${Boost_LIBRARIES}
+    ${JSONCPP_LIBRARIES}
+)
+
 if(${MODULE_MPI})
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${MPI_LIBRARIES})
 endif(${MODULE_MPI})
-
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
 
 if(${MODULE_SAAS})
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${LIB_CPPCMS_LIBRARIES}) 
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC /usr/local/lib/libcppcms.so.1.2.1)
 endif(${MODULE_SAAS})
 
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${JSONCPP_LIBRARIES})
 
+# ## Cppunit
+# pkg_check_modules(CPPUNIT cppunit)
+# link_libraries(${CPPUNIT_LIBRARIES})
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE MODULE_MPI=${MODULE_MPI} MODULE_SAAS=${MODULE_SAAS} MODULE_SEQ=${MODULE_SEQ})
+# # ## Aposd unit test
+# add_executable(${PROJECT_NAME}-unittest tests-unitaires/unitTest.cpp)
+# target_include_directories(${PROJECT_NAME}-unittest PRIVATE "modules")
+# target_include_directories(${PROJECT_NAME}-unittest PUBLIC sources/)
+# target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${Boost_LIBRARIES})
+# target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${MPI_LIBRARIES})
+# target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${LIB_CPPCMS_LIBRARIES})
+# target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${JSONCPP_LIBRARIES})
+# target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC /usr/local/lib/libcppcms.so.1.2.1)
+# target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${CPPUNIT_LIBRARIES})
 
+# # ## Test unitaire
+# enable_testing()
+# add_test(NAME ${PROJECT_NAME}-unittest COMMAND "${PROJECT_NAME}-unittest")
 
-## Cppunit
-pkg_check_modules(CPPUNIT cppunit)
-link_libraries(${CPPUNIT_LIBRARIES})
+# ## Detection du programme python3.7
+# FIND_PROGRAM(PYTHON3.7_EXECUTABLE python3.7)
+# if (NOT PYTHON3.7_EXECUTABLE)
+#     packageManager("python3.7")
+#     FIND_PROGRAM(PYTHON3.7_EXECUTABLE python3.7)
+# endif(NOT PYTHON3.7_EXECUTABLE)
 
-# ## Aposd unit test
-add_executable(${PROJECT_NAME}-unittest tests-unitaires/unitTest.cpp)
-target_include_directories(${PROJECT_NAME}-unittest PRIVATE "modules")
-target_include_directories(${PROJECT_NAME}-unittest PUBLIC sources/)
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${Boost_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${MPI_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${LIB_CPPCMS_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${JSONCPP_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC /usr/local/lib/libcppcms.so.1.2.1)
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${CPPUNIT_LIBRARIES})
-
-# ## Test unitaire
-enable_testing()
-add_test(NAME ${PROJECT_NAME}-unittest COMMAND "${PROJECT_NAME}-unittest")
-
-## Detection du programme python3.7
-FIND_PROGRAM(PYTHON3.7_EXECUTABLE python3.7)
-if (NOT PYTHON3.7_EXECUTABLE)
-    packageManager("python3.7")
-    FIND_PROGRAM(PYTHON3.7_EXECUTABLE python3.7)
-endif(NOT PYTHON3.7_EXECUTABLE)
-
-set(LIST_OF_FILES 
-aposd_saas_collective
-aposd_saas_individual
-)
-foreach(FILE  ${LIST_OF_FILES})
-    add_test(NAME ${FILE} COMMAND ${PYTHON3.7_EXECUTABLE} ./tests-aposd/${FILE}.py WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
-endforeach()
-
-
-# add_custom_target(run
-#     COMMAND ${PROJECT_NAME}
-#     DEPENDS ${PROJECT_NAME}
-#     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+# set(LIST_OF_FILES 
+# aposd_saas_collective
+# aposd_saas_individual
 # )
+# foreach(FILE  ${LIST_OF_FILES})
+#     add_test(NAME ${FILE} COMMAND ${PYTHON3.7_EXECUTABLE} ./tests-aposd/${FILE}.py WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+# endforeach()
+
+
+# # add_custom_target(run
+# #     COMMAND ${PROJECT_NAME}
+# #     DEPENDS ${PROJECT_NAME}
+# #     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+# # )
