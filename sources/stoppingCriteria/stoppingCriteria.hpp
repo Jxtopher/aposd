@@ -13,6 +13,7 @@
 #include <iostream>
 #include <list>
 #include <memory>
+#include <vector>
 
 #include "criteria.hpp"
 
@@ -41,7 +42,7 @@ class StoppingCriteria {
 	}
 
   protected:
-	vector<Criteria<SOL, TYPE_FITNESS>*> criteria;
+	std::vector<Criteria<SOL, TYPE_FITNESS>*> criteria;
 };
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef SAAS_LEARNINGONLINECOLLECTIVE_H
 #define SAAS_LEARNINGONLINECOLLECTIVE_H
 
+#include <iostream>
 #include <memory>
 #include <numeric>
 #include <utility>

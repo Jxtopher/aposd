@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <sstream>
-
 #include "parameterSelection/psRandom.hpp"
 
 using namespace CppUnit;
@@ -42,7 +41,7 @@ class UnitTest_psRandom : public CppUnit::TestFixture {
 			else if(p == 1)
 				p1++;
 		}
-		CPPUNIT_ASSERT(abs(p1 - p0) < 10);
+		CPPUNIT_ASSERT(abs(static_cast<int>(p1 - p0)) < 10);
 	}
 
   private:

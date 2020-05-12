@@ -1,6 +1,8 @@
 #ifndef SAAS_LEARNINGONL_H
 #define SAAS_LEARNINGONL_H
 
+#include <utility> // std::pair
+
 template<class SOL>
 class LearningOnline {
   public:
