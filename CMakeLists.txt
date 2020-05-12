@@ -3,7 +3,7 @@
 # @License: *
 # @Date: *
 # @Version: 1
-# @Description: Makefile
+# @Description: CMakeLists
 #
 
 cmake_minimum_required(VERSION 3.0)
@@ -32,7 +32,7 @@ include(auto-install)   # auto install package
 include(cppcheck)       # 
 include(clang-format)   #
 include(version)        # Version name generator form git branch, hash
-#include(doxygen)       # Create le doc
+include(doxygen)        # Create le doc
 
 ###############################################################################
 # Load modules of the projet
@@ -117,6 +117,8 @@ endif(${MODULE_SAAS})
 
 ## Aposd
 add_executable(${PROJECT_NAME} sources/main.cpp)
+# file(GLOB_RECURSE ALL_SOURCE_FILES  sources/*.hpp)
+# target_precompile_headers(${PROJECT_NAME} ${ALL_SOURCE_FILES})
 if(${MODULE_MPI})
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${MPI_LIBRARIES})
 endif(${MODULE_MPI})

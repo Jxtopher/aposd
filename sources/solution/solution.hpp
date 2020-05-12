@@ -10,6 +10,11 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
+#include <boost/log/core.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/program_options.hpp>
+
 #include <cassert>
 #include <cstdio>
 #include <cstring>

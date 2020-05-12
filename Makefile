@@ -11,12 +11,12 @@ MAKEFLAGS += --no-print-directory
 
 all : check 
 	@cd build && cmake ..
-	@cd build && make
+	@cd build && make  -j 2
 
 test: check
 	export LD_LIBRARY_PATH=/usr/local/lib
 	@cd build && cmake ..
-	@cd build && make
+	@cd build && make -j 2
 	@cd build && make test
 
 run: 
