@@ -7,9 +7,11 @@
 
 class Launcher {
   public:
-	Launcher() {}
+	Launcher() {
+	}
 
-	virtual ~Launcher() {}
+	virtual ~Launcher() {
+	}
 
 	virtual std::string initSolution() = 0;
 	virtual std::string solve(std::string solution, unsigned int parameter_id) = 0;

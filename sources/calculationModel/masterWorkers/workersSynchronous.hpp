@@ -11,8 +11,10 @@
 
 class WorkersSynchronous : public Workers {
   public:
-	WorkersSynchronous(std::unique_ptr<Launcher> launcher) : _launcher(std::move(launcher)) {}
-	virtual ~WorkersSynchronous() {}
+	WorkersSynchronous(std::unique_ptr<Launcher> launcher) : _launcher(std::move(launcher)) {
+	}
+	virtual ~WorkersSynchronous() {
+	}
 
 	void operator()() {
 		BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":" << __LINE__ << " Workers";
@@ -51,7 +53,9 @@ class WorkersSynchronous : public Workers {
 					MPI_Isend((char*)s.c_str(), s.size(), MPI_CHAR, MPI_MASTER, MPI_TAG,
 							  MPI_COMM_WORLD, &request);
 				} break;
-				case MPI_Order::FINISH: continued = false; break;
+				case MPI_Order::FINISH:
+					continued = false;
+					break;
 				default:
 					throw std::runtime_error(std::string(__FILE__) + ":" +
 											 std::to_string(__LINE__) +

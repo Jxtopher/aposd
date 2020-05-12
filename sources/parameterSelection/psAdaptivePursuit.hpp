@@ -48,7 +48,8 @@ class PsAdaptivePursuit : public ParameterSelection {
 		}
 	}
 
-	virtual ~PsAdaptivePursuit() {}
+	virtual ~PsAdaptivePursuit() {
+	}
 
 	template<typename T>
 	static unsigned int roulette_wheel(const T* array, unsigned int size, std::mt19937& mt_rand) {
@@ -63,7 +64,9 @@ class PsAdaptivePursuit : public ParameterSelection {
 		return index - 1;
 	}
 
-	ParameterSelection* clone() const { return new PsAdaptivePursuit(*this); }
+	ParameterSelection* clone() const {
+		return new PsAdaptivePursuit(*this);
+	}
 
 	void reset() {
 		init_each_parameter = 0;
@@ -157,7 +160,9 @@ class PsAdaptivePursuit : public ParameterSelection {
 		}
 	}
 
-	std::string className() const { return "PsAdaptivePursuit"; }
+	std::string className() const {
+		return "PsAdaptivePursuit";
+	}
 
   protected:
 	std::shared_ptr<std::mt19937> _mt_rand;

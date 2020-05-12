@@ -39,9 +39,12 @@ class PsSelectBestMutate : public ParameterSelection {
 		uid = new std::uniform_int_distribution<unsigned int>(0, this->_number_of_parameters - 1);
 	}
 
-	virtual ~PsSelectBestMutate() {}
+	virtual ~PsSelectBestMutate() {
+	}
 
-	ParameterSelection* clone() const { return new PsSelectBestMutate(*this); }
+	ParameterSelection* clone() const {
+		return new PsSelectBestMutate(*this);
+	}
 
 	void reset() {
 		init_each_parameter = 0;
@@ -151,7 +154,9 @@ class PsSelectBestMutate : public ParameterSelection {
 								 reward_aggregation.get() + this->_number_of_parameters));
 	}
 
-	std::string className() const { return "PsSelectBestMutate"; }
+	std::string className() const {
+		return "PsSelectBestMutate";
+	}
 
   protected:
 	std::shared_ptr<std::mt19937> _mt_rand;

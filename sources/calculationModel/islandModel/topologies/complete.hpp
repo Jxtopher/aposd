@@ -20,7 +20,8 @@ class Complete : public Topologies {
 			}
 		}
 	}
-	virtual ~Complete() {}
+	virtual ~Complete() {
+	}
 
   protected:
 };

@@ -13,14 +13,18 @@ using namespace boost;
 struct VertexProperties {
 	float d;
 	int predecessor;
-	VertexProperties() : d(std::numeric_limits<float>::infinity()), predecessor(-1) {}
-	VertexProperties(float d, int predecessor) : d(d), predecessor(-1) {}
+	VertexProperties() : d(std::numeric_limits<float>::infinity()), predecessor(-1) {
+	}
+	VertexProperties(float d, int predecessor) : d(d), predecessor(-1) {
+	}
 };
 
 struct EdgeProperties {
 	int weight;
-	EdgeProperties() : weight(0) {}
-	EdgeProperties(int weight) : weight(weight) {}
+	EdgeProperties() : weight(0) {
+	}
+	EdgeProperties(int weight) : weight(weight) {
+	}
 };
 
 struct EdgeInfoPropertyTag {
@@ -44,11 +48,15 @@ class Topologies {
 	static constexpr const char* RANDOMEDGE = "RandomEdge";
 	static constexpr const char* STAR = "Star";
 
-	Topologies(unsigned int number_of_nodes) : _number_of_nodes(number_of_nodes) {}
-	virtual ~Topologies() {}
+	Topologies(unsigned int number_of_nodes) : _number_of_nodes(number_of_nodes) {
+	}
+	virtual ~Topologies() {
+	}
 	// virtual void operator()() = 0;
 
-	void print() { print_graph(g); }
+	void print() {
+		print_graph(g);
+	}
 
 	const adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
 						 VertexProperties,   // Type vertex

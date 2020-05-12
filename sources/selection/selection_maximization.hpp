@@ -12,11 +12,14 @@
 
 #include "solutionSelection.hpp"
 
-template<class SOL> class Selection_maximization : public SolutionSelection<SOL> {
+template<class SOL>
+class Selection_maximization : public SolutionSelection<SOL> {
   public:
-	Selection_maximization() {}
+	Selection_maximization() {
+	}
 
-	virtual ~Selection_maximization() {}
+	virtual ~Selection_maximization() {
+	}
 
 	SOL operator()(const std::vector<SOL>& solutions) const {
 		assert(0 < solutions.size());

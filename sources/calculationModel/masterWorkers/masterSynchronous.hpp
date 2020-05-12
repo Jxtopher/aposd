@@ -7,15 +7,18 @@
 #include "../calculationModel.hpp"
 #include "master.hpp"
 
-template<class SOL> class MasterSynchronous : public Master {
+template<class SOL>
+class MasterSynchronous : public Master {
   public:
 	MasterSynchronous(std::unique_ptr<ParameterSelection> parameterSelection,
 					  std::unique_ptr<RewardComputation<SOL>> rewardComputation,
 					  std::unique_ptr<SolutionSelection<SOL>> selection)
 		: Master(), _parameterSelection(std::move(parameterSelection)),
-		  _rewardComputation(std::move(rewardComputation)), _selection(std::move(selection)) {}
+		  _rewardComputation(std::move(rewardComputation)), _selection(std::move(selection)) {
+	}
 
-	virtual ~MasterSynchronous() {}
+	virtual ~MasterSynchronous() {
+	}
 
 	virtual void operator()() {
 		BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":" << __LINE__ << " MASTER";

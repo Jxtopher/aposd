@@ -21,8 +21,12 @@ class UnitTest_criteriaBudget : public CppUnit::TestFixture {
 	CPPUNIT_TEST_SUITE_END();
 
   public:
-	void setUp(void) { o = new CriteriaBudget<Solution<int>, unsigned int>(1000); }
-	void tearDown(void) { delete o; }
+	void setUp(void) {
+		o = new CriteriaBudget<Solution<int>, unsigned int>(1000);
+	}
+	void tearDown(void) {
+		delete o;
+	}
 
 	void constructor(void) {
 		Solution<int> s;

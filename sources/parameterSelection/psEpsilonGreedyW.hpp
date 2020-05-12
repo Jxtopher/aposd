@@ -62,9 +62,12 @@ class PsEspsilonGreedy : public ParameterSelection {
 		}
 	}
 
-	virtual ~PsEspsilonGreedy() {}
+	virtual ~PsEspsilonGreedy() {
+	}
 
-	ParameterSelection* clone() const { return new PsEspsilonGreedy(*this); }
+	ParameterSelection* clone() const {
+		return new PsEspsilonGreedy(*this);
+	}
 
 	void reset() {
 		init_each_parameter = 0;
@@ -186,7 +189,9 @@ class PsEspsilonGreedy : public ParameterSelection {
 		return reward_aggregation[parameter];
 	}
 
-	std::string className() const { return "PsEspsilonGreedy"; }
+	std::string className() const {
+		return "PsEspsilonGreedy";
+	}
 
   protected:
 	std::shared_ptr<std::mt19937> _mt_rand;

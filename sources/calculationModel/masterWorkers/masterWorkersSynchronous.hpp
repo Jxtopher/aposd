@@ -8,7 +8,8 @@
 #include "masterSynchronous.hpp"
 #include "workersSynchronous.hpp"
 
-template<class SOL> class MasterWorkersSynchronous : public CalculationModel {
+template<class SOL>
+class MasterWorkersSynchronous : public CalculationModel {
   public:
 	MasterWorkersSynchronous(int argc, char** argv, std::unique_ptr<Launcher> launcher,
 							 std::unique_ptr<ParameterSelection> parameterSelection,
@@ -33,7 +34,10 @@ template<class SOL> class MasterWorkersSynchronous : public CalculationModel {
 			wSynchro = std::make_unique<WorkersSynchronous>(std::move(launcher));
 		}
 	}
-	virtual ~MasterWorkersSynchronous() { MPI_Finalize(); }
+
+	virtual ~MasterWorkersSynchronous() {
+		MPI_Finalize();
+	}
 
 	void operator()() {
 		if(mpi_globals_number_of_nodes == 1) {

@@ -9,15 +9,18 @@
 #include "../../rewardComputation/rewardComputation.hpp"
 #include "../calculationModel.hpp"
 
-template<class SOL> class SequentialModel : public CalculationModel {
+template<class SOL>
+class SequentialModel : public CalculationModel {
   public:
 	SequentialModel(std::unique_ptr<Launcher> launcher,
 					std::unique_ptr<ParameterSelection> parameterSelection,
 					std::unique_ptr<RewardComputation<SOL>> rewardComputation)
 		: _launcher(std::move(launcher)), _parameterSelection(std::move(parameterSelection)),
-		  _rewardComputation(std::move(rewardComputation)) {}
+		  _rewardComputation(std::move(rewardComputation)) {
+	}
 
-	virtual ~SequentialModel() {}
+	virtual ~SequentialModel() {
+	}
 
 	void operator()() {
 		// Initialisation de la 1er solution

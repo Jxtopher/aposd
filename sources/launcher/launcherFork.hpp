@@ -33,7 +33,9 @@ class LauncherFork { //: public Launcher {
 		pid = fork();
 
 		switch(pid) {
-			case -1: perror("fork"); exit(1);
+			case -1:
+				perror("fork");
+				exit(1);
 			case 0: /* le fils */
 				std::cout << "processus fils" << std::endl;
 				close(PARENT_READ);

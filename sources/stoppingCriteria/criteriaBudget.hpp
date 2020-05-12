@@ -19,13 +19,20 @@ class CriteriaBudget : public Criteria<SOL, TYPE_FITNESS> {
 		consumedBudget = 0;
 	}
 
-	virtual ~CriteriaBudget() {}
+	virtual ~CriteriaBudget() {
+	}
 
-	virtual bool operator()(const SOL& s) { return consumedBudget++ < budget; }
+	virtual bool operator()(const SOL& s) {
+		return consumedBudget++ < budget;
+	}
 
-	unsigned int getConsumedBudget() const { return consumedBudget; }
+	unsigned int getConsumedBudget() const {
+		return consumedBudget;
+	}
 
-	void resetConsumedBudget() { consumedBudget = 0; }
+	void resetConsumedBudget() {
+		consumedBudget = 0;
+	}
 
   protected:
 	unsigned int consumedBudget;

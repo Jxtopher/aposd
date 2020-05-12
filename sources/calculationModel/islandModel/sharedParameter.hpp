@@ -12,7 +12,8 @@
 #include "islandModel.hpp"
 #include "topologies/topologies.hpp"
 
-template<class SOL> class SharedParameter : public IslandModel<SOL> {
+template<class SOL>
+class SharedParameter : public IslandModel<SOL> {
   public:
 	SharedParameter(int argc, char** argv, std::unique_ptr<Topologies> topologies,
 					std::unique_ptr<Launcher> launcher,
@@ -26,7 +27,9 @@ template<class SOL> class SharedParameter : public IslandModel<SOL> {
 		recv_msg_size = 10;
 		recv_msg = new char[recv_msg_size];
 	}
-	virtual ~SharedParameter() { delete recv_msg; }
+	virtual ~SharedParameter() {
+		delete recv_msg;
+	}
 
 	void operator()() {
 		// Initialisation des varaibles
@@ -77,7 +80,9 @@ template<class SOL> class SharedParameter : public IslandModel<SOL> {
 			for(unsigned int neighbour : make_iterator_range(neighbours)) {
 				MPI_Recv(&order, 1, MPI_INT, neighbour, MPI_TAG, MPI_COMM_WORLD, &status);
 				switch(order) {
-					case MPI_Order::FINISH: continued = false; break;
+					case MPI_Order::FINISH:
+						continued = false;
+						break;
 					case MPI_Order::COMPUTE_FITNESS: {
 						MPI_Probe(status.MPI_SOURCE, MPI_TAG, MPI_COMM_WORLD, &status);
 						MPI_Get_count(&status, MPI_CHAR, &recv_sizeOfmessage);

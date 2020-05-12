@@ -4,11 +4,14 @@
 #include <cassert>
 #include <utility>
 
-template<typename SOL> class RewardComputation {
+template<typename SOL>
+class RewardComputation {
   public:
-	RewardComputation() {}
+	RewardComputation() {
+	}
 
-	virtual ~RewardComputation() {}
+	virtual ~RewardComputation() {
+	}
 
 	std::pair<double, unsigned int> operator()(const SOL& previousSolution, const SOL& solution,
 											   const unsigned int& parameter) const {

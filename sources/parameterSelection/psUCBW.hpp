@@ -54,9 +54,12 @@ class PsUCBW : public ParameterSelection {
 		}
 	}
 
-	virtual ~PsUCBW() {}
+	virtual ~PsUCBW() {
+	}
 
-	ParameterSelection* clone() const { return new PsUCBW(*this); }
+	ParameterSelection* clone() const {
+		return new PsUCBW(*this);
+	}
 
 	void reset() {
 		init_each_parameter = 0;
@@ -145,7 +148,9 @@ class PsUCBW : public ParameterSelection {
 								 std::max_element(Q.get(), Q.get() + this->_number_of_parameters));
 	}
 
-	std::string className() const { return "PsUCBW"; }
+	std::string className() const {
+		return "PsUCBW";
+	}
 
   protected:
 	std::shared_ptr<std::mt19937> _mt_rand;

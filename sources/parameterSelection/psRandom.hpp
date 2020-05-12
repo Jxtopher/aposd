@@ -20,15 +20,21 @@ class PsRandom : public ParameterSelection {
 		uid = new std::uniform_int_distribution<unsigned int>(0, this->_number_of_parameters - 1);
 	}
 
-	virtual ~PsRandom() {}
+	virtual ~PsRandom() {
+	}
 
-	ParameterSelection* clone() const { return new PsRandom(*this); }
+	ParameterSelection* clone() const {
+		return new PsRandom(*this);
+	}
 
-	void reset() {}
+	void reset() {
+	}
 
-	void update(std::vector<std::pair<double, unsigned int>>& rewards) {}
+	void update(std::vector<std::pair<double, unsigned int>>& rewards) {
+	}
 
-	void update(std::pair<double, unsigned int>& rewards) {}
+	void update(std::pair<double, unsigned int>& rewards) {
+	}
 
 	std::vector<unsigned int> getParameter(const unsigned int number_of_nodes) {
 		std::vector<unsigned int> parameterList;
@@ -46,9 +52,13 @@ class PsRandom : public ParameterSelection {
 		return parameterList;
 	}
 
-	unsigned int getParameter() { return uid->operator()(*(this->_mt_rand)); }
+	unsigned int getParameter() {
+		return uid->operator()(*(this->_mt_rand));
+	}
 
-	std::string className() const { return "PsRandom"; }
+	std::string className() const {
+		return "PsRandom";
+	}
 
   protected:
 	std::shared_ptr<std::mt19937> _mt_rand;

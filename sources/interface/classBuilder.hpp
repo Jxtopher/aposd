@@ -29,7 +29,8 @@
 
 class ClassBuilder {
   public:
-	ClassBuilder(std::shared_ptr<std::mt19937> mt_rand) : _mt_rand(mt_rand) {}
+	ClassBuilder(std::shared_ptr<std::mt19937> mt_rand) : _mt_rand(mt_rand) {
+	}
 
 	std::unique_ptr<Topologies> topologies(const Json::Value& configuration) {
 		std::unique_ptr<Topologies> _topologies;

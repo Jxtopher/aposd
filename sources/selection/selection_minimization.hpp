@@ -12,11 +12,14 @@
 #ifndef SELECTION_MINIMIZATION_H
 #define SELECTION_MINIMIZATION_H
 
-template<class SOL> class Selection_minimization : public SolutionSelection<SOL> {
+template<class SOL>
+class Selection_minimization : public SolutionSelection<SOL> {
   public:
-	Selection_minimization() {}
+	Selection_minimization() {
+	}
 
-	virtual ~Selection_minimization() {}
+	virtual ~Selection_minimization() {
+	}
 
 	SOL operator()(const std::vector<SOL>& solutions) const {
 		assert(0 < solutions.size());
