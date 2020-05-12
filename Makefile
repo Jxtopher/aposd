@@ -23,7 +23,11 @@ run:
 	export LD_LIBRARY_PATH=/usr/local/lib
 	./build/aposd-Release -c configuration/aposd-webApps.json -ldebug
 
-check:
+checks:
+	@cd build && make clang-format
+	@cd build && make cppcheck
+
+tools-required:
 	@#build-essential
 	@hash cmake 2> /dev/null || sudo apt-get install -y cmake 2> /dev/null || ( echo >&2 "Please install cmake" ; exit -1)
 
