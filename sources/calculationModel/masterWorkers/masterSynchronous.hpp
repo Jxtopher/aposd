@@ -15,6 +15,9 @@ class MasterSynchronous : public Master {
 					  std::unique_ptr<SolutionSelection<SOL>> selection)
 		: Master(), _parameterSelection(std::move(parameterSelection)),
 		  _rewardComputation(std::move(rewardComputation)), _selection(std::move(selection)) {
+		MPI_Comm_size(MPI_COMM_WORLD, &mpi_globals_number_of_nodes);
+		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_globals_rank);
+		MPI_Get_processor_name(mpi_globals_name, &mpi_globals_namelen);
 	}
 
 	virtual ~MasterSynchronous() {
@@ -89,6 +92,11 @@ class MasterSynchronous : public Master {
 	int sizeOfmessage;
 	MPI_Request request;
 	MPI_Status status;
+
+	int mpi_globals_number_of_nodes;
+	int mpi_globals_rank;
+	int mpi_globals_namelen;
+	char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 
 	std::unique_ptr<ParameterSelection> _parameterSelection;
 	std::unique_ptr<RewardComputation<SOL>> _rewardComputation;

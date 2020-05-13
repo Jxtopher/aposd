@@ -38,7 +38,7 @@ include(doxygen)        # Create le doc
 # Load modules of the projet
 ###############################################################################
 project(aposd)
-set(MODULE_MPI false)
+set(MODULE_MPI true)
 set(MODULE_SAAS true)
 set(MODULE_SEQ true)
 
@@ -117,8 +117,8 @@ endif(${MODULE_SAAS})
 
 ## Aposd
 add_executable(${PROJECT_NAME} sources/main.cpp)
-# file(GLOB_RECURSE ALL_SOURCE_FILES  sources/*.hpp)
-# target_precompile_headers(${PROJECT_NAME} ${ALL_SOURCE_FILES})
+file(GLOB_RECURSE ALL_SOURCE_FILES  sources/*.hpp)
+target_precompile_headers(${PROJECT_NAME} PRIVATE ${ALL_SOURCE_FILES})
 if(${MODULE_MPI})
     target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${MPI_LIBRARIES})
 endif(${MODULE_MPI})
@@ -166,17 +166,8 @@ if (NOT PYTHON3.7_EXECUTABLE)
     FIND_PROGRAM(PYTHON3.7_EXECUTABLE python3.7)
 endif(NOT PYTHON3.7_EXECUTABLE)
 
-set(LIST_OF_FILES 
-aposd_saas_collective
-aposd_saas_individual
-)
-foreach(FILE  ${LIST_OF_FILES})
-    add_test(NAME ${FILE} COMMAND ${PYTHON3.7_EXECUTABLE} ./tests-aposd/${FILE}.py WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+file(GLOB LIST_OF_FILES  tests-aposd/*.py)
+foreach(PATH_FILE  ${LIST_OF_FILES})
+    get_filename_component(FILE ${PATH_FILE} NAME)
+    add_test(NAME ${FILE} COMMAND ${PYTHON3.7_EXECUTABLE} ${PATH_FILE} WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 endforeach()
-
-
-# add_custom_target(run
-#     COMMAND ${PROJECT_NAME}
-#     DEPENDS ${PROJECT_NAME}
-#     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
-# )

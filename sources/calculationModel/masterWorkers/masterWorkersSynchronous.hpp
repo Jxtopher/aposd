@@ -56,6 +56,12 @@ class MasterWorkersSynchronous : public CalculationModel {
   private:
 	std::unique_ptr<MasterSynchronous<SOL>> mSynchro;
 	std::unique_ptr<WorkersSynchronous> wSynchro;
+	
+	int mpi_globals_number_of_nodes;
+	int mpi_globals_rank;
+	int mpi_globals_namelen;
+	char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
+
 };
 
 #endif

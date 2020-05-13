@@ -19,7 +19,7 @@ class AposdClient:
         payload = {
             "method": method,
             "params": [json.dumps(msg)],  # NOTE (vivi): why use dumps here?
-            "id": 0,  # NOTE (vivi): why always 0?
+            "id": 0,                      # NOTE (vivi): why always 0?
         }
         print("[Send] ", payload)
         return requests.post(self.url, json=payload).json()
@@ -41,12 +41,6 @@ class Aposd:
             "Interface": "WEBAPPLICATION",
             "group_id": "Learning",
             "CalculationModel": {
-                # "ParameterSelection": {
-                #     # "className": "PsConstant", # learning method constant
-                #     # "className": "PsRandom", # learning method Random
-                #     # "className": "PsEspsilonGreedy", # learning method E-Greedy
-                #     "number_of_parameters": 2,
-                # },
                 "ParameterSelection": {
                     "className": "PsAdaptivePursuit", # learning method AP
                     "alpha" : 0.2,
@@ -132,7 +126,7 @@ def main(is_development: bool, is_echo_test: bool):
 
 
 if __name__ == "__main__":
-    process = subprocess.Popen(["build/aposd-Release", "-c", "configuration/aposd-webApps.json"], stdout=subprocess.PIPE)
+    process = subprocess.Popen(["build/aposd", "-c", "configuration/aposd-webApps.json"], stdout=subprocess.PIPE)
     logging.debug("[+] Launch aposd in backgroud")
 
     is_echo_test = False

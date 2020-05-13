@@ -18,8 +18,6 @@ class Launcher {
 
 	static constexpr const char* LAUNCHEREXEC = "LauncherExec";
 	static constexpr const char* LAUNCHERFORK = "LauncherFork";
-
-  protected:
 };
 
 #endif

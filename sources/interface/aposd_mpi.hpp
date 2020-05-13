@@ -6,26 +6,13 @@
 #include <memory>
 #include <random>
 
-// -> MPI ---------------------
-#include <mpi.h>
-
-int mpi_globals_number_of_nodes;
-int mpi_globals_rank;
-int mpi_globals_namelen;
-char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
-
-#define MPI_MASTER 0
-#define MPI_TAG 0
-// <- MPI ---------------------
-
+#include "../calculationModel/mpiConfig.hpp"
 #include "../calculationModel/islandModel/islandModel.hpp"
 #include "../calculationModel/islandModel/sharedParameter.hpp"
 #include "../calculationModel/masterWorkers/master.hpp"
 #include "../calculationModel/masterWorkers/masterSynchronous.hpp"
 #include "../calculationModel/masterWorkers/masterWorkersSynchronous.hpp"
-
 #include "../launcher/launcher.hpp"
-
 #include "../parameterSelection/parameterSelection.hpp"
 #include "../rewardComputation/rewardComputation.hpp"
 #include "../selection/selection_maximization.hpp"

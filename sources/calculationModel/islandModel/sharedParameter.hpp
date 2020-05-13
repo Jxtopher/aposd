@@ -33,7 +33,7 @@ class SharedParameter : public IslandModel<SOL> {
 
 	void operator()() {
 		// Initialisation des varaibles
-		auto neighbours = boost::adjacent_vertices(mpi_globals_rank, this->_topologies->graph());
+		auto neighbours = boost::adjacent_vertices(this->mpi_globals_rank, this->_topologies->graph());
 		solutions.clear();
 		_parameterSelection->reset();
 
@@ -60,7 +60,7 @@ class SharedParameter : public IslandModel<SOL> {
 			order = MPI_Order::COMPUTE_FITNESS;
 
 			for(unsigned int neighbour : make_iterator_range(neighbours)) {
-				// std::cout << mpi_globals_rank<< " has adjacent vertex " << neighbour << "\n";
+				// std::cout << this->mpi_globals_rank<< " has adjacent vertex " << neighbour << "\n";
 				MPI_Isend(&order, 1, MPI_INT, neighbour, MPI_TAG, MPI_COMM_WORLD, &request);
 
 				// Send solution

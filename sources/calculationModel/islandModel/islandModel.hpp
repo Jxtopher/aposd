@@ -2,8 +2,8 @@
 #define JXTOPHER_ISLANDMODEL_H
 
 #include <memory>
-#include <mpi.h>
 
+#include "../mpiConfig.hpp"
 #include "../calculationModel.hpp"
 #include "topologies/topologies.hpp"
 
@@ -25,6 +25,10 @@ class IslandModel : public CalculationModel {
 	virtual void operator()() = 0;
 
   protected:
+	int mpi_globals_number_of_nodes;
+	int mpi_globals_rank;
+	int mpi_globals_namelen;
+	char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 	std::unique_ptr<Topologies> _topologies;
 };
 
