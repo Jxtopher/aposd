@@ -59,14 +59,12 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     endif()
 endif()
 
-add_subdirectory("modules")
-
 # include(ExternalProject)
-# ExternalProject_Add(CPPCMS
-#   GIT_REPOSITORY    git@github.com:artyom-beilis/cppcms.git
-#   GIT_TAG           origin/release/1.2.1
+# ExternalProject_Add(STOCOS
+#     GIT_REPOSITORY    https://github.com/Jxtopher/stocos.git
+#     GIT_TAG           f76e608
+#     INSTALL_COMMAND ""
 # )
-
 
 ## PkgConfig
 find_package(PkgConfig REQUIRED)
@@ -82,10 +80,6 @@ if (NOT JSONCPP_FOUND)
     packageManager("libjsoncpp-dev")
     packageManager("libjsoncpp1")
 endif(NOT JSONCPP_FOUND)
-
-# find_package(jsoncpp REQUIRED)
-# include_directories(${jsoncpp_INCLUDE_DIR})
-
 
 ## MPI
 if(${MODULE_MPI})
