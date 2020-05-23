@@ -1,14 +1,14 @@
-from typing import Dict
-
-import requests
+import argparse
 import json
-import signal
-import sys
-
+import logging
 import os
+import requests
 import signal
 import subprocess
-import logging
+import sys
+
+from typing import Dict
+
 
 class AposdClient:
     def __init__(self, is_development: bool):
@@ -126,7 +126,11 @@ def main(is_development: bool, is_echo_test: bool):
 
 
 if __name__ == "__main__":
-    process = subprocess.Popen(["build/aposd", "-c", "configuration/aposd-webApps.json"], stdout=subprocess.PIPE)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('path', type=str,  help='Path stocos executable')
+    args = parser.parse_args()
+
+    process = subprocess.Popen([args.path, "-c", "configuration/aposd-webApps.json"], stdout=subprocess.PIPE)
     logging.debug("[+] Launch aposd in backgroud")
 
     is_echo_test = False
