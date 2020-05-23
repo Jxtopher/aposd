@@ -7,8 +7,6 @@
 /// @brief
 ///
 
-#define BOOST_LOG_DYN_LINK 1
-
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/trivial.hpp>
@@ -46,9 +44,9 @@ void version(const std::string& name_software) {
 	std::cout << "*************************************" << std::endl;
 	std::cout << "[+] *** " << name_software << " ***" << std::endl;
 	std::cout << "[+] Day compilation : " << __DATE__ << " " << __TIME__ << std::endl;
-	std::cout << "[+] Version ("<< CMAKE_BUILD_TYPE <<") : " << VERSION_PROJECT << std::endl;
-	std::cout << "[+] Git branch : "<< GIT_BRANCH <<std::endl;
-	std::cout << "[+] Git commit hash : "<< GIT_COMMIT_HASH <<std::endl;
+	std::cout << "[+] Version (" << CMAKE_BUILD_TYPE << ") : " << VERSION_PROJECT << std::endl;
+	std::cout << "[+] Git branch : " << GIT_BRANCH << std::endl;
+	std::cout << "[+] Git commit hash : " << GIT_COMMIT_HASH << std::endl;
 	std::cout << "[+] MODULE MPI : " << MODULE_MPI << std::endl;
 	std::cout << "[+] MODULE_SAAS : " << MODULE_SAAS << std::endl;
 	std::cout << "[+] MODULE_SEQ : " << MODULE_SEQ << std::endl;
@@ -61,8 +59,7 @@ int main(int argc, char** argv) {
 
 	boost::program_options::variables_map vm;
 	boost::program_options::options_description argements("[*] main option");
-	argements.add_options()("help,h", "help message")(
-		"version,v","version")(
+	argements.add_options()("help,h", "help message")("version,v", "version")(
 		"config,c", boost::program_options::value<std::string>(&configFile),
 		"File configuration json (default : null)")(
 		"loggin,l", boost::program_options::value<std::string>(&loggin), "loggin (default : null)");

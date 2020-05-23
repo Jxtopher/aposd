@@ -3,7 +3,7 @@
 # @License: *
 # @Date: *
 # @Version: 1
-# @Description: Makefile
+# @Description: CMakeLists
 #
 
 cmake_minimum_required(VERSION 3.0)
@@ -11,8 +11,7 @@ cmake_minimum_required(VERSION 3.0)
 ###############################################################################
 # Set of parameters
 ###############################################################################
-set(CMAKE_BUILD_TYPE Release)
-#set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_BUILD_TYPE Release) # (Release|Debug)
 
 set(CMAKE_CXX_FLAGS "-std=c++2a")
 # -pedantic -Wall -Wextra -Wcast-align -Wctor-dtor-privacy    \
@@ -29,10 +28,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 ###############################################################################
 set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(auto-install)   # auto install package
-include(cppcheck)       # 
-include(clang-format)   #
+include(cppcheck)       # Check code
+include(clang-format)   # Code formatting
 include(version)        # Version name generator form git branch, hash
-#include(doxygen)       # Create le doc
+include(doxygen)        # Create le doc
 
 ###############################################################################
 # Load modules of the projet
@@ -60,14 +59,12 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
     endif()
 endif()
 
-add_subdirectory("modules")
-
 # include(ExternalProject)
-# ExternalProject_Add(CPPCMS
-#   GIT_REPOSITORY    git@github.com:artyom-beilis/cppcms.git
-#   GIT_TAG           origin/release/1.2.1
+# ExternalProject_Add(STOCOS
+#     GIT_REPOSITORY    https://github.com/Jxtopher/stocos.git
+#     GIT_TAG           f76e608
+#     INSTALL_COMMAND ""
 # )
-
 
 ## PkgConfig
 find_package(PkgConfig REQUIRED)
@@ -83,10 +80,6 @@ if (NOT JSONCPP_FOUND)
     packageManager("libjsoncpp-dev")
     packageManager("libjsoncpp1")
 endif(NOT JSONCPP_FOUND)
-
-# find_package(jsoncpp REQUIRED)
-# include_directories(${jsoncpp_INCLUDE_DIR})
-
 
 ## MPI
 if(${MODULE_MPI})
@@ -117,22 +110,27 @@ endif(${MODULE_SAAS})
 
 ## Aposd
 add_executable(${PROJECT_NAME} sources/main.cpp)
+# file(GLOB_RECURSE ALL_SOURCE_FILES  sources/*.hpp)
+# target_precompile_headers(${PROJECT_NAME} PRIVATE ${ALL_SOURCE_FILES})
+target_link_libraries(${PROJECT_NAME} LINK_PRIVATE 
+    ${Boost_LIBRARIES}
+    ${JSONCPP_LIBRARIES}
+)
+
 if(${MODULE_MPI})
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${MPI_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${MPI_LIBRARIES})
 endif(${MODULE_MPI})
 
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${Boost_LIBRARIES})
-
 if(${MODULE_SAAS})
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${LIB_CPPCMS_LIBRARIES}) 
-    target_link_libraries(${PROJECT_NAME} LINK_PUBLIC /usr/local/lib/libcppcms.so.1.2.1)
+    target_link_libraries(${PROJECT_NAME} LINK_PRIVATE ${LIB_CPPCMS_LIBRARIES}) 
+    target_link_libraries(${PROJECT_NAME} LINK_PRIVATE /usr/local/lib/libcppcms.so.1.2.1)
 endif(${MODULE_SAAS})
 
-target_link_libraries(${PROJECT_NAME} LINK_PUBLIC ${JSONCPP_LIBRARIES})
-
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE MODULE_MPI=${MODULE_MPI} MODULE_SAAS=${MODULE_SAAS} MODULE_SEQ=${MODULE_SEQ})
-
+target_compile_definitions(${PROJECT_NAME} 
+    PRIVATE MODULE_MPI=${MODULE_MPI} 
+    MODULE_SAAS=${MODULE_SAAS} 
+    MODULE_SEQ=${MODULE_SEQ}
+    BOOST_LOG_DYN_LINK=1)
 
 ## Cppunit
 pkg_check_modules(CPPUNIT cppunit)
@@ -141,15 +139,17 @@ link_libraries(${CPPUNIT_LIBRARIES})
 # ## Aposd unit test
 add_executable(${PROJECT_NAME}-unittest tests-unitaires/unitTest.cpp)
 target_include_directories(${PROJECT_NAME}-unittest PRIVATE "modules")
-target_include_directories(${PROJECT_NAME}-unittest PUBLIC sources/)
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${Boost_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${MPI_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${LIB_CPPCMS_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${JSONCPP_LIBRARIES})
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC /usr/local/lib/libcppcms.so.1.2.1)
-target_link_libraries(${PROJECT_NAME}-unittest LINK_PUBLIC ${CPPUNIT_LIBRARIES})
+target_include_directories(${PROJECT_NAME}-unittest PRIVATE sources/)
+target_link_libraries(${PROJECT_NAME}-unittest LINK_PRIVATE 
+    ${Boost_LIBRARIES}
+    ${MPI_LIBRARIES}
+    ${LIB_CPPCMS_LIBRARIES}
+    ${JSONCPP_LIBRARIES}
+    /usr/local/lib/libcppcms.so.1.2.1
+    ${CPPUNIT_LIBRARIES}
+)
 
-# ## Test unitaire
+## Test unitaire
 enable_testing()
 add_test(NAME ${PROJECT_NAME}-unittest COMMAND "${PROJECT_NAME}-unittest")
 
@@ -160,17 +160,8 @@ if (NOT PYTHON3.7_EXECUTABLE)
     FIND_PROGRAM(PYTHON3.7_EXECUTABLE python3.7)
 endif(NOT PYTHON3.7_EXECUTABLE)
 
-set(LIST_OF_FILES 
-aposd_saas_collective
-aposd_saas_individual
-)
-foreach(FILE  ${LIST_OF_FILES})
-    add_test(NAME ${FILE} COMMAND ${PYTHON3.7_EXECUTABLE} ./tests-aposd/${FILE}.py WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
+file(GLOB LIST_OF_FILES  tests-aposd/*.py)
+foreach(PATH_FILE  ${LIST_OF_FILES})
+    get_filename_component(FILE ${PATH_FILE} NAME)
+    add_test(NAME ${FILE} COMMAND ${PYTHON3.7_EXECUTABLE} ${PATH_FILE} WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 endforeach()
-
-
-# add_custom_target(run
-#     COMMAND ${PROJECT_NAME}
-#     DEPENDS ${PROJECT_NAME}
-#     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
-# )

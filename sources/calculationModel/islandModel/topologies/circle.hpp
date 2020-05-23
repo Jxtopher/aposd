@@ -18,7 +18,8 @@ class Circle : public Topologies {
 		}
 		if(1 < number_of_nodes) add_edge(number_of_nodes - 1, 0, EdgeProperties(0), g);
 	}
-	virtual ~Circle() {}
+	virtual ~Circle() {
+	}
 
   protected:
 };

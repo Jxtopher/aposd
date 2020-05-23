@@ -3,8 +3,10 @@
 
 class Workers {
   public:
-	Workers() {}
-	virtual ~Workers() {}
+	Workers() {
+	}
+	virtual ~Workers() {
+	}
 
 	virtual void operator()() = 0;
 

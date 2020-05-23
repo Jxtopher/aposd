@@ -3,8 +3,10 @@
 
 class Master {
   public:
-	Master() {}
-	virtual ~Master() {}
+	Master() {
+	}
+	virtual ~Master() {
+	}
 	virtual void operator()() = 0;
 
   protected:

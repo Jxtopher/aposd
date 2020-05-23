@@ -18,7 +18,8 @@ class Star : public Topologies {
 			add_edge(0, i, EdgeProperties(0), g);
 		}
 	}
-	virtual ~Star() {}
+	virtual ~Star() {
+	}
 
   protected:
 };

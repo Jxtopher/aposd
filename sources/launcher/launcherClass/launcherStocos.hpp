@@ -8,13 +8,20 @@
 
 class LauncherStocos : public Launcher {
   public:
-	LauncherStocos() { std::mt19937 mt_rand; }
+	LauncherStocos() {
+		std::mt19937 mt_rand;
+	}
 
-	virtual ~LauncherStocos() {}
+	virtual ~LauncherStocos() {
+	}
 
-	std::string initSolution() { return ""; }
+	std::string initSolution() {
+		return "";
+	}
 
-	std::string solve(std::string solution, unsigned int parameter_id) { return ""; }
+	std::string solve(std::string solution, unsigned int parameter_id) {
+		return "";
+	}
 
   private:
 };

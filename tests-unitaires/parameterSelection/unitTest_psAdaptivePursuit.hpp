@@ -15,9 +15,11 @@ class UnitTest_psAdaptivePursuit : public CppUnit::TestFixture {
 	CPPUNIT_TEST_SUITE_END();
 
   public:
-	void setUp(void) {}
+	void setUp(void) {
+	}
 
-	void tearDown(void) {}
+	void tearDown(void) {
+	}
 
 	void roulette_wheel(void) {
 		std::mt19937 mt_rand;

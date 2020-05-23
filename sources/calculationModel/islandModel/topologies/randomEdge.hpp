@@ -26,7 +26,8 @@ class RandomEdge : public Topologies {
 			}
 		}
 	}
-	virtual ~RandomEdge() {}
+	virtual ~RandomEdge() {
+	}
 
   protected:
 };

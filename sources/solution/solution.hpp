@@ -10,6 +10,11 @@
 #ifndef SOLUTION_H
 #define SOLUTION_H
 
+#include <boost/log/core.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/program_options.hpp>
+
 #include <cassert>
 #include <cstdio>
 #include <cstring>
@@ -18,7 +23,8 @@
 
 #include <jsoncpp/json/json.h>
 
-template<typename TYPE_FITNESS> class Solution {
+template<typename TYPE_FITNESS>
+class Solution {
   public:
 	Solution(const Solution& s) : _numberOfObjective(s._numberOfObjective) {
 		BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":" << __LINE__
@@ -71,7 +77,9 @@ template<typename TYPE_FITNESS> class Solution {
 		return *this;
 	}
 
-	~Solution() { BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":" << __LINE__ << " Delete Solution"; }
+	~Solution() {
+		BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":" << __LINE__ << " Delete Solution";
+	}
 
 	bool fitnessIsValid(unsigned int numObjectif) const {
 		assert(numObjectif < _numberOfObjective);
@@ -112,7 +120,9 @@ template<typename TYPE_FITNESS> class Solution {
 		return _fitness[numObjectif];
 	}
 
-	unsigned int numberOfObjective() const { return _numberOfObjective; }
+	unsigned int numberOfObjective() const {
+		return _numberOfObjective;
+	}
 
 	std::string getSolution() const {
 		Json::StreamWriterBuilder builder;

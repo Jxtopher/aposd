@@ -9,15 +9,16 @@
 using namespace CppUnit;
 
 class UnitTest_psSelectBestMutate : public CppUnit::TestFixture {
-
 	CPPUNIT_TEST_SUITE(UnitTest_psSelectBestMutate);
 	CPPUNIT_TEST(update);
 	CPPUNIT_TEST_SUITE_END();
 
   public:
-	void setUp(void) {}
+	void setUp(void) {
+	}
 
-	void tearDown(void) {}
+	void tearDown(void) {
+	}
 
 	void update(void) {
 		{ // TEST 1 -> MEAN

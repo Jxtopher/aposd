@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <sstream>
-
 #include "parameterSelection/psRandom.hpp"
 
 using namespace CppUnit;
@@ -14,9 +13,11 @@ class UnitTest_psRandom : public CppUnit::TestFixture {
 	CPPUNIT_TEST_SUITE_END();
 
   public:
-	void setUp(void) {}
+	void setUp(void) {
+	}
 
-	void tearDown(void) {}
+	void tearDown(void) {
+	}
 
 	void update(void) {
 		std::shared_ptr<std::mt19937> mt_rand = std::make_shared<std::mt19937>();
@@ -40,7 +41,7 @@ class UnitTest_psRandom : public CppUnit::TestFixture {
 			else if(p == 1)
 				p1++;
 		}
-		CPPUNIT_ASSERT(abs(p1 - p0) < 10);
+		CPPUNIT_ASSERT(abs(static_cast<int>(p1 - p0)) < 10);
 	}
 
   private:

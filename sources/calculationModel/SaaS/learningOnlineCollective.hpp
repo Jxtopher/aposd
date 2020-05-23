@@ -1,6 +1,7 @@
 #ifndef SAAS_LEARNINGONLINECOLLECTIVE_H
 #define SAAS_LEARNINGONLINECOLLECTIVE_H
 
+#include <iostream>
 #include <memory>
 #include <numeric>
 #include <utility>
@@ -14,7 +15,8 @@
 #include "../calculationModel.hpp"
 #include "learningOnline.hpp"
 
-template<class SOL> class LearningOnlineCollective : public LearningOnline<SOL> {
+template<class SOL>
+class LearningOnlineCollective : public LearningOnline<SOL> {
   public:
 	LearningOnlineCollective(std::unique_ptr<ParameterSelection> parameterSelection,
 							 std::unique_ptr<RewardComputation<SOL>> rewardComputation,
@@ -27,7 +29,8 @@ template<class SOL> class LearningOnlineCollective : public LearningOnline<SOL> 
 		history_fitness.set_capacity(number_of_nodes);
 	}
 
-	virtual ~LearningOnlineCollective() {}
+	virtual ~LearningOnlineCollective() {
+	}
 
 	//
 	std::pair<SOL, unsigned int> initial_solution(const SOL& s) {

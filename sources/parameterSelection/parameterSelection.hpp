@@ -27,9 +27,11 @@ class ParameterSelection {
 	static constexpr const char* UCBW = "PsUCBW";
 
 	ParameterSelection(unsigned int number_of_parameters)
-		: _number_of_parameters(number_of_parameters) {}
+		: _number_of_parameters(number_of_parameters) {
+	}
 
-	virtual ~ParameterSelection() {}
+	virtual ~ParameterSelection() {
+	}
 
 	virtual ParameterSelection* clone() const = 0;
 	virtual void reset() = 0;

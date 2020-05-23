@@ -7,15 +7,21 @@
 #include "../calculationModel.hpp"
 #include "master.hpp"
 
-template<class SOL> class MasterSynchronous : public Master {
+template<class SOL>
+class MasterSynchronous : public Master {
   public:
 	MasterSynchronous(std::unique_ptr<ParameterSelection> parameterSelection,
 					  std::unique_ptr<RewardComputation<SOL>> rewardComputation,
 					  std::unique_ptr<SolutionSelection<SOL>> selection)
 		: Master(), _parameterSelection(std::move(parameterSelection)),
-		  _rewardComputation(std::move(rewardComputation)), _selection(std::move(selection)) {}
+		  _rewardComputation(std::move(rewardComputation)), _selection(std::move(selection)) {
+		MPI_Comm_size(MPI_COMM_WORLD, &mpi_globals_number_of_nodes);
+		MPI_Comm_rank(MPI_COMM_WORLD, &mpi_globals_rank);
+		MPI_Get_processor_name(mpi_globals_name, &mpi_globals_namelen);
+	}
 
-	virtual ~MasterSynchronous() {}
+	virtual ~MasterSynchronous() {
+	}
 
 	virtual void operator()() {
 		BOOST_LOG_TRIVIAL(debug) << __FILE__ << ":" << __LINE__ << " MASTER";
@@ -86,6 +92,11 @@ template<class SOL> class MasterSynchronous : public Master {
 	int sizeOfmessage;
 	MPI_Request request;
 	MPI_Status status;
+
+	int mpi_globals_number_of_nodes;
+	int mpi_globals_rank;
+	int mpi_globals_namelen;
+	char mpi_globals_name[MPI_MAX_PROCESSOR_NAME];
 
 	std::unique_ptr<ParameterSelection> _parameterSelection;
 	std::unique_ptr<RewardComputation<SOL>> _rewardComputation;

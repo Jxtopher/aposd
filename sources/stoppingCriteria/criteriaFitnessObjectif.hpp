@@ -31,7 +31,9 @@ class CriteriaFitnessObjectif : public Criteria<SOL, TYPE_FITNESS> {
 		}
 	}
 
-	virtual ~CriteriaFitnessObjectif() { delete[] _fitnessObjectif; }
+	virtual ~CriteriaFitnessObjectif() {
+		delete[] _fitnessObjectif;
+	}
 
 	virtual bool operator()(const SOL& s) {
 		assert(s.numberOfObjective() == _numberOfObjective);

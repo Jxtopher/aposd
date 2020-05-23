@@ -10,15 +10,18 @@
 #include "../../selection/solutionSelection.hpp"
 #include "learningOnline.hpp"
 
-template<class SOL> class LearningOnlineIndividual : public LearningOnline<SOL> {
+template<class SOL>
+class LearningOnlineIndividual : public LearningOnline<SOL> {
   public:
 	LearningOnlineIndividual(std::unique_ptr<ParameterSelection> parameterSelection,
 							 std::unique_ptr<RewardComputation<SOL>> rewardComputation,
 							 std::unique_ptr<SolutionSelection<SOL>> selection)
 		: _parameterSelection(std::move(parameterSelection)),
-		  _rewardComputation(std::move(rewardComputation)), _selection(std::move(selection)) {}
+		  _rewardComputation(std::move(rewardComputation)), _selection(std::move(selection)) {
+	}
 
-	virtual ~LearningOnlineIndividual() {}
+	virtual ~LearningOnlineIndividual() {
+	}
 
 	//
 	std::pair<SOL, unsigned int> initial_solution(const SOL& s) {
@@ -44,7 +47,8 @@ template<class SOL> class LearningOnlineIndividual : public LearningOnline<SOL> 
 		return std::pair<SOL, unsigned int>(solution_t1, new_parameter);
 	}
 
-	void operator()() {}
+	void operator()() {
+	}
 
   protected:
 	std::unique_ptr<ParameterSelection> _parameterSelection;

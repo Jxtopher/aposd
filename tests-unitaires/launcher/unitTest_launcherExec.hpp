@@ -14,9 +14,11 @@ class UnitTest_LauncherExec : public CppUnit::TestFixture {
 	CPPUNIT_TEST_SUITE_END();
 
   public:
-	void setUp(void) {}
+	void setUp(void) {
+	}
 
-	void tearDown(void) {}
+	void tearDown(void) {
+	}
 
 	void test_launchExecutable(void) {
 		std::string x = "echo";

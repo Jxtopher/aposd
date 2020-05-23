@@ -26,7 +26,9 @@ class LauncherExec : public Launcher {
 		buffer = new char[bufferLength];
 	}
 
-	virtual ~LauncherExec() { delete[] buffer; }
+	virtual ~LauncherExec() {
+		delete[] buffer;
+	}
 
 	std::string initSolution() {
 		std::stringstream ss;
@@ -63,7 +65,9 @@ class LauncherExec : public Launcher {
 		return ss.str();
 	}
 
-	bool exists_file(const std::string& name) { return (access(name.c_str(), F_OK) != -1); }
+	bool exists_file(const std::string& name) {
+		return (access(name.c_str(), F_OK) != -1);
+	}
 
   private:
 	const std::string _pathExecutable;

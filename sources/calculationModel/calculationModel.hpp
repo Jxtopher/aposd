@@ -14,9 +14,11 @@ class CalculationModel {
 	static constexpr const char* MASTER_WORKER_MODEL = "MasterWorkersSynchronous";
 	static constexpr const char* ISLAND_MODEL = "SharedParameter";
 
-	CalculationModel() {}
+	CalculationModel() {
+	}
 
-	virtual ~CalculationModel() {}
+	virtual ~CalculationModel() {
+	}
 
 	virtual void operator()() = 0;
 

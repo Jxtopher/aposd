@@ -13,12 +13,15 @@
 #include <iostream>
 #include <list>
 #include <memory>
+#include <vector>
 
 #include "criteria.hpp"
 
-template<typename SOL, typename TYPE_FITNESS> class StoppingCriteria {
+template<typename SOL, typename TYPE_FITNESS>
+class StoppingCriteria {
   public:
-	StoppingCriteria() {}
+	StoppingCriteria() {
+	}
 
 	virtual ~StoppingCriteria() {
 		for(unsigned int i = 0; i < criteria.size(); i++) delete criteria[i];
@@ -34,10 +37,12 @@ template<typename SOL, typename TYPE_FITNESS> class StoppingCriteria {
 		return total;
 	}
 
-	void addCriteria(Criteria<SOL, TYPE_FITNESS>* c) { criteria.push_back(c); }
+	void addCriteria(Criteria<SOL, TYPE_FITNESS>* c) {
+		criteria.push_back(c);
+	}
 
   protected:
-	vector<Criteria<SOL, TYPE_FITNESS>*> criteria;
+	std::vector<Criteria<SOL, TYPE_FITNESS>*> criteria;
 };
 
 #endif

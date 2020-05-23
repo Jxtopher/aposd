@@ -10,23 +10,3 @@ function(packageManager name_pakage)
         endif()
     endif (UNIX)
 endfunction()
-
-# function(dlSources url_git)
-#     execute_process(COMMAND sudo apt-get install -y ${name_pakage})
-# endfunction()
-
-# git clone https://github.com/catchorg/Catch2.git
-# mkdir -p Catch2/build
-# cd Catch2/build
-# cmake .. && make
-# sudo make install
-
-# -------------------
-
-# apt-get install  libargtable2-dev libcurl4-gnutls-dev libmicrohttpd libhiredis-dev
-
-# git clone https://github.com/cinemast/libjson-rpc-cpp.git
-# mkdir -p libjson-rpc-cpp/build
-# cd libjson-rpc-cpp/build
-# cmake .. && make
-# sudo make install

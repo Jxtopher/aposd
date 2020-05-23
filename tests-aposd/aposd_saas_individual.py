@@ -41,12 +41,6 @@ class Aposd:
             "seed": 0,
             "Interface": "WEBAPPLICATION",
             "CalculationModel": {
-                # "ParameterSelection": {
-                #     "className": "PsConstant", # learning method constant
-                # #     #"className": "PsRandom", # learning method Random
-                # #     #"className": "PsEspsilonGreedy", # learning method E-Greedy
-                #     "number_of_parameters": 2,
-                # },
                 "ParameterSelection": {
                     "className": "PsAdaptivePursuit", # learning method AP
                     "alpha" : 0.2,
@@ -130,7 +124,7 @@ def main(is_development: bool, is_echo_test: bool):
 
 
 if __name__ == "__main__":
-    process = subprocess.Popen(["build/aposd-Release", "-c", "configuration/aposd-webApps.json"], stdout=subprocess.PIPE)
+    process = subprocess.Popen(["build/aposd", "-c", "configuration/aposd-webApps.json"], stdout=subprocess.PIPE)
     logging.debug("[+] Launch aposd in backgroud")
 
     is_echo_test = False
