@@ -13,7 +13,7 @@ jobs:
             build-essential
             cmake
             pkg-config
-            libpcre3-dev 
+            libpcre3-dev
             zlib1g-dev
             libicu-dev
             python
@@ -37,7 +37,7 @@ jobs:
             make install &&
             export LD_LIBRARY_PATH=/usr/local/lib
           working_directory: /tmp
-      - run: 
+      - run:
           name: make
           command: cmake .. && make
           working_directory: ~/project/build
