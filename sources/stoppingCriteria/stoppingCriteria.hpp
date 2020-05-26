@@ -18,31 +18,29 @@
 #include "criteria.hpp"
 
 template<typename SOL, typename TYPE_FITNESS>
-class StoppingCriteria {
+class StoppingCriteria :
+	private std::list<Criteria<SOL, TYPE_FITNESS>*>  {
   public:
-	StoppingCriteria() {
-	}
-
 	virtual ~StoppingCriteria() {
-		for(unsigned int i = 0; i < criteria.size(); i++) delete criteria[i];
-
-		criteria.clear();
+		for (auto criteria : *this) delete criteria;
+		this->clear();
 	}
 
 	bool operator()(const SOL& s) {
-		bool total = 1;
-
-		for(unsigned int i = 0; i < criteria.size(); i++)
-			total = total & criteria[i]->operator()(s);
+		bool total = true;
+		for (auto criteria : *this)
+			total = total & criteria->operator()(s);
 		return total;
 	}
+	
+	/// 
+	/// @brief add a criterion to the list
+	/// 
+	void addCriteria(Criteria<SOL, TYPE_FITNESS>* criteria) { this->push_back(criteria); }
 
-	void addCriteria(Criteria<SOL, TYPE_FITNESS>* c) {
-		criteria.push_back(c);
+	void reset() {
+		for (auto criteria : *this) this->reset();
 	}
-
-  protected:
-	std::vector<Criteria<SOL, TYPE_FITNESS>*> criteria;
 };
 
 #endif
