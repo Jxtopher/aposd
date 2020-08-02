@@ -21,7 +21,7 @@ set(CMAKE_CXX_FLAGS "-std=c++2a")
 #                                 -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default \
 #                                 -Wundef -Werror -Wno-unused") # -Wsign-conversion -Wshadow  -Wcast-qual -Wold-style-cast
 set(CMAKE_CXX_FLAGS_DEBUG "-g3 -DDEBUG")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 ###############################################################################
 # Load modules cmake
