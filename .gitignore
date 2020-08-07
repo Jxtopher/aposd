@@ -1,5 +1,6 @@
 .vscode/
 build/
+version.h.in
 
 # Prerequisites
 *.d

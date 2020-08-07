@@ -17,6 +17,8 @@ jobs:
             zlib1g-dev
             libicu-dev
             python
+            python3.7
+            python3-pip
             libcppunit-dev
             libjsoncpp-dev
             openmpi-bin
@@ -26,6 +28,10 @@ jobs:
             libc6
             libc6-dev
             git
+      - run:
+          name: Install Dependencies python3.7
+          command: >
+            python3.7 -m pip install argparse requests
       - run:
           name: install  cppcms
           command: >
@@ -41,3 +47,7 @@ jobs:
           name: make
           command: cmake .. && make
           working_directory: ~/project/build
+      # - run:
+      #     name: Tests
+      #     command: make test
+      #     working_directory: ~/project/build
