@@ -47,7 +47,7 @@ jobs:
           name: make
           command: cmake .. && make
           working_directory: ~/project/build
-      - run:
-          name: Tests
-          command: make test
-          working_directory: ~/project/build
+      # - run:
+      #     name: Tests
+      #     command: make test
+      #     working_directory: ~/project/build
