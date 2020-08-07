@@ -16,6 +16,7 @@ jobs:
             libpcre3-dev
             zlib1g-dev
             libicu-dev
+            python
             python3.7
             python3-pip
             libcppunit-dev
