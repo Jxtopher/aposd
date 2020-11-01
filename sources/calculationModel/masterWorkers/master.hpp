@@ -3,11 +3,11 @@
 
 class Master {
   public:
-	Master() {
-	}
-	virtual ~Master() {
-	}
-	virtual void operator()() = 0;
+    Master() {
+    }
+    virtual ~Master() {
+    }
+    virtual void operator()() = 0;
 
   protected:
 };

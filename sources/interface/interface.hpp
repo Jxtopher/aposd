@@ -6,9 +6,9 @@
 
 class Interface {
   public:
-	static constexpr const char* MPI = "MPI";
-	static constexpr const char* WEBAPPLICATION = "WEBAPPLICATION";
-	static constexpr const char* SEQUENTIAL = "SEQUENTIAL";
+    static constexpr const char* MPI = "MPI";
+    static constexpr const char* WEBAPPLICATION = "WEBAPPLICATION";
+    static constexpr const char* SEQUENTIAL = "SEQUENTIAL";
 };
 
 #endif

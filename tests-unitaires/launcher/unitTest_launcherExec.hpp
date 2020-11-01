@@ -9,23 +9,23 @@
 using namespace CppUnit;
 
 class UnitTest_LauncherExec : public CppUnit::TestFixture {
-	CPPUNIT_TEST_SUITE(UnitTest_LauncherExec);
-	CPPUNIT_TEST(test_launchExecutable);
-	CPPUNIT_TEST_SUITE_END();
+    CPPUNIT_TEST_SUITE(UnitTest_LauncherExec);
+    CPPUNIT_TEST(test_launchExecutable);
+    CPPUNIT_TEST_SUITE_END();
 
   public:
-	void setUp(void) {
-	}
+    void setUp(void) {
+    }
 
-	void tearDown(void) {
-	}
+    void tearDown(void) {
+    }
 
-	void test_launchExecutable(void) {
-		std::string x = "echo";
-		// LauncherExec lExec(x);
-		// string r = lExec.launchExecutable("\"xxx xxxx -1 !\"");
-		// CPPUNIT_ASSERT(r == "xxx xxxx -1 !\n");
-	}
+    void test_launchExecutable(void) {
+        std::string x = "echo";
+        // LauncherExec lExec(x);
+        // string r = lExec.launchExecutable("\"xxx xxxx -1 !\"");
+        // CPPUNIT_ASSERT(r == "xxx xxxx -1 !\n");
+    }
 
   private:
 };
