@@ -1,6 +1,6 @@
 # Adaptive Portfolio Selection Distributed (aposd)
 
-APOSD sélectionne de manière automatique les paramètres d'un solver d'optimisation. Il est conçu pour les environnements de cluster de calcul HPC, il support plusieurs de modèle de calcul distribué en fonction des besoins. Conçus étroitement avec le solver [STOCOS](https://github.com/Jxtopher/stocos), il s'inter-connecter facilement à d'autres solver ou simulateur par le biais d'une communication websocket ou commnucation inter-processus avec une description en JSON. 
+APOSD sélectionne automatimatiquement les paramètres d'un solver d'optimisation. Il est conçu pour les environnements de cluster de calcul HPC, il support plusieurs de modèle de calcul distribué en fonction des besoins. Conçus étroitement avec le solver [STOCOS](https://github.com/Jxtopher/stocos), il s'inter-connecter facilement à d'autres solver ou simulateur par le biais d'une communication websocket ou commnucation inter-processus avec une description en JSON. 
 
 
 - **Build Status Linux** : [![CircleCI](https://circleci.com/gh/Jxtopher/aposd.svg?style=svg)](https://circleci.com/gh/Jxtopher/aposd)
